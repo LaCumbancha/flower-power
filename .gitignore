@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+# Jet Brains
+.idea/
+
+# CMake Files
+cmake-build-debug/
