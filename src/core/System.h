@@ -3,20 +3,22 @@
 
 
 #include "../menu/Menu.h"
-#include "producer/ProducerJob.h"
-#include "seller/SellerJob.h"
 #include "config/Config.h"
+#include "job/seller/SellerJob.h"
+#include "job/producer/ProducerJob.h"
 
 class System {
 
 public:
-    int run();
+    explicit System() = default;
+
+    pid_t run();
     Config* getConfig();
 
 private:
-    ProducerJob producerJob = ProducerJob();
-    SellerJob sellerJob = SellerJob();
     Config _config = Config();
+    SellerJob sellerJob = SellerJob(&_config);
+    ProducerJob producerJob = ProducerJob(&_config);
 
 };
 

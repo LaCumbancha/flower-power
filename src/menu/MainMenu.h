@@ -5,6 +5,7 @@
 #include "SettingsMenu.h"
 #include "../core/System.h"
 
+
 using namespace std;
 
 class MainMenu: public Menu {

@@ -1,8 +1,18 @@
 #include "System.h"
+#include "scheduler/Scheduler.h"
 
-int System::run() {
-    cout << "Running system with " << this->_config.getDistributionCenters() << " DC and " << this->_config.getSalePoints() << " SP." << endl;
-    return EXIT_SUCCESS;
+pid_t System::run() {
+    pid_t pid;
+
+    // Running producer process.
+    pid = Scheduler::newProcess(&producerJob);
+
+    // Running sale process (only if its parent process).
+    if (pid != CHILD_PROCESS_PID) {
+        pid = Scheduler::newProcess(&sellerJob);
+    }
+
+    return pid;
 }
 
 Config *System::getConfig() {
