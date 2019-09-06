@@ -1,5 +1,7 @@
 #ifndef FLOWER_POWER_MENU_H
 #define FLOWER_POWER_MENU_H
+#define CHILD_PROCESS_PID 0
+
 
 #include <iostream>
 
