@@ -8,7 +8,7 @@ using namespace std;
 class Menu {
 
 public:
-    virtual int run();
+    virtual int show();
 
 protected:
     virtual void display();

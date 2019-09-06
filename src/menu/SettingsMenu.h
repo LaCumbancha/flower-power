@@ -6,7 +6,7 @@
 class SettingsMenu: public Menu {
 
 public:
-    int run() override ;
+    int show() override ;
 
 private:
     int distributionCenters = 1;

@@ -1,6 +1,6 @@
 #include "Menu.h"
 
-int Menu::run() {
+int Menu::show() {
     return EXIT_SUCCESS;
 }
 

@@ -1,7 +1,7 @@
 #include <string>
 #include "SettingsMenu.h"
 
-int SettingsMenu::run() {
+int SettingsMenu::show() {
     int option = -1;
     display();
 

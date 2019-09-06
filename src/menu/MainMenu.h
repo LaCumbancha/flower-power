@@ -3,16 +3,18 @@
 
 #include "Menu.h"
 #include "SettingsMenu.h"
+#include "../core/System.h"
 
 using namespace std;
 
 class MainMenu: public Menu {
 
 public:
-    int run() override;
+    int show() override;
 
 private:
     SettingsMenu settingsMenu = SettingsMenu();
+    System coreSystem = System();
 
     void display() override;
 };

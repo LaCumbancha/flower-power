@@ -1,6 +1,6 @@
 #include "MainMenu.h"
 
-int MainMenu::run() {
+int MainMenu::show() {
     int option = 0;
     display();
 
@@ -8,11 +8,12 @@ int MainMenu::run() {
         option = readInt();
         switch (option) {
             case 1:
-                // systemMenu();
-                cout << "Accessing System Menu" << endl;
+                coreSystem.run();
+                cout << endl;
+                display();
                 break;
             case 2:
-                settingsMenu.run();
+                settingsMenu.show();
                 cout << endl;
                 display();
                 break;
@@ -31,7 +32,7 @@ int MainMenu::run() {
 void MainMenu::display() {
     cout << "Flower Power Menu!" << endl;
     cout << "Select your option:" << endl;
-    cout << "[1] Enter system" << endl;
+    cout << "[1] Run system" << endl;
     cout << "[2] Settings" << endl;
     cout << "[3] Exit" << endl;
     cout << "Selection: ";
