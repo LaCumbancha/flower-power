@@ -2,7 +2,7 @@
 Trabajo Práctico N°1 | 75.59 - Técnicas de Programación Concurrentes | FIUBA
 
 #### Integrantes del Grupo
-Inoriza, Pablo (padrón XXXXX)<br>
+Inoriza, Pablo (padrón 94986)<br>
 Maitia, Darius (padrón XXXXX)<br>
 Raña, Cristian Ezequiel (padrón 95457)
 
