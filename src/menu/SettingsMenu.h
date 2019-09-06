@@ -2,18 +2,18 @@
 #define FLOWER_POWER_SETTINGSMENU_H
 
 #include "Menu.h"
+#include "../core/config/Config.h"
 
 class SettingsMenu: public Menu {
 
 public:
+    explicit SettingsMenu(Config *config);
     int show() override ;
 
 private:
-    int distributionCenters = 1;
-    int salePoints = 1;
+    Config* config;
 
     void display() override;
-    void customizeSettings();
 };
 
 

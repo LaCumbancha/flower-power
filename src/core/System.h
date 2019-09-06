@@ -5,15 +5,18 @@
 #include "../menu/Menu.h"
 #include "producer/ProducerJob.h"
 #include "seller/SellerJob.h"
+#include "config/Config.h"
 
 class System {
 
 public:
     int run();
+    Config* getConfig();
 
 private:
     ProducerJob producerJob = ProducerJob();
     SellerJob sellerJob = SellerJob();
+    Config _config = Config();
 
 };
 
