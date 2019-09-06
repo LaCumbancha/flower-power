@@ -1,12 +1,15 @@
 #include "MainMenu.h"
 
 int MainMenu::show() {
-    int option = 0;
+    int option = -1;
     display();
 
-    while (option != 3) {
+    while (option != 0) {
         option = readInt();
         switch (option) {
+            case 0:
+                cout << "Thanks for using Flower Power System!" << endl;
+                break;
             case 1:
                 coreSystem.run();
                 cout << endl;
@@ -16,9 +19,6 @@ int MainMenu::show() {
                 settingsMenu.show();
                 cout << endl;
                 display();
-                break;
-            case 3:
-                cout << "Thanks for using Flower Power System!" << endl;
                 break;
             default:
                 cout << "Wrong option. Retry: ";
@@ -34,6 +34,5 @@ void MainMenu::display() {
     cout << "Select your option:" << endl;
     cout << "[1] Run system" << endl;
     cout << "[2] Settings" << endl;
-    cout << "[3] Exit" << endl;
-    cout << "Selection: ";
+    cout << "Selection: [0 for quit] ";
 }
