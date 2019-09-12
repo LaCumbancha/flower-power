@@ -1,15 +1,23 @@
 #include "System.h"
-#include "scheduler/Scheduler.h"
 
 pid_t System::run() {
-    pid_t pid;
+    // Loading configuration data.
+    this->_config.loadData();
 
-    // Running producer process.
-    pid = Scheduler::newProcess(&producerJob);
+    pid_t pid = getpid();
+    for (int idx = 0; idx < this->_config.getDistributionCenters(); idx++) {
 
-    // Running sale process (only if its parent process).
-    if (pid != CHILD_PROCESS_PID) {
-        pid = Scheduler::newProcess(&sellerJob);
+        // Creating new processes for each Distribution Center.
+        if (pid != CHILD_PROCESS_PID) {
+            pid = fork();
+
+            // Creating a Distribution Center in each child process.
+            if (pid == CHILD_PROCESS_PID) {
+                auto distributionCenter = DistributionCenter(&(this->_config));
+                distributionCenter.run();
+            }
+        }
+
     }
 
     return pid;

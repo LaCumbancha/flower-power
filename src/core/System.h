@@ -2,10 +2,10 @@
 #define FLOWER_POWER_SYSTEM_H
 
 
-#include "../menu/Menu.h"
+#include <zconf.h>
 #include "config/Config.h"
-#include "job/seller/SellerJob.h"
-#include "job/producer/ProducerJob.h"
+#include "DistributionCenter.h"
+
 
 class System {
 
@@ -17,8 +17,6 @@ public:
 
 private:
     Config _config = Config();
-    SellerJob sellerJob = SellerJob(&_config);
-    ProducerJob producerJob = ProducerJob(&_config);
 
 };
 

@@ -6,13 +6,11 @@
 #include "../../config/Config.h"
 #include "../Job.h"
 
-using namespace std;
-
 class SellerJob : public Job {
 
 public:
-    explicit SellerJob(Config* config);
-    int run();
+    explicit SellerJob();
+    int run() override;
 
 };
 
