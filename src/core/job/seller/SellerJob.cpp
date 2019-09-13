@@ -1,10 +1,7 @@
 #include "SellerJob.h"
 
-SellerJob::SellerJob(Config* config) : Job(config) {};
+SellerJob::SellerJob() : Job() {}
 
-int SellerJob::run() {
-    cout << "Running seller job with " << _config->getSalePoints() << " SPs." << endl;
-    return EXIT_SUCCESS;
-}
+int SellerJob::run() { return 0; }
 
 

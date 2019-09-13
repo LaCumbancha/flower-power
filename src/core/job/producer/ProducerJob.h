@@ -3,16 +3,21 @@
 
 
 #include <iostream>
-#include "../../config/Config.h"
 #include "../Job.h"
-
-using namespace std;
+#include "../../../utils/Pipe.h"
 
 class ProducerJob : public Job {
 
 public:
-    explicit ProducerJob(Config* config);
-    int run();
+    explicit ProducerJob(const ProducerDTO& producerData, Pipe* distributionPipe);
+    int run() override;
+
+private:
+    int _id;
+    int _rosesStock;
+    int _tulipsStock;
+    std::string _name;
+    Pipe* _distributionPipe;
 
 };
 
