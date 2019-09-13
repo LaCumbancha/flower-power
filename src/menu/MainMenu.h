@@ -1,10 +1,11 @@
 #ifndef FLOWER_POWER_MAINMENU_H
 #define FLOWER_POWER_MAINMENU_H
 
+
+#include <sys/wait.h>
 #include "Menu.h"
 #include "SettingsMenu.h"
 #include "../core/System.h"
-
 
 using namespace std;
 

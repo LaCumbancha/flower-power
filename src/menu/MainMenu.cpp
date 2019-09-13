@@ -2,7 +2,6 @@
 
 int MainMenu::show() {
     int option = -1;
-    pid_t pid;
     display();
 
     while (option != 0) {
@@ -12,15 +11,9 @@ int MainMenu::show() {
                 cout << "Thanks for using Flower Power System!" << endl;
                 break;
             case 1:
-                pid = coreSystem.run();
-
-                // Quitting if its child process.
-                if (pid == CHILD_PROCESS_PID) {
-                    option = 0;
-                } else {
-                    cout << endl;
-                    display();
-                }
+                coreSystem.run();
+                cout << endl;
+                display();
                 break;
             case 2:
                 settingsMenu.show();

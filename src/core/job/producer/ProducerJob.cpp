@@ -14,6 +14,11 @@ ProducerJob::ProducerJob(const ProducerDTO& producerData, Pipe* distributionPipe
 }
 
 int ProducerJob::run() {
-    std::cout << "Running producer " << _name << " (" << _id << ") with " << _rosesStock << " roses and " << _tulipsStock << " tulips." << std::endl;
+    ProducerDTO data;
+    data.producerId = this->_id;
+    data.rosesStock = this->_rosesStock;
+    data.tulipsStock = this->_tulipsStock;
+
+    this->_distributionPipe->write(static_cast<const void*>(&data), sizeof(data));
     exit(EXIT_SUCCESS);
 }
