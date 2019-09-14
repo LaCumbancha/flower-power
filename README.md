@@ -9,6 +9,15 @@ Raña, Cristian Ezequiel (padrón 95457)
 #### Fecha de Entrega
 Miércoles 25 de Septiembre de 2019
 
+## Bootstrapping
+En el directorio raíz del proyecto, ejecutar la siguiente secuencia de comandos:
+```
+cmake CMakeLists.txt
+make
+```
+
+Es necesario una versión de cmake superior a la 3.10 para poder correr el proyecto.
+
 ## Enunciado
 
 #### Objetivo
