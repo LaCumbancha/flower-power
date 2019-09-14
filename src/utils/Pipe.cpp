@@ -1,4 +1,3 @@
-#include <iostream>
 #include "Pipe.h"
 
 Pipe::Pipe() {
@@ -67,11 +66,10 @@ ssize_t Pipe::read(std::string& data, int* status) {
 
 Pipe::~Pipe() {
     if (this->_writeMode) {
-        close(this->_writeFileDescriptor);
+        ::close(this->_writeFileDescriptor);
     }
 
     if (this->_readMode) {
-        close(this->_readFileDescriptor);
+        ::close(this->_readFileDescriptor);
     }
 }
-

@@ -1,6 +1,7 @@
 #include "ProducerJob.h"
+#include "../../../utils/Logger.h"
 
-ProducerJob::ProducerJob(const ProducerFlowers& producerData, Pipe* distributionPipe) : Job() {
+ProducerJob::ProducerJob(const int center, const ProducerFlowers& producerData, Pipe* distributionPipe) : Job() {
 
     // Assigning pipe to communicate with the distribution center.
     this->_distributionPipe = distributionPipe;
@@ -10,6 +11,9 @@ ProducerJob::ProducerJob(const ProducerFlowers& producerData, Pipe* distribution
     this->_producerName = producerData.producerName;
     this->_rosesStock = producerData.rosesStock;
     this->_tulipsStock = producerData.tulipsStock;
+
+    // Initializing distribution center data.
+    this->_center = center;
 
     // Initializing random number generator
     srand(time(NULL) * getpid());
@@ -50,6 +54,8 @@ ProducerFlowers ProducerJob::generateFlowerBox() {
 
 int ProducerJob::run() {
     while (this->_rosesStock != 0 or this->_tulipsStock != 0) {
+        auto box = this->generateFlowerBox();
+        Logger::info("Producer #" + std::to_string(this->_center) + "." + std::to_string(this->_producerId) + " (" + this->_producerName + ") sent a box with " + std::to_string(box.rosesStock) + " roses and " + std::to_string(box.tulipsStock) + " tulips to the Distribution Center #" + std::to_string(this->_center) + ".");
         this->_distributionPipe->write(this->generateFlowerBox().serialize());
     }
 

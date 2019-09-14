@@ -12,10 +12,11 @@
 class ProducerJob : public Job {
 
 public:
-    explicit ProducerJob(const ProducerFlowers& producerData, Pipe* distributionPipe);
+    explicit ProducerJob(const int center, const ProducerFlowers& producerData, Pipe* distributionPipe);
     int run() override;
 
 private:
+    int _center;
     int _producerId;
     int _rosesStock;
     int _tulipsStock;
