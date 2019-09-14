@@ -3,7 +3,7 @@
 
 #include <list>
 #include <vector>
-#include "data/DTOs.h"
+#include "data/ProducerFlowers.h"
 
 #define CHILD_PROCESS_PID 0
 
@@ -17,14 +17,14 @@ public:
     int getDistributionCenters();
     void setSalePoints(int salePoints);
     void setDistributionCenters(int distributionCenters);
-    std::vector<ProducerDTO> getProducers();
-    void setProducers(std::vector<ProducerDTO> producersDTO);
+    std::vector<ProducerFlowers> getProducers();
+    void setProducers(std::vector<ProducerFlowers> producersDTO);
 
 private:
     int _salePoints = 1;
     int _distributionCenters = 1;
     std::string _producersPath = "../data/producers.csv";
-    std::vector<ProducerDTO> _producers;
+    std::vector<ProducerFlowers> _producers;
 
 };
 
