@@ -38,6 +38,7 @@ TP1
 # CMake Files
 cmake-build-debug/
 CMakeFiles
+CMakeCache.txt
 cmake_install.cmake
 Makefile
 
