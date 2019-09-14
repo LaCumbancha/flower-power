@@ -2,6 +2,9 @@
 #define FLOWER_POWER_PRODUCERJOB_H
 
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include <iostream>
 #include "../Job.h"
 #include "../../../utils/Pipe.h"
@@ -18,6 +21,8 @@ private:
     int _tulipsStock;
     std::string _name;
     Pipe* _distributionPipe;
+
+    void generateFlowerBox(ProducerDTO* box);
 
 };
 
