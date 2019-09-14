@@ -1,4 +1,3 @@
-#include <iostream>
 #include "Pipe.h"
 
 Pipe::Pipe() {

@@ -39,7 +39,7 @@ pid_t DistributionCenter::run() {
     while(this->_producersPipe->read(data, &status)){
         if (status == EXIT_SUCCESS) {
             ProducerFlowers box = ProducerFlowers::deserialize(data);
-            Logger::info("Distribution Center received a box with " + std::to_string(box.rosesStock) + " roses and " + std::to_string(box.tulipsStock) + " tulips from provider #" + std::to_string(box.producerId) + "(" + box.producerName + ").");
+            Logger::info("Distribution Center received a box with " + std::to_string(box.rosesStock) + " roses and " + std::to_string(box.tulipsStock) + " tulips from provider #" + std::to_string(box.producerId) + " (" + box.producerName + ").");
         }
     }
 
