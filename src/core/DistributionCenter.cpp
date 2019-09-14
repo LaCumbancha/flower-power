@@ -23,9 +23,11 @@ DistributionCenter::DistributionCenter(Config *config, int id) : Job() {
                 producersPipe->setWriteMode();
                 auto producerJob = new ProducerJob(this->_id, producerData, producersPipe);
                 producerJob->run();
+            } else {
+                Logger::info("Producer #" + std::to_string(this->_id) + "." + std::to_string(producerData.producerId) + " running in process with PID #" + std::to_string(pid) + ".");
+                this->_producersPIDs.push_back(pid);
             }
 
-            Logger::info("Producer #" + std::to_string(this->_id) + "." + std::to_string(producerData.producerId) + " running in process with PID #" + std::to_string(pid) + ".");
         }
 
     }
@@ -46,6 +48,24 @@ pid_t DistributionCenter::run() {
         }
     }
 
+    finish();
     wait(nullptr);
     exit(EXIT_SUCCESS);
+}
+
+void DistributionCenter::finish() {
+    int signals = 0;
+    for (auto producerPID : this->_producersPIDs) {
+        int processStatus;
+        waitpid(producerPID, &processStatus, 0);
+
+        if (processStatus != EXIT_SUCCESS) {
+            signals += 1;
+            Logger::error("Producer in process " + std::to_string(producerPID) + " finished with error code " + std::to_string(processStatus));
+        }
+    }
+
+    if (signals == 0) {
+        Logger::info("Every Producer finished successfully without errors.");
+    }
 }

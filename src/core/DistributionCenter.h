@@ -13,11 +13,13 @@ class DistributionCenter : public Job {
 public:
     explicit DistributionCenter(Config *config, int id);
     pid_t run() override;
+    void finish();
 
 private:
     int _id;
     Config* _config;
     Pipe* _producersPipe;
+    std::vector<pid_t > _producersPIDs;
 
 };
 

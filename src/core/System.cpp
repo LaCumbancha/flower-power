@@ -19,7 +19,7 @@ pid_t System::run() {
                 distributionCenter.run();
             } else {
                 Logger::info("Distribution Center #" + std::to_string(idx) + " running in process with PID #" + std::to_string(pid) + ".");
-                this->_distributionCenters.push_back(pid);
+                this->_distributionCentersPIDs.push_back(pid);
             }
         }
 
@@ -30,13 +30,19 @@ pid_t System::run() {
 }
 
 void System::finish() {
-    for (auto distributionCenter : this->_distributionCenters) {
+    int signals = 0;
+    for (auto distributionCenter : this->_distributionCentersPIDs) {
         int processStatus;
         waitpid(distributionCenter, &processStatus, 0);
 
         if (processStatus != EXIT_SUCCESS) {
-            Logger::error("Process " + std::to_string(distributionCenter) + " finished with error code " + std::to_string(processStatus));
+            signals += 1;
+            Logger::error("Distribution Center in process " + std::to_string(distributionCenter) + " finished with error code " + std::to_string(processStatus));
         }
+    }
+
+    if (signals == 0) {
+        Logger::info("Every Distribution Center finished successfully without errors.");
     }
 }
 
