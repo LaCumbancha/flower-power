@@ -6,7 +6,8 @@ pid_t System::run() {
     this->_config.loadData();
 
     pid_t pid = getpid();
-    for (int idx = 0; idx < this->_config.getDistributionCenters(); idx++) {
+    Logger::info("Main system running in process with PID #" + std::to_string(pid) + ".");
+    for (int idx = 1; idx <= this->_config.getDistributionCenters(); idx++) {
 
         // Creating new processes for each Distribution Center.
         if (pid != CHILD_PROCESS_PID) {
@@ -14,9 +15,10 @@ pid_t System::run() {
 
             // Creating a Distribution Center in each child process.
             if (pid == CHILD_PROCESS_PID) {
-                auto distributionCenter = DistributionCenter(&(this->_config));
+                auto distributionCenter = DistributionCenter(&(this->_config), idx);
                 distributionCenter.run();
             } else {
+                Logger::info("Distribution Center #" + std::to_string(idx) + " running in process with PID #" + std::to_string(pid) + ".");
                 this->_distributionCenters.push_back(pid);
             }
         }

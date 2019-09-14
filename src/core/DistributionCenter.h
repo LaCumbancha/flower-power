@@ -11,10 +11,11 @@
 class DistributionCenter : public Job {
 
 public:
-    explicit DistributionCenter(Config *config);
+    explicit DistributionCenter(Config *config, int id);
     pid_t run() override;
 
 private:
+    int _id;
     Config* _config;
     Pipe* _producersPipe;
 

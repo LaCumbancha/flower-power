@@ -1,9 +1,10 @@
 #include "DistributionCenter.h"
 #include "../utils/Logger.h"
 
-DistributionCenter::DistributionCenter(Config *config) : Job() {
+DistributionCenter::DistributionCenter(Config *config, int id) : Job() {
 
     // Setting configurations.
+    this->_id = id;
     this->_config = config;
 
     // Getting current pid
@@ -20,9 +21,11 @@ DistributionCenter::DistributionCenter(Config *config) : Job() {
             // Child process.
             if (pid == CHILD_PROCESS_PID) {
                 producersPipe->setWriteMode();
-                auto producerJob = new ProducerJob(producerData, producersPipe);
+                auto producerJob = new ProducerJob(this->_id, producerData, producersPipe);
                 producerJob->run();
             }
+
+            Logger::info("Producer #" + std::to_string(this->_id) + "." + std::to_string(producerData.producerId) + " running in process with PID #" + std::to_string(pid) + ".");
         }
 
     }

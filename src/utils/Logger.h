@@ -25,8 +25,10 @@ private:
     static Pipe* logPipe;
     static std::string logFile;
 
+    static std::string time();
     static std::string mainLog();
-    static std::string time(const char* format = "%Y-%m-%d.%X");
+    static void cleanLog(std::string& log);
+    static std::string date(const char* format = "%Y-%m-%d.%X");
 
 };
 
