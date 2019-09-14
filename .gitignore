@@ -30,12 +30,16 @@
 *.exe
 *.out
 *.app
+TP1
 
 # Jet Brains
 .idea/
 
 # CMake Files
 cmake-build-debug/
+CMakeFiles
+cmake_install.cmake
+Makefile
 
 # Logs
 logs/
