@@ -4,6 +4,7 @@
 #include <list>
 #include <vector>
 #include "data/ProducerFlowers.h"
+#include "data/Seller.h"
 
 #define CHILD_PROCESS_PID 0
 
@@ -13,18 +14,18 @@ class Config {
 public:
     explicit Config() = default;
     void loadData();
-    int getSalePoints();
     int getDistributionCenters();
-    void setSalePoints(int salePoints);
     void setDistributionCenters(int distributionCenters);
     std::vector<ProducerFlowers> getProducers();
     void setProducers(std::vector<ProducerFlowers> producersDTO);
+    std::vector<Seller> getSalePoints();
+    void setSellers(std::vector<Seller> sellers);
 
 private:
-    int _salePoints = 1;
     int _distributionCenters = 1;
     std::string _producersPath = "../data/producers.csv";
     std::vector<ProducerFlowers> _producers;
+    std::vector<Seller> _sellers;
 
 };
 

@@ -2,8 +2,8 @@
 #include "../../utils/CSVReader.h"
 
 
-int Config::getSalePoints() {
-    return _salePoints;
+std::vector<Seller> Config::getSalePoints() {
+    return _sellers;
 }
 
 int Config::getDistributionCenters() {
@@ -14,8 +14,8 @@ std::vector<ProducerFlowers> Config::getProducers() {
     return _producers;
 }
 
-void Config::setSalePoints(int salePoints) {
-    this->_salePoints = salePoints;
+void Config::setSellers(std::vector<Seller> sellers) {
+    this->_sellers = sellers;
 }
 
 void Config::setDistributionCenters(int distributionCenters) {

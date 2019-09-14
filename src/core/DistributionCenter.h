@@ -18,6 +18,8 @@ private:
     int _id;
     Config* _config;
     Pipe* _producersPipe;
+    Pipe* _requestsPipe;
+    std::vector<Pipe*> _distributionPipes;
 
 };
 
