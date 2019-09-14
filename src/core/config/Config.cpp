@@ -10,7 +10,7 @@ int Config::getDistributionCenters() {
     return _distributionCenters;
 }
 
-std::vector<ProducerDTO> Config::getProducers() {
+std::vector<ProducerFlowers> Config::getProducers() {
     return _producers;
 }
 
@@ -22,7 +22,7 @@ void Config::setDistributionCenters(int distributionCenters) {
     this->_distributionCenters = distributionCenters;
 }
 
-void Config::setProducers(std::vector<ProducerDTO> producersDTO) {
+void Config::setProducers(std::vector<ProducerFlowers> producersDTO) {
     this->_producers = std::move(producersDTO);
 }
 
@@ -33,14 +33,13 @@ void Config::loadData() {
     std::vector<std::vector<std::string>> producersData = reader.getData();
 
     // Parsing producers.
-    std::vector<ProducerDTO> producers;
+    std::vector<ProducerFlowers> producers;
     for (auto producerData: producersData) {
-        ProducerDTO producerDTO;
-        producerDTO.producerId = std::stoi(producerData[0]);
-        producerDTO.producerName = producerData[1];
-        producerDTO.rosesStock = std::stoi(producerData[2]);
-        producerDTO.tulipsStock = std::stoi(producerData[3]);
-        producers.push_back(producerDTO);
+        int producerId = std::stoi(producerData[0]);
+        std::string producerName = producerData[1];
+        int rosesStock = std::stoi(producerData[2]);
+        int tulipsStock = std::stoi(producerData[3]);
+        producers.push_back(ProducerFlowers(producerId, producerName, rosesStock, tulipsStock));
     }
 
     // Storing producers.

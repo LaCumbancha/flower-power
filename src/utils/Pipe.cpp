@@ -1,3 +1,4 @@
+#include <iostream>
 #include "Pipe.h"
 
 Pipe::Pipe() {
@@ -21,12 +22,47 @@ void Pipe::setWriteMode() {
     ::close(this->_readFileDescriptor);
 }
 
-ssize_t Pipe::write(const void* data, int size) {
-    return ::write(this->_writeFileDescriptor, data, size);
+ssize_t Pipe::write(const std::string& data) {
+    std::string stream;
+    stream += "|";
+    stream += std::to_string(data.size());
+    stream += "|";
+    stream += data;
+    return ::write(this->_writeFileDescriptor, stream.c_str(), stream.length() + 1);
 }
 
-ssize_t Pipe::read(void* buffer, const int size) {
-    return ::read(this->_readFileDescriptor, buffer, size);
+// Expected protocol: |<size in chars>|<element 1>|<element 2>|...|<element n>|
+ssize_t Pipe::read(std::string& data, int* status) {
+    int bufferSize = 0;
+    char character;
+    ssize_t readReturn = ::read(this->_readFileDescriptor, &character, 1);
+
+    if (character == '|') {
+
+        std::string size;
+        while(::read(this->_readFileDescriptor, &character, 1)) {
+            if (character != '|') {
+                size += character;
+            } else {
+                bufferSize = std::stoi(size);
+                break;
+            }
+        }
+
+        char* buffer;
+        buffer = new char[bufferSize];
+        readReturn = ::read(this->_readFileDescriptor, buffer, bufferSize);
+
+        data = buffer;
+        delete[] buffer;
+        *status = EXIT_SUCCESS;
+        return readReturn;
+
+    } else {
+        *status = EXIT_FAILURE;
+        return readReturn;
+    }
+
 }
 
 Pipe::~Pipe() {

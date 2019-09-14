@@ -32,10 +32,14 @@ DistributionCenter::DistributionCenter(Config *config) : Job() {
 }
 
 pid_t DistributionCenter::run() {
-    ProducerDTO data;
+    std::string data;
+    int status;
 
-    while(this->_producersPipe->read(static_cast<void*>(&data), sizeof(data))){
-        std::cout << "Recibí una caja con " << data.rosesStock << " rosas y " << data.tulipsStock << " tulipanes del productor " << data.producerId << std::endl;
+    while(this->_producersPipe->read(data, &status)){
+        if (status == EXIT_SUCCESS) {
+            ProducerFlowers box = ProducerFlowers::deserialize(data);
+            std::cout << "Recibí una caja con " << box.rosesStock << " rosas y " << box.tulipsStock << " tulipanes del productor " << box.producerName << " (" << box.producerId << ")." << std::endl;
+        }
     }
 
     wait(nullptr);

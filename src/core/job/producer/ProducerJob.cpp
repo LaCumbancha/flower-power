@@ -1,13 +1,13 @@
 #include "ProducerJob.h"
 
-ProducerJob::ProducerJob(const ProducerDTO& producerData, Pipe* distributionPipe) : Job() {
+ProducerJob::ProducerJob(const ProducerFlowers& producerData, Pipe* distributionPipe) : Job() {
 
     // Assigning pipe to communicate with the distribution center.
     this->_distributionPipe = distributionPipe;
 
     // Initializing producer data.
-    this->_id = producerData.producerId;
-    this->_name = producerData.producerName;
+    this->_producerId = producerData.producerId;
+    this->_producerName = producerData.producerName;
     this->_rosesStock = producerData.rosesStock;
     this->_tulipsStock = producerData.tulipsStock;
 
@@ -16,7 +16,7 @@ ProducerJob::ProducerJob(const ProducerDTO& producerData, Pipe* distributionPipe
 
 }
 
-void ProducerJob::generateFlowerBox(ProducerDTO *box) {
+ProducerFlowers ProducerJob::generateFlowerBox() {
 
     // Take a random number of roses.
     int rosesToBox = rand() % 10;
@@ -39,23 +39,18 @@ void ProducerJob::generateFlowerBox(ProducerDTO *box) {
         }
     }
 
-    // Fill box.
-    box->tulipsStock = tulipsToBox;
-    box->rosesStock = rosesToBox;
-
     // Decrease stock.
     this->_tulipsStock = this->_tulipsStock - tulipsToBox;
     this->_rosesStock = this->_rosesStock - rosesToBox;
+
+    // Create box.
+    return ProducerFlowers(this->_producerId, this->_producerName, rosesToBox, tulipsToBox);
+
 }
 
 int ProducerJob::run() {
-
     while (this->_rosesStock != 0 or this->_tulipsStock != 0) {
-        ProducerDTO box;
-        box.producerId = this->_id;
-        this->generateFlowerBox(&box);
-
-        this->_distributionPipe->write(static_cast<const void*>(&box), sizeof(box));
+        this->_distributionPipe->write(this->generateFlowerBox().serialize());
     }
 
     exit(EXIT_SUCCESS);

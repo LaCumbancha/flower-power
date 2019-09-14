@@ -12,17 +12,17 @@
 class ProducerJob : public Job {
 
 public:
-    explicit ProducerJob(const ProducerDTO& producerData, Pipe* distributionPipe);
+    explicit ProducerJob(const ProducerFlowers& producerData, Pipe* distributionPipe);
     int run() override;
 
 private:
-    int _id;
+    int _producerId;
     int _rosesStock;
     int _tulipsStock;
-    std::string _name;
+    std::string _producerName;
     Pipe* _distributionPipe;
 
-    void generateFlowerBox(ProducerDTO* box);
+    ProducerFlowers generateFlowerBox();
 
 };
 

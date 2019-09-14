@@ -4,6 +4,7 @@
 
 #include <zconf.h>
 #include <cstdlib>
+#include <string>
 
 class Pipe {
 
@@ -11,8 +12,8 @@ public:
     explicit Pipe();
     void setReadMode();
     void setWriteMode();
-    ssize_t write(const void* data, int size);
-    ssize_t read(void* buffer, int size);
+    ssize_t write(const std::string& data);
+    ssize_t read(std::string& data, int* status);
     ~Pipe();
 
 private:
