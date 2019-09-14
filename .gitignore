@@ -36,3 +36,6 @@
 
 # CMake Files
 cmake-build-debug/
+
+# Logs
+logs/

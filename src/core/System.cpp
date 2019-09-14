@@ -1,4 +1,5 @@
 #include "System.h"
+#include "../utils/Logger.h"
 
 pid_t System::run() {
     // Loading configuration data.
@@ -32,7 +33,7 @@ void System::finish() {
         waitpid(distributionCenter, &processStatus, 0);
 
         if (processStatus != EXIT_SUCCESS) {
-            std::cout << "Process " << distributionCenter << " finished with error code " << processStatus << std::endl;
+            Logger::error("Process " + std::to_string(distributionCenter) + " finished with error code " + std::to_string(processStatus));
         }
     }
 }

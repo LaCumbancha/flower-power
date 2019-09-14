@@ -1,8 +1,9 @@
 #include "ProducerJob.h"
+#include "../../../utils/Logger.h"
 
 ProducerJob::ProducerJob(const ProducerFlowers& producerData, Pipe* distributionPipe) : Job() {
 
-    // Assigning pipe to communicate with the distribution center.
+    // Assigning logPipe to communicate with the distribution center.
     this->_distributionPipe = distributionPipe;
 
     // Initializing producer data.
@@ -50,6 +51,8 @@ ProducerFlowers ProducerJob::generateFlowerBox() {
 
 int ProducerJob::run() {
     while (this->_rosesStock != 0 or this->_tulipsStock != 0) {
+        auto box = this->generateFlowerBox();
+        Logger::info("Producer #" + std::to_string(this->_producerId) + " (" + this->_producerName + ") sent a box with " + std::to_string(box.rosesStock) + " roses and " + std::to_string(box.tulipsStock) + " tulips to the Distribution Center.");
         this->_distributionPipe->write(this->generateFlowerBox().serialize());
     }
 

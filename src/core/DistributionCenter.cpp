@@ -1,4 +1,5 @@
 #include "DistributionCenter.h"
+#include "../utils/Logger.h"
 
 DistributionCenter::DistributionCenter(Config *config) : Job() {
 
@@ -8,7 +9,7 @@ DistributionCenter::DistributionCenter(Config *config) : Job() {
     // Getting current pid
     pid_t pid = getpid();
 
-    // Creating pipe for producers.
+    // Creating logPipe for producers.
     auto producersPipe = new Pipe();
 
     for (const auto& producerData : config->getProducers()) {
@@ -38,7 +39,7 @@ pid_t DistributionCenter::run() {
     while(this->_producersPipe->read(data, &status)){
         if (status == EXIT_SUCCESS) {
             ProducerFlowers box = ProducerFlowers::deserialize(data);
-            std::cout << "Recibí una caja con " << box.rosesStock << " rosas y " << box.tulipsStock << " tulipanes del productor " << box.producerName << " (" << box.producerId << ")." << std::endl;
+            Logger::info("Distribution Center received a box with " + std::to_string(box.rosesStock) + " roses and " + std::to_string(box.tulipsStock) + " tulips from provider #" + std::to_string(box.producerId) + "(" + box.producerName + ").");
         }
     }
 
