@@ -3,8 +3,10 @@
 
 #include <zconf.h>
 #include <iostream>
+#include <sys/wait.h>
 #include "../utils/Pipe.h"
 #include "job/producer/ProducerJob.h"
+
 
 class DistributionCenter : public Job {
 

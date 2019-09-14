@@ -11,6 +11,8 @@ public:
     explicit Pipe();
     void setReadMode();
     void setWriteMode();
+    ssize_t write(const void* data, int size);
+    ssize_t read(void* buffer, int size);
     ~Pipe();
 
 private:

@@ -21,6 +21,14 @@ void Pipe::setWriteMode() {
     ::close(this->_readFileDescriptor);
 }
 
+ssize_t Pipe::write(const void* data, int size) {
+    return ::write(this->_writeFileDescriptor, data, size);
+}
+
+ssize_t Pipe::read(void* buffer, const int size) {
+    return ::read(this->_readFileDescriptor, buffer, size);
+}
+
 Pipe::~Pipe() {
     if (this->_writeMode) {
         close(this->_writeFileDescriptor);

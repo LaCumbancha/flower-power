@@ -15,12 +15,26 @@ pid_t System::run() {
             if (pid == CHILD_PROCESS_PID) {
                 auto distributionCenter = DistributionCenter(&(this->_config));
                 distributionCenter.run();
+            } else {
+                this->_distributionCenters.push_back(pid);
             }
         }
 
     }
 
-    return pid;
+    finish();
+    return EXIT_SUCCESS;
+}
+
+void System::finish() {
+    for (auto distributionCenter : this->_distributionCenters) {
+        int processStatus;
+        waitpid(distributionCenter, &processStatus, 0);
+
+        if (processStatus != EXIT_SUCCESS) {
+            std::cout << "Process " << distributionCenter << " finished with error code " << processStatus << std::endl;
+        }
+    }
 }
 
 Config *System::getConfig() {

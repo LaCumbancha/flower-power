@@ -32,5 +32,12 @@ DistributionCenter::DistributionCenter(Config *config) : Job() {
 }
 
 pid_t DistributionCenter::run() {
+    ProducerDTO data;
+
+    while(this->_producersPipe->read(static_cast<void*>(&data), sizeof(data))){
+        std::cout << "Recibí una caja con " << data.rosesStock << " rosas y " << data.tulipsStock << " tulipanes del productor " << data.producerId << std::endl;
+    }
+
+    wait(nullptr);
     exit(EXIT_SUCCESS);
 }
