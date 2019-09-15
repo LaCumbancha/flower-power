@@ -34,7 +34,9 @@ add_executable(TP1
         src/core/config/data/ProducerFlowers.cpp
         src/utils/Logger.cpp
         src/utils/Logger.h
-        tests/test1.cpp)
+        src/core/config/data/Seller.h
+        src/core/config/data/Seller.cpp
+        tests/test1.cpp tests/SellerTests.cpp)
 
 # Download and unpack googletest at configure time
 configure_file(CMakeLists.txt.in googletest-download/CMakeLists.txt)

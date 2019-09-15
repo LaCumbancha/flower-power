@@ -58,7 +58,7 @@ void Config::loadData() {
         std::string sellerName = sellerData[1];
         int rosesStock = 0;
         int tulipsStock = 0;
-        sellers.emplace_back(sellerId, sellerName, rosesStock, tulipsStock);
+        sellers.push_back(Seller(sellerId, sellerName, rosesStock, tulipsStock));
     }
 
     //Storing sellers
