@@ -27,6 +27,7 @@ private:
     Pipe* _requestsPipe;
     std::vector<Pipe*> _distributionPipes;
     std::vector<pid_t > _producersPIDs;
+    std::vector<pid_t > _sellersPIDs;
 
 };
 

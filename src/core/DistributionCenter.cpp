@@ -23,6 +23,7 @@ DistributionCenter::DistributionCenter(Config *config, int id) : Job() {
             producerJob->run();
             return;
         }
+        this->_producersPIDs.push_back(pid);
         Logger::info("Producer #" + std::to_string(this->_id) + "." + std::to_string(producerData.producerId) +
                      " running in process with PID #" + std::to_string(pid) + ".");
     }
@@ -41,6 +42,7 @@ DistributionCenter::DistributionCenter(Config *config, int id) : Job() {
             sellerJob->run();
             return;
         }
+        this->_sellersPIDs.push_back(pid);
         Logger::info("Seller #" + std::to_string(this->_id) + "." + std::to_string(sellerData.sellerId) +
                      " running in process with PID #" + std::to_string(pid) + ".");
         _distributionPipes.push_back(distributionPipe);
