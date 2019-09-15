@@ -44,6 +44,8 @@ DistributionCenter::DistributionCenter(Config *config, int id) : Job() {
         }
         _distributionPipes.push_back(distributionPipe);
     }
+    requestsPipe->setReadMode();
+    this->_requestsPipe = requestsPipe;
 }
 
 pid_t DistributionCenter::run() {
