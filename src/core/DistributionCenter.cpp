@@ -21,10 +21,10 @@ DistributionCenter::DistributionCenter(Config *config, int id) : Job() {
             producersPipe->setWriteMode();
             auto producerJob = new ProducerJob(this->_id, producerData, producersPipe);
             producerJob->run();
-            Logger::info("Producer #" + std::to_string(this->_id) + "." + std::to_string(producerData.producerId) +
-                         " running in process with PID #" + std::to_string(pid) + ".");
             return;
         }
+        Logger::info("Producer #" + std::to_string(this->_id) + "." + std::to_string(producerData.producerId) +
+                     " running in process with PID #" + std::to_string(pid) + ".");
     }
     producersPipe->setReadMode();
     this->_producersPipe = producersPipe;
@@ -39,10 +39,10 @@ DistributionCenter::DistributionCenter(Config *config, int id) : Job() {
             distributionPipe->setReadMode();
             auto sellerJob = new SellerJob(this->_id, sellerData, requestsPipe, distributionPipe);
             sellerJob->run();
-            Logger::info("Seller #" + std::to_string(this->_id) + "." + std::to_string(sellerData.sellerId) +
-                         " running in process with PID #" + std::to_string(pid) + ".");
             return;
         }
+        Logger::info("Seller #" + std::to_string(this->_id) + "." + std::to_string(sellerData.sellerId) +
+                     " running in process with PID #" + std::to_string(pid) + ".");
         _distributionPipes.push_back(distributionPipe);
     }
     requestsPipe->setReadMode();
