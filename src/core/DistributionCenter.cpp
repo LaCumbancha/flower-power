@@ -83,3 +83,12 @@ void DistributionCenter::finish() {
         Logger::info("Every Producer finished successfully without errors.");
     }
 }
+
+const std::vector<Pipe *> &DistributionCenter::getDistributionPipes() const {
+    return _distributionPipes;
+}
+
+void DistributionCenter::setDistributionPipes(const std::vector<Pipe *> &distributionPipes) {
+    _distributionPipes = distributionPipes;
+}
+
