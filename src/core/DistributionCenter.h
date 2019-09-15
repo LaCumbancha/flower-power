@@ -12,6 +12,11 @@ class DistributionCenter : public Job {
 
 public:
     explicit DistributionCenter(Config *config, int id);
+
+    const std::vector<Pipe *> &getDistributionPipes() const;
+
+    void setDistributionPipes(const std::vector<Pipe *> &distributionPipes);
+
     pid_t run() override;
     void finish();
 
@@ -19,7 +24,10 @@ private:
     int _id;
     Config* _config;
     Pipe* _producersPipe;
+    Pipe* _requestsPipe;
+    std::vector<Pipe*> _distributionPipes;
     std::vector<pid_t > _producersPIDs;
+    std::vector<pid_t > _sellersPIDs;
 
 };
 
