@@ -24,6 +24,7 @@ public:
 private:
     int _distributionCenters = 1;
     std::string _producersPath = "../data/producers.csv";
+    std::string _sellersPath = "../data/sellers.csv";
     std::vector<ProducerFlowers> _producers;
     std::vector<Seller> _sellers;
 

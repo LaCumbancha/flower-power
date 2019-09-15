@@ -1,4 +1,6 @@
 #include "Config.h"
+
+#include <utility>
 #include "../../utils/CSVReader.h"
 
 
@@ -15,7 +17,7 @@ std::vector<ProducerFlowers> Config::getProducers() {
 }
 
 void Config::setSellers(std::vector<Seller> sellers) {
-    this->_sellers = sellers;
+    this->_sellers = std::move(sellers);
 }
 
 void Config::setDistributionCenters(int distributionCenters) {
