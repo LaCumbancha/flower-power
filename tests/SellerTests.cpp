@@ -29,6 +29,15 @@ TEST_F(SellerTests, Sellers_data_is_loaded_properly) {
 
     config.loadData();
     auto salePoints = config.getSalePoints();
+
+    ASSERT_EQ(salePoints.at(0).sellerId, 1);
+    ASSERT_EQ(salePoints.at(1).sellerId, 2);
+    ASSERT_EQ(salePoints.at(2).sellerId, 3);
+    ASSERT_EQ(salePoints.at(3).sellerId, 4);
+    ASSERT_EQ(salePoints.at(4).sellerId, 5);
+    ASSERT_EQ(salePoints.at(5).sellerId, 6);
+    ASSERT_EQ(salePoints.at(6).sellerId, 7);
+
     ASSERT_EQ(salePoints.at(0).sellerName, "Tulipanmania");
     ASSERT_EQ(salePoints.at(1).sellerName, "La Floristeria Rosa");
     ASSERT_EQ(salePoints.at(2).sellerName, "Tu jardin");
@@ -36,5 +45,4 @@ TEST_F(SellerTests, Sellers_data_is_loaded_properly) {
     ASSERT_EQ(salePoints.at(4).sellerName, "El loto blanco");
     ASSERT_EQ(salePoints.at(5).sellerName, "El loto rojo");
     ASSERT_EQ(salePoints.at(6).sellerName, "Holanda tulipanes");
-
 }
