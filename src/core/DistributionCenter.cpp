@@ -13,6 +13,7 @@ DistributionCenter::DistributionCenter(Config *config, int id) : Job() {
 
     // Creating logPipe for producers.
     auto producersPipe = new Pipe();
+
     for (const auto &producerData : config->getProducers()) {
         pid = fork();
         // Child process.
@@ -61,6 +62,24 @@ pid_t DistributionCenter::run() {
         }
     }
 
+    finish();
     wait(nullptr);
     exit(EXIT_SUCCESS);
+}
+
+void DistributionCenter::finish() {
+    int signals = 0;
+    for (auto producerPID : this->_producersPIDs) {
+        int processStatus;
+        waitpid(producerPID, &processStatus, 0);
+
+        if (processStatus != EXIT_SUCCESS) {
+            signals += 1;
+            Logger::error("Producer in process " + std::to_string(producerPID) + " finished with error code " + std::to_string(processStatus));
+        }
+    }
+
+    if (signals == 0) {
+        Logger::info("Every Producer finished successfully without errors.");
+    }
 }

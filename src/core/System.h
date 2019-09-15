@@ -17,7 +17,7 @@ public:
 
 private:
     Config _config = Config();
-    std::vector<pid_t> _distributionCenters;
+    std::vector<pid_t> _distributionCentersPIDs;
 
 };
 
