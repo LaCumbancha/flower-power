@@ -9,7 +9,7 @@ void ClientSimulator::Run() {
 
     for (int i = 0; i < 10; i++) {
         BouquetRequest request = SimulateBouquetRequest();
-        std::cout << request.to_string() << std::endl;
+        _clientPipe->write(request.to_string());
     }
 }
 

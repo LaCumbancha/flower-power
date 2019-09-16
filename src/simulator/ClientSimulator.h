@@ -15,7 +15,7 @@ private:
     int _distributionCenterId;
     int _sellerId;
     int _sellerProcessId;
-    Pipe *_sellerPipe;
+    Pipe * _clientPipe;
 
     struct BouquetRequest {
         int rosesAmount = 0;
@@ -31,11 +31,11 @@ private:
     BouquetRequest SimulateBouquetRequest();
 
 public:
-    ClientSimulator(int distributionCenterId, int sellerId, int sellerProcessId, Pipe *sellerPipe) :
+    ClientSimulator(int distributionCenterId, int sellerId, int sellerProcessId, Pipe *clientPipe) :
             _distributionCenterId(distributionCenterId),
             _sellerId(sellerId),
             _sellerProcessId(sellerProcessId),
-            _sellerPipe(sellerPipe) {};
+            _clientPipe(clientPipe) {};
 
     void Run();
 };
