@@ -2,7 +2,7 @@
 #include "Logger.h"
 
 Pipe* Logger::logPipe = new Pipe();
-std::string Logger::logFile = "../logs/" + date("%Y%m%d") + ".log";
+std::string Logger::logFile = "./logs/" + date("%Y%m%d") + ".log";
 
 void Logger::writing() {
     Logger::logPipe->setWriteMode();

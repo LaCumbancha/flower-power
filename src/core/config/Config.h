@@ -23,8 +23,8 @@ public:
 
 private:
     int _distributionCenters = 1;
-    std::string _producersPath = "../data/producers.csv";
-    std::string _sellersPath = "../data/sellers.csv";
+    std::string _producersPath = "./data/producers.csv";
+    std::string _sellersPath = "./data/sellers.csv";
     std::vector<FlowerBox> _producers;
     std::vector<Seller> _sellers;
 

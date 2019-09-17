@@ -1,8 +1,8 @@
 #include "SellerJob.h"
 
 int SellerJob::run() {
-    std::cout << "Seller Job RUN" << std::endl;
-    return 0;
+    Logger::info("Running Seller job.");
+    exit(EXIT_SUCCESS);
 }
 
 SellerJob::SellerJob(const int center, const Seller &sellerData, Pipe *requestPipe, Pipe *distributionPipe) : Job() {

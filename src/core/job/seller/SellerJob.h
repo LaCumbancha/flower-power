@@ -3,9 +3,10 @@
 
 
 #include <iostream>
-#include "../../config/Config.h"
 #include "../Job.h"
+#include "../../config/Config.h"
 #include "../../../utils/Pipe.h"
+#include "../../../utils/Logger.h"
 
 class SellerJob : public Job {
 

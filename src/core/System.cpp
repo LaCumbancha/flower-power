@@ -17,6 +17,7 @@ pid_t System::run() {
             if (pid == CHILD_PROCESS_PID) {
                 auto distributionCenter = DistributionCenter(&(this->_config), idx);
                 distributionCenter.run();
+                distributionCenter.finish();
             } else {
                 Logger::info("Distribution Center #" + std::to_string(idx) + " running in process with PID #" + std::to_string(pid) + ".");
                 this->_distributionCentersPIDs.push_back(pid);

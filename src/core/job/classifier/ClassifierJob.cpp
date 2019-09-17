@@ -22,7 +22,7 @@ int ClassifierJob::run() {
                          " tulips from provider #" + std::to_string(box.producerId) + " (" + box.producerName + ").");
 
             for (int rose = 1; rose <= box.rosesStock; rose++) {
-                this->_tulips.push_back(new Flower(box.producerId, box.producerName));
+                this->_roses.push_back(new Flower(box.producerId, box.producerName));
             }
 
             for (int tulip = 1; tulip <= box.tulipsStock; tulip++) {
