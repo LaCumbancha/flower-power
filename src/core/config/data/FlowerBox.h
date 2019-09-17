@@ -18,11 +18,4 @@ public:
     static FlowerBox deserialize(std::string data);
 };
 
-//struct FlowerBox {
-//    int producerId;
-//    std::string producerName;
-//    int rosesStock;
-//    int tulipsStock;
-//};
-
 #endif //FLOWER_POWER_FLOWERBOX_H
