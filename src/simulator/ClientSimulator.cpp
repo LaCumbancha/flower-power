@@ -9,11 +9,11 @@ void ClientSimulator::Run() {
 
     for (int i = 0; i < 10; i++) {
         BouquetRequest request = SimulateBouquetRequest();
-        _clientPipe->write(request.to_string());
+        _clientPipe->write(request.serialize());
     }
 }
 
-ClientSimulator::BouquetRequest ClientSimulator::SimulateBouquetRequest() {
+BouquetRequest ClientSimulator::SimulateBouquetRequest() {
     int rosesAmount = rand() % 10;
     int tulipsAmount = rand() % 10;
     BouquetRequest request(rosesAmount, tulipsAmount);
