@@ -8,11 +8,13 @@
 #include "gtest/gtest.h"
 #include "../src/core/config/data/Seller.h"
 #include "../src/core/config/Config.h"
+#include "../src/core/job/seller/SellerJob.h"
 
 class SellerTests : public  testing::Test {
 
 public:
     Config config;
+    SellerJob * sellerJob;
 
     SellerTests() = default;
 
@@ -45,4 +47,11 @@ TEST_F(SellerTests, Sellers_data_is_loaded_properly) {
     ASSERT_EQ(salePoints.at(4).sellerName, "El loto blanco");
     ASSERT_EQ(salePoints.at(5).sellerName, "El loto rojo");
     ASSERT_EQ(salePoints.at(6).sellerName, "Holanda tulipanes");
+}
+
+TEST_F(SellerTests, Seller_job_responds_to_client_simulator) {
+    Seller seller = Seller(666, "Las flores alucinógenas", 50, 100);
+    sellerJob = new SellerJob(0, seller,0 ,0);
+    sellerJob->run();
+    delete(sellerJob);
 }
