@@ -11,9 +11,9 @@ class System {
 public:
     explicit System() = default;
 
-    pid_t run();
+    int run();
+    int finish();
     Config* getConfig();
-    void finish();
 
 private:
     Config _config = Config();

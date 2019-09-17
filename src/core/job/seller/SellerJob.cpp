@@ -1,7 +1,4 @@
 #include "SellerJob.h"
-#include "../../../simulator/ClientSimulator.h"
-
-//int xx = 0;
 
 int SellerJob::run() {
     Pipe* clientPipe = new Pipe();
@@ -22,7 +19,8 @@ int SellerJob::run() {
             }
         };
     }
-    return 0;
+    Logger::info("Running Seller job.");
+    return EXIT_SUCCESS;
 }
 
 SellerJob::SellerJob(const int center, const Seller &sellerData, Pipe *requestPipe, Pipe *distributionPipe) : Job() {
@@ -43,6 +41,10 @@ void SellerJob::handleRequest(BouquetRequest bouquetRequest) {
     _rosesStock -= bouquetRequest.rosesAmount;
     _tulipsStock -= bouquetRequest.tulipsAmount;
     //TODO: Log properly
+}
+
+int SellerJob::finish() {
+    exit(EXIT_SUCCESS);
 }
 
 

@@ -15,8 +15,8 @@ public:
     int show() override;
 
 private:
-    System coreSystem = System();
-    SettingsMenu settingsMenu = SettingsMenu(coreSystem.getConfig());
+    System* coreSystem = new System();
+    SettingsMenu* settingsMenu = new SettingsMenu(coreSystem->getConfig());
 
     void display() override;
 };

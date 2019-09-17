@@ -2,7 +2,7 @@
 #include "Logger.h"
 
 Pipe* Logger::logPipe = new Pipe();
-std::string Logger::logFile = "../logs/" + date("%Y%m%d") + ".log";
+std::string Logger::logFile = "./logs/" + date("%Y%m%d") + ".log";
 
 void Logger::writing() {
     Logger::logPipe->setWriteMode();
@@ -31,6 +31,12 @@ void Logger::run() {
 
 void Logger::close() {
     Logger::logPipe->~Pipe();
+}
+
+void Logger::debug(const std::string& text) {
+    std::string log = mainLog();
+    log += "[DEBUG] " + text + "|||";
+    Logger::logPipe->write(log);
 }
 
 void Logger::info(const std::string& text) {

@@ -3,16 +3,19 @@
 
 
 #include <iostream>
-#include "../../config/Config.h"
 #include "../Job.h"
+#include "../../config/Config.h"
 #include "../../../utils/Pipe.h"
 #include "../../../simulator/ClientSimulator.h"
+#include "../../../utils/Logger.h"
+
 
 class SellerJob : public Job {
 
 public:
-    explicit SellerJob(const int center, const Seller& sellerData, Pipe* requestPipe, Pipe* distributionPipe);
+    explicit SellerJob(int center, const Seller& sellerData, Pipe* requestPipe, Pipe* distributionPipe);
     int run() override;
+    int finish() override;
 
 private:
     int _center;
