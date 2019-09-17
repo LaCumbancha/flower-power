@@ -37,4 +37,10 @@ add_executable(
         src/utils/Logger.h
         src/core/config/data/Seller.h
         src/core/config/data/Seller.cpp
-        src/core/job/classifier/ClassifierJob.cpp src/core/job/classifier/ClassifierJob.h src/core/config/data/Flower.cpp src/core/config/data/Flower.h src/core/job/classifier/ClassifierJob.cpp src/core/job/classifier/ClassifierJob.h)
+        src/core/job/classifier/ClassifierJob.cpp
+        src/core/job/classifier/ClassifierJob.h
+        src/core/config/data/Flower.cpp
+        src/core/config/data/Flower.h
+        src/core/job/classifier/ClassifierJob.cpp
+        src/core/job/classifier/ClassifierJob.h
+)
