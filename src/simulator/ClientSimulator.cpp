@@ -1,19 +1,21 @@
-//
-// Created by darius on 15/9/19.
-//
-
-#include <iostream>
 #include "ClientSimulator.h"
 
-void ClientSimulator::Run() {
+ClientSimulator::ClientSimulator(int distributionCenterId, int sellerId, int sellerProcessId, Pipe *clientPipe) {
+    this->_centerId = distributionCenterId;
+    this->_sellerId = sellerId;
+    this->_sellerPID = sellerProcessId;
+    this->_clientPipe = clientPipe;
+}
+
+void ClientSimulator::run() {
 
     for (int i = 0; i < 10; i++) {
-        BouquetRequest request = SimulateBouquetRequest();
-        _clientPipe->write(request.serialize());
+        BouquetRequest request = simulateBouquetRequest();
+        this->_clientPipe->write(request.serialize());
     }
 }
 
-BouquetRequest ClientSimulator::SimulateBouquetRequest() {
+BouquetRequest ClientSimulator::simulateBouquetRequest() {
     int rosesAmount = rand() % 10;
     int tulipsAmount = rand() % 10;
     BouquetRequest request(rosesAmount, tulipsAmount);

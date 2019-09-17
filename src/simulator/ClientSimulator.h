@@ -1,14 +1,11 @@
-//
-// Created by darius on 15/9/19.
-//
-
 #ifndef FLOWER_POWER_CLIENTSIMULATOR_H
 #define FLOWER_POWER_CLIENTSIMULATOR_H
 
 
-#include "../utils/Pipe.h"
 #include <cstdlib>
 #include <vector>
+#include <iostream>
+#include "../utils/Pipe.h"
 
 struct BouquetRequest {
     int rosesAmount = 0;
@@ -48,22 +45,18 @@ struct BouquetRequest {
 
 class ClientSimulator {
 
+public:
+    explicit ClientSimulator(int distributionCenterId, int sellerId, int sellerProcessId, Pipe *clientPipe);
+    void run();
+
 private:
-    int _distributionCenterId;
+    int _centerId;
     int _sellerId;
-    int _sellerProcessId;
+    int _sellerPID;
     Pipe * _clientPipe;
 
-    BouquetRequest SimulateBouquetRequest();
+    BouquetRequest simulateBouquetRequest();
 
-public:
-    ClientSimulator(int distributionCenterId, int sellerId, int sellerProcessId, Pipe *clientPipe) :
-            _distributionCenterId(distributionCenterId),
-            _sellerId(sellerId),
-            _sellerProcessId(sellerProcessId),
-            _clientPipe(clientPipe) {};
-
-    void Run();
 };
 
 
