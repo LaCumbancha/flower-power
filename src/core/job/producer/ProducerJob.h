@@ -2,12 +2,11 @@
 #define FLOWER_POWER_PRODUCERJOB_H
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
 #include <iostream>
 #include "../Job.h"
 #include "../../../utils/Pipe.h"
+#include "../../../utils/Logger.h"
+
 
 class ProducerJob : public Job {
 

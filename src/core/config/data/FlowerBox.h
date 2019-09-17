@@ -15,7 +15,7 @@ public:
     int tulipsStock;
 
     std::string serialize();
-    static FlowerBox deserialize(std::string data);
+    static FlowerBox deserialize(const std::string& data);
 };
 
 #endif //FLOWER_POWER_FLOWERBOX_H

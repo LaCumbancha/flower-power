@@ -1,5 +1,4 @@
 #include "ProducerJob.h"
-#include "../../../utils/Logger.h"
 
 ProducerJob::ProducerJob(const int center, const FlowerBox &producerData, Pipe *distributionPipe) : Job() {
 

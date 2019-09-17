@@ -16,7 +16,7 @@ int SellerJob::run() {
     if (pid == CHILD_PROCESS_PID) {
         // Child process.
         this->_clientPipe->setWriteMode();
-        ClientSimulator clientSimulator = ClientSimulator(0, _sellerId, 0, this->_clientPipe);
+        ClientSimulator clientSimulator = ClientSimulator(this->_center, this->_sellerId, this->_clientPipe);
         clientSimulator.run();
     } else {
         // Seller process.
@@ -39,7 +39,7 @@ int SellerJob::listenRequests() {
                  " started to listen for requests.");
     while (this->_clientPipe->read(incoming, &status)) {
         if (status == EXIT_SUCCESS) {
-            BouquetRequest bouquetRequest = BouquetRequest(incoming);
+            BouquetRequest bouquetRequest = BouquetRequest::deserialize(incoming);
             this->handleRequest(bouquetRequest);
         }
     }
@@ -53,14 +53,28 @@ void SellerJob::handleRequest(BouquetRequest bouquetRequest) {
                  std::to_string(bouquetRequest.tulipsAmount) + " tulips.");
 
     if (this->_rosesStock < bouquetRequest.rosesAmount || this->_tulipsStock < bouquetRequest.tulipsAmount) {
-        //TODO request stock and handle case of distributor not having anymore stock
+        // TODO: Request stock to Distribution Center and handle case of not having anymore stock.
     }
 
+    // TODO: Remove when Stock Manager added.
     this->_rosesStock -= bouquetRequest.rosesAmount;
     this->_tulipsStock -= bouquetRequest.tulipsAmount;
 }
 
 int SellerJob::finish() {
+    int processStatus;
+
+    // Awaiting for client simulator process.
+    waitpid(this->_clientSimulatorPID, &processStatus, 0);
+
+    if (processStatus != EXIT_SUCCESS) {
+        Logger::error("Client simulator in process " + std::to_string(this->_clientSimulatorPID) +
+                      " finished with error code " + std::to_string(processStatus));
+    } else {
+        Logger::info("Client Simulator #" + std::to_string(this->_center) + "." + std::to_string(this->_sellerId) +
+                     " successfully ended without errors.");
+    }
+
     this->_distributionPipe->~Pipe();
     this->_requestPipe->~Pipe();
     exit(EXIT_SUCCESS);

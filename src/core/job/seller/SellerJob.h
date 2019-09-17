@@ -3,11 +3,12 @@
 
 
 #include <iostream>
+#include <sys/wait.h>
 #include "../Job.h"
 #include "../../config/Config.h"
 #include "../../../utils/Pipe.h"
-#include "../../../simulator/ClientSimulator.h"
 #include "../../../utils/Logger.h"
+#include "../../../simulator/ClientSimulator.h"
 
 
 class SellerJob : public Job {
