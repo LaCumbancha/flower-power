@@ -2,7 +2,7 @@
 
 int SellerJob::run() {
     Logger::info("Running Seller job.");
-    exit(EXIT_SUCCESS);
+    return EXIT_SUCCESS;
 }
 
 SellerJob::SellerJob(const int center, const Seller &sellerData, Pipe *requestPipe, Pipe *distributionPipe) : Job() {
@@ -12,6 +12,10 @@ SellerJob::SellerJob(const int center, const Seller &sellerData, Pipe *requestPi
     this->_sellerId = sellerData.sellerId;
     this->_rosesStock = sellerData.rosesStock;
     this->_tulipsStock = sellerData.tulipsStock;
+}
+
+int SellerJob::finish() {
+    exit(EXIT_SUCCESS);
 }
 
 

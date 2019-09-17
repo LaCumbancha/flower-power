@@ -11,8 +11,9 @@
 class SellerJob : public Job {
 
 public:
-    explicit SellerJob(const int center, const Seller& sellerData, Pipe* requestPipe, Pipe* distributionPipe);
+    explicit SellerJob(int center, const Seller& sellerData, Pipe* requestPipe, Pipe* distributionPipe);
     int run() override;
+    int finish() override;
 
 private:
     int _center;

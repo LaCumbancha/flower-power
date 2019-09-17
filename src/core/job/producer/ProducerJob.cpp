@@ -70,6 +70,10 @@ int ProducerJob::run() {
         this->_distributionPipe->write(box.serialize());
     }
 
+    return EXIT_SUCCESS;
+}
+
+int ProducerJob::finish() {
     this->_distributionPipe->~Pipe();
     Logger::info("Producer #" + std::to_string(this->_center) + "." + std::to_string(this->_producerId) + " (" +
                  this->_producerName + ") pipe destroyed.");

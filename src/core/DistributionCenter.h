@@ -15,8 +15,8 @@ class DistributionCenter : public Job {
 
 public:
     explicit DistributionCenter(Config *config, int id);
-    pid_t run() override;
-    void finish();
+    int run() override;
+    int finish() override;
 
     const std::vector<Pipe *> &getDistributionPipes() const;
     void setDistributionPipes(const std::vector<Pipe *> &distributionPipes);

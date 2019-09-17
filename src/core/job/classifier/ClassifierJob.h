@@ -14,6 +14,7 @@ class ClassifierJob : public Job {
 public:
     explicit ClassifierJob(int center, Pipe* producersPipe);
     int run() override;
+    int finish() override;
 
 private:
     int _center;

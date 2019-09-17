@@ -1,6 +1,6 @@
 #include "ClassifierJob.h"
 
-ClassifierJob::ClassifierJob(const int center, Pipe* producersPipe) : Job() {
+ClassifierJob::ClassifierJob(const int center, Pipe *producersPipe) : Job() {
 
     // Assigning pipe to communicate with the distribution center.
     this->_producersPipe = producersPipe;
@@ -29,11 +29,16 @@ int ClassifierJob::run() {
                 this->_tulips.push_back(new Flower(box.producerId, box.producerName));
             }
 
-            Logger::debug("Current stock: " + std::to_string(this->_roses.size()) + " roses and " +
-                          std::to_string(this->_tulips.size()) + " tulips.");
+            Logger::debug("Current stock in Distribution Center #" + std::to_string(this->_center) + ": "
+                          + std::to_string(this->_roses.size()) + " roses and " + std::to_string(this->_tulips.size()) +
+                          " tulips.");
         }
     }
 
+    return EXIT_SUCCESS;
+}
+
+int ClassifierJob::finish() {
     this->_producersPipe->~Pipe();
     Logger::info("Classifier #" + std::to_string(this->_center) + " pipe destroyed.");
     exit(EXIT_SUCCESS);

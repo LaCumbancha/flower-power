@@ -12,8 +12,9 @@
 class ProducerJob : public Job {
 
 public:
-    explicit ProducerJob(const int center, const FlowerBox& producerData, Pipe* distributionPipe);
+    explicit ProducerJob(int center, const FlowerBox& producerData, Pipe* distributionPipe);
     int run() override;
+    int finish() override;
 
 private:
     int _center;

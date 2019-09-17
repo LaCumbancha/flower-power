@@ -1,7 +1,6 @@
 #include "System.h"
-#include "../utils/Logger.h"
 
-pid_t System::run() {
+int System::run() {
     // Loading configuration data.
     this->_config.loadData();
 
@@ -15,9 +14,9 @@ pid_t System::run() {
 
             // Creating a Distribution Center in each child process.
             if (pid == CHILD_PROCESS_PID) {
-                auto distributionCenter = DistributionCenter(&(this->_config), idx);
-                distributionCenter.run();
-                distributionCenter.finish();
+                auto distributionCenter = new DistributionCenter(&(this->_config), idx);
+                distributionCenter->run();
+                distributionCenter->finish();
             } else {
                 Logger::info("Distribution Center #" + std::to_string(idx) + " running in process with PID #" + std::to_string(pid) + ".");
                 this->_distributionCentersPIDs.push_back(pid);
@@ -26,11 +25,11 @@ pid_t System::run() {
 
     }
 
-    finish();
+    this->finish();
     return EXIT_SUCCESS;
 }
 
-void System::finish() {
+int System::finish() {
     int signals = 0;
     for (auto distributionCenter : this->_distributionCentersPIDs) {
         int processStatus;
@@ -44,7 +43,10 @@ void System::finish() {
 
     if (signals == 0) {
         Logger::info("Every Distribution Center finished successfully without errors.");
+        Logger::info("System finished successfully.");
     }
+
+    return EXIT_SUCCESS;
 }
 
 Config *System::getConfig() {
