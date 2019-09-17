@@ -1,6 +1,8 @@
 #include "SellerJob.h"
 #include "../../../simulator/ClientSimulator.h"
 
+//int xx = 0;
+
 int SellerJob::run() {
     Pipe* clientPipe = new Pipe();
     pid_t pid = fork();
@@ -15,7 +17,9 @@ int SellerJob::run() {
         int status;
         std::cout << "\nProceso padre" << std::endl;
         while( clientPipe->read(incomming, &status) != 0) {
-          std::cout << incomming << std::endl;
+            if ( status != EXIT_FAILURE) {
+                std::cout << incomming << std::endl;
+            }
         };
     }
     return 0;
