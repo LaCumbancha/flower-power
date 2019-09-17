@@ -33,6 +33,12 @@ void Logger::close() {
     Logger::logPipe->~Pipe();
 }
 
+void Logger::debug(const std::string& text) {
+    std::string log = mainLog();
+    log += "[DEBUG] " + text + "|||";
+    Logger::logPipe->write(log);
+}
+
 void Logger::info(const std::string& text) {
     std::string log = mainLog();
     log += "[INFO] " + text + "|||";

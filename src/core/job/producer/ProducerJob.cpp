@@ -1,7 +1,7 @@
 #include "ProducerJob.h"
 #include "../../../utils/Logger.h"
 
-ProducerJob::ProducerJob(const int center, const ProducerFlowers& producerData, Pipe* distributionPipe) : Job() {
+ProducerJob::ProducerJob(const int center, const FlowerBox& producerData, Pipe* distributionPipe) : Job() {
 
     // Assigning pipe to communicate with the distribution center.
     this->_distributionPipe = distributionPipe;
@@ -20,7 +20,7 @@ ProducerJob::ProducerJob(const int center, const ProducerFlowers& producerData, 
 
 }
 
-ProducerFlowers ProducerJob::generateFlowerBox() {
+FlowerBox ProducerJob::generateFlowerBox() {
 
     // Take a random number of roses.
     int rosesToBox = rand() % 10;
@@ -48,7 +48,7 @@ ProducerFlowers ProducerJob::generateFlowerBox() {
     this->_rosesStock = this->_rosesStock - rosesToBox;
 
     // Create box.
-    return ProducerFlowers(this->_producerId, this->_producerName, rosesToBox, tulipsToBox);
+    return FlowerBox(this->_producerId, this->_producerName, rosesToBox, tulipsToBox);
 
 }
 
