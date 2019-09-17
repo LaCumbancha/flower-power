@@ -1,31 +1,36 @@
 #include "Config.h"
 
-#include <utility>
-#include "../../utils/CSVReader.h"
 
 
-std::vector<Seller> Config::getSalePoints() {
-    return _sellers;
+int Config::getClients() {
+    return this->_clients;
+}
+
+void Config::setClients(int clients) {
+    this->_clients = clients;
+}
+
+int Config::getSalePoints() {
+    return this->_salePoints;
+}
+
+void Config::setSalePoints(int salePoints) {
+    this->_salePoints = salePoints;
 }
 
 int Config::getDistributionCenters() {
     return _distributionCenters;
 }
 
-std::vector<FlowerBox> Config::getProducers() {
-    return _producers;
-}
-
-void Config::setSellers(std::vector<Seller> sellers) {
-    this->_sellers = std::move(sellers);
-}
-
 void Config::setDistributionCenters(int distributionCenters) {
     this->_distributionCenters = distributionCenters;
 }
 
-void Config::setProducers(std::vector<FlowerBox> producersDTO) {
-    this->_producers = std::move(producersDTO);
+std::vector<FlowerBox*> Config::getProducers() {
+    return _producers;
+}
+void Config::setProducers(std::vector<FlowerBox*> producersDTO) {
+    this->_producers = producersDTO;
 }
 
 void Config::loadData() {
@@ -34,33 +39,13 @@ void Config::loadData() {
     auto reader = CSVReader(this->_producersPath);
     std::vector<std::vector<std::string>> producersData = reader.getData();
 
-    // Parsing producers.
-    std::vector<FlowerBox> producers;
+    // Parsing and storing producers.
     for (auto producerData: producersData) {
         int producerId = std::stoi(producerData[0]);
         std::string producerName = producerData[1];
         int rosesStock = std::stoi(producerData[2]);
         int tulipsStock = std::stoi(producerData[3]);
-        producers.push_back(FlowerBox(producerId, producerName, rosesStock, tulipsStock));
+        this->_producers.push_back(new FlowerBox(producerId, producerName, rosesStock, tulipsStock));
     }
 
-    // Storing producers.
-    this->_producers = producers;
-
-    //Loading sellers from CSV
-    reader = CSVReader(this->_sellersPath);
-    std::vector<std::vector<std::string>> sellersData = reader.getData();
-
-    //Parsing sellers
-    std::vector<Seller> sellers;
-    for (auto sellerData : sellersData) {
-        int sellerId = std::stoi(sellerData[0]);
-        std::string sellerName = sellerData[1];
-        int rosesStock = 0;
-        int tulipsStock = 0;
-        sellers.push_back(Seller(sellerId, sellerName, rosesStock, tulipsStock));
-    }
-
-    //Storing sellers
-    this->_sellers = sellers;
 }

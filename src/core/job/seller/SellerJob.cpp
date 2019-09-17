@@ -1,12 +1,11 @@
 #include "SellerJob.h"
 
-SellerJob::SellerJob(const int center, const Seller &sellerData, Pipe *requestPipe, Pipe *distributionPipe) : Job() {
+SellerJob::SellerJob(const int center, const int sellerId, int clients, Pipe *requestPipe, Pipe *distributionPipe) : Job() {
     this->_center = center;
-    this->_distributionPipe = distributionPipe;
+    this->_clients = clients;
+    this->_sellerId = sellerId;
     this->_requestPipe = requestPipe;
-    this->_sellerId = sellerData.sellerId;
-    this->_rosesStock = sellerData.rosesStock;
-    this->_tulipsStock = sellerData.tulipsStock;
+    this->_distributionPipe = distributionPipe;
 }
 
 int SellerJob::run() {
@@ -16,7 +15,7 @@ int SellerJob::run() {
     if (pid == CHILD_PROCESS_PID) {
         // Child process.
         this->_clientPipe->setWriteMode();
-        ClientSimulator clientSimulator = ClientSimulator(this->_center, this->_sellerId, this->_clientPipe);
+        ClientSimulator clientSimulator = ClientSimulator(this->_center, this->_sellerId, this->_clients, this->_clientPipe);
         clientSimulator.run();
     } else {
         // Seller process.

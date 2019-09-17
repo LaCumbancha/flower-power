@@ -14,25 +14,25 @@
 class SellerJob : public Job {
 
 public:
-    explicit SellerJob(int center, const Seller& sellerData, Pipe* requestPipe, Pipe* distributionPipe);
+    explicit SellerJob(int center, int sellerId, int clients, Pipe *requestPipe, Pipe *distributionPipe);
     int run() override;
     int finish() override;
 
 private:
-    pid_t _clientSimulatorPID{};
     int _center;
+    int _clients;
     int _sellerId;
-    std::string _sellerName;
     Pipe* _clientPipe{};
     Pipe* _requestPipe;
     Pipe* _distributionPipe;
+    pid_t _clientSimulatorPID{};
 
     int listenRequests();
     void handleRequest(BouquetRequest bouquetRequest);
 
     // TODO: Delete after implementing shared memory.
-    int _rosesStock;
-    int _tulipsStock;
+    int _rosesStock = 1000;
+    int _tulipsStock = 1000;
 
 };
 

@@ -21,8 +21,13 @@ int SettingsMenu::show() {
                 break;
             case 2:
                 cout << "Insert new sale points: ";
-//                this->config->setSellers(readInt());
-//                display();
+                this->config->setSalePoints(readInt());
+                display();
+                break;
+            case 3:
+                cout << "Insert new clients: ";
+                this->config->setClients(readInt());
+                display();
                 break;
             default:
                 cout << "Wrong option. Retry: ";
@@ -37,6 +42,7 @@ void SettingsMenu::display() {
     cout << endl;
     cout << "Current settings:" << endl;
     cout << "[1] Distribution centers: " << this->config->getDistributionCenters() << endl;
-//    cout << "[2] Sale points: " << this->config->getSalePoints() << endl;
+    cout << "[2] Sale points: " << this->config->getSalePoints() << endl;
+    cout << "[3] Sale points: " << this->config->getClients() << endl;
     cout << "What do you want to change? [0 for quit] ";
 }

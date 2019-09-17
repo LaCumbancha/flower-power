@@ -3,8 +3,10 @@
 
 #include <list>
 #include <vector>
+#include <utility>
 #include "data/FlowerBox.h"
 #include "data/Seller.h"
+#include "../../utils/CSVReader.h"
 
 #define CHILD_PROCESS_PID 0
 
@@ -14,19 +16,24 @@ class Config {
 public:
     explicit Config() = default;
     void loadData();
+
+    int getClients();
+    int getSalePoints();
     int getDistributionCenters();
+    std::vector<FlowerBox*> getProducers();
+
+    void setClients(int clients);
+    void setSalePoints(int salePoints);
     void setDistributionCenters(int distributionCenters);
-    std::vector<FlowerBox> getProducers();
-    void setProducers(std::vector<FlowerBox> producersDTO);
-    std::vector<Seller> getSalePoints();
-    void setSellers(std::vector<Seller> sellers);
+    void setProducers(std::vector<FlowerBox*> producersDTO);
 
 private:
+    int _clients = 5;
+    int _salePoints = 5;
     int _distributionCenters = 1;
+    std::vector<FlowerBox*> _producers;
+
     std::string _producersPath = "./data/producers.csv";
-    std::string _sellersPath = "./data/sellers.csv";
-    std::vector<FlowerBox> _producers;
-    std::vector<Seller> _sellers;
 
 };
 

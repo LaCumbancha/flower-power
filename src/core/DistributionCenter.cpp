@@ -12,7 +12,7 @@ DistributionCenter::DistributionCenter(Config *config, int id) : Job() {
     /*********** Producer processes creation. **********/
     // Creating pipe for producers.
     auto producersPipe = new Pipe();
-    for (const auto &producerData : config->getProducers()) {
+    for (auto producerData : config->getProducers()) {
         pid = fork();
 
         if (pid == CHILD_PROCESS_PID) {
@@ -23,7 +23,7 @@ DistributionCenter::DistributionCenter(Config *config, int id) : Job() {
             producerJob->finish();
         }
         this->_producersPIDs.push_back(pid);
-        Logger::info("Producer #" + std::to_string(this->_id) + "." + std::to_string(producerData.producerId) +
+        Logger::info("Producer #" + std::to_string(this->_id) + "." + std::to_string(producerData->producerId) +
                      " running in process with PID #" + std::to_string(pid) + ".");
     }
     producersPipe->setReadMode();
@@ -32,7 +32,8 @@ DistributionCenter::DistributionCenter(Config *config, int id) : Job() {
     /*********** Seller processes creation. **********/
     // Creating pipe for sellers' requests.
     auto requestsPipe = new Pipe();
-    for (const auto &sellerData : config->getSalePoints()) {
+    int salePoints = config->getSalePoints();
+    for (int salePoint = 1 ; salePoint <= salePoints ; salePoint++) {
         // Creating pipe for sellers' stock distribution.
         auto distributionPipe = new Pipe();
         pid = fork();
@@ -41,12 +42,12 @@ DistributionCenter::DistributionCenter(Config *config, int id) : Job() {
             // Child process.
             requestsPipe->setWriteMode();
             distributionPipe->setReadMode();
-            auto sellerJob = new SellerJob(this->_id, sellerData, requestsPipe, distributionPipe);
+            auto sellerJob = new SellerJob(this->_id, salePoint, config->getClients(), requestsPipe, distributionPipe);
             sellerJob->run();
             sellerJob->finish();
         }
         this->_sellersPIDs.push_back(pid);
-        Logger::info("Seller #" + std::to_string(this->_id) + "." + std::to_string(sellerData.sellerId) +
+        Logger::info("Seller #" + std::to_string(this->_id) + "." + std::to_string(salePoint) +
                      " running in process with PID #" + std::to_string(pid) + ".");
         this->_distributionPipes.push_back(distributionPipe);
     }
