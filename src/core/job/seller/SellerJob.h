@@ -6,7 +6,9 @@
 #include "../Job.h"
 #include "../../config/Config.h"
 #include "../../../utils/Pipe.h"
+#include "../../../simulator/ClientSimulator.h"
 #include "../../../utils/Logger.h"
+
 
 class SellerJob : public Job {
 
@@ -16,13 +18,20 @@ public:
     int finish() override;
 
 private:
+    pid_t _clientSimulatorPID{};
     int _center;
     int _sellerId;
+    std::string _sellerName;
+    Pipe* _clientPipe{};
+    Pipe* _requestPipe;
+    Pipe* _distributionPipe;
+
+    int listenRequests();
+    void handleRequest(BouquetRequest bouquetRequest);
+
+    // TODO: Delete after implementing shared memory.
     int _rosesStock;
     int _tulipsStock;
-    std::string _sellerName;
-    Pipe* _distributionPipe;
-    Pipe* _requestPipe;
 
 };
 
