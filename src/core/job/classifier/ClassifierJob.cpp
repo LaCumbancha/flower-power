@@ -34,5 +34,7 @@ int ClassifierJob::run() {
         }
     }
 
+    this->_producersPipe->~Pipe();
+    Logger::info("Classifier #" + std::to_string(this->_center) + " pipe destroyed.");
     exit(EXIT_SUCCESS);
 }

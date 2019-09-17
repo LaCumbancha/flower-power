@@ -32,6 +32,7 @@ private:
     std::vector<pid_t> _producersPIDs;
     std::vector<pid_t> _sellersPIDs;
 
+    void closePipes();
 };
 
 

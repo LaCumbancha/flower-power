@@ -61,8 +61,7 @@ pid_t DistributionCenter::run() {
         classifierJob->run();
     }
 
-    Logger::info(
-            "Classifier #" + std::to_string(this->_id) + " running in process with PID #" + std::to_string(pid) + ".");
+    Logger::info("Classifier #" + std::to_string(this->_id) + " running in process with PID #" + std::to_string(pid) + ".");
     this->_classifierPID = pid;
 
     exit(EXIT_SUCCESS);
@@ -78,11 +77,14 @@ void DistributionCenter::finish() {
 
         if (processStatus != EXIT_SUCCESS) {
             signals += 1;
-            Logger::error("Producer in process " + std::to_string(producerPID) + " finished with error code " + std::to_string(processStatus));
+            Logger::error("Producer in process " + std::to_string(producerPID) + " finished with error code " +
+                          std::to_string(processStatus));
         }
     }
 
-    if (signals == 0) { Logger::info("Every Producer in Center # " + std::to_string(this->_id) + " finished successfully without errors."); }
+    if (signals == 0) {
+        Logger::info("Every Producer in Center # " + std::to_string(this->_id) + " finished successfully without errors.");
+    }
 
     // Awaiting for sellers processes.
     signals = 0;
@@ -91,19 +93,44 @@ void DistributionCenter::finish() {
 
         if (processStatus != EXIT_SUCCESS) {
             signals += 1;
-            Logger::error("Seller in process " + std::to_string(sellerPID) + " finished with error code " + std::to_string(processStatus));
+            Logger::error("Seller in process " + std::to_string(sellerPID) + " finished with error code " +
+                          std::to_string(processStatus));
         }
     }
 
-    if (signals == 0) { Logger::info("Every Seller in Center # " + std::to_string(this->_id) + " finished successfully without errors."); }
+    if (signals == 0) {
+        Logger::info("Every Seller in Center # " + std::to_string(this->_id) + " finished successfully without errors.");
+    }
 
     // Awaiting for classifier process.
     waitpid(this->_classifierPID, &processStatus, 0);
 
     if (processStatus != EXIT_SUCCESS) {
-        Logger::error("Classifier in process " + std::to_string(this->_classifierPID) + " finished with error code " + std::to_string(processStatus));
+        Logger::error("Classifier in process " + std::to_string(this->_classifierPID) + " finished with error code " +
+                      std::to_string(processStatus));
     } else {
         Logger::info("Classifier in Center #" + std::to_string(this->_id) + " successfully ended without errors.");
+    }
+
+    this->closePipes();
+}
+
+void DistributionCenter::closePipes() {
+    // Closing Producers pipe.
+    this->_producersPipe->~Pipe();
+    Logger::info("Distribution Center #" + std::to_string(this->_id) + "'s producers pipe destroyed.");
+
+    // Closing Requests pipe.
+    this->_requestsPipe->~Pipe();
+    Logger::info("Distribution Center #" + std::to_string(this->_id) + "'s requests pipe destroyed.");
+
+    // Closing Distribution pipes.
+    int pipeIdx = 0;
+    for (auto pipe : this->_distributionPipes) {
+        pipeIdx++;
+        pipe->~Pipe();
+        Logger::info("Distribution Center #" + std::to_string(this->_id) + "'s distribution pipe " +
+                     std::to_string(pipeIdx) + " destroyed.");
     }
 }
 
