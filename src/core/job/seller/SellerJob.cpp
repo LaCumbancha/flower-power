@@ -51,7 +51,7 @@ void SellerJob::handleRequest(BouquetRequest bouquetRequest) {
         // TODO: Request stock to Distribution Center and handle case of not having anymore stock.
     }
 
-    // TODO: Remove when Stock Manager added.
+    // TODO: Remove when Stock Manager is implemented.
     this->_rosesStock -= bouquetRequest.rosesAmount;
     this->_tulipsStock -= bouquetRequest.tulipsAmount;
 }

@@ -43,6 +43,6 @@ void SettingsMenu::display() {
     cout << "Current settings:" << endl;
     cout << "[1] Distribution centers: " << this->config->getDistributionCenters() << endl;
     cout << "[2] Sale points: " << this->config->getSalePoints() << endl;
-    cout << "[3] Sale points: " << this->config->getClients() << endl;
+    cout << "[3] Clients: " << this->config->getClients() << endl;
     cout << "What do you want to change? [0 for quit] ";
 }
