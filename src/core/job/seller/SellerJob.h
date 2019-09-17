@@ -6,6 +6,7 @@
 #include "../../config/Config.h"
 #include "../Job.h"
 #include "../../../utils/Pipe.h"
+#include "../../../simulator/ClientSimulator.h"
 
 class SellerJob : public Job {
 
@@ -21,6 +22,8 @@ private:
     std::string _sellerName;
     Pipe* _distributionPipe;
     Pipe* _requestPipe;
+
+    void handleRequest(BouquetRequest bouquetRequest);
 
 };
 

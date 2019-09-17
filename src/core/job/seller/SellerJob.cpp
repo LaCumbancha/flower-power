@@ -15,10 +15,10 @@ int SellerJob::run() {
         clientPipe->setReadMode();
         std::string incomming;
         int status;
-        std::cout << "\nProceso padre" << std::endl;
         while( clientPipe->read(incomming, &status) != 0) {
             if ( status != EXIT_FAILURE) {
-                std::cout << incomming << std::endl;
+                BouquetRequest bouquetRequest = BouquetRequest(incomming);
+                handleRequest(bouquetRequest);
             }
         };
     }
@@ -32,6 +32,17 @@ SellerJob::SellerJob(const int center, const Seller &sellerData, Pipe *requestPi
     this->_sellerId = sellerData.sellerId;
     this->_rosesStock = sellerData.rosesStock;
     this->_tulipsStock = sellerData.tulipsStock;
+}
+
+void SellerJob::handleRequest(BouquetRequest bouquetRequest) {
+    bool success;
+    if (_rosesStock < bouquetRequest.rosesAmount || _tulipsStock < bouquetRequest.tulipsAmount) {
+        //TODO request stock and handle case of distributor not having anymore stock
+    }
+
+    _rosesStock -= bouquetRequest.rosesAmount;
+    _tulipsStock -= bouquetRequest.tulipsAmount;
+    //TODO: Log properly
 }
 
 
