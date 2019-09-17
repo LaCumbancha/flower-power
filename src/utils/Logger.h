@@ -17,6 +17,7 @@ public:
     static void run();
     static void close();
     static void writing();
+    static void debug(const std::string& text);
     static void info(const std::string& text);
     static void warn(const std::string& text);
     static void error(const std::string& text);

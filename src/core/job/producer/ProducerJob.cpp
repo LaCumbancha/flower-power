@@ -1,7 +1,7 @@
 #include "ProducerJob.h"
 #include "../../../utils/Logger.h"
 
-ProducerJob::ProducerJob(const int center, const ProducerFlowers& producerData, Pipe* distributionPipe) : Job() {
+ProducerJob::ProducerJob(const int center, const FlowerBox &producerData, Pipe *distributionPipe) : Job() {
 
     // Assigning pipe to communicate with the distribution center.
     this->_distributionPipe = distributionPipe;
@@ -15,12 +15,16 @@ ProducerJob::ProducerJob(const int center, const ProducerFlowers& producerData, 
     // Initializing distribution center data.
     this->_center = center;
 
+    Logger::debug("Producer #" + std::to_string(this->_center) + "." + std::to_string(this->_producerId) + " (" +
+                  this->_producerName + ") current stock: " + std::to_string(this->_rosesStock) + " roses and " +
+                  std::to_string(this->_tulipsStock) + " tulips.");
+
     // Initializing random number generator
     srand(time(NULL) * getpid());
 
 }
 
-ProducerFlowers ProducerJob::generateFlowerBox() {
+FlowerBox ProducerJob::generateFlowerBox() {
 
     // Take a random number of roses.
     int rosesToBox = rand() % 10;
@@ -47,18 +51,32 @@ ProducerFlowers ProducerJob::generateFlowerBox() {
     this->_tulipsStock = this->_tulipsStock - tulipsToBox;
     this->_rosesStock = this->_rosesStock - rosesToBox;
 
+    Logger::debug("Producer #" + std::to_string(this->_center) + "." + std::to_string(this->_producerId) + " (" +
+                  this->_producerName + ") current stock: " + std::to_string(this->_rosesStock) + " roses and " +
+                  std::to_string(this->_tulipsStock) + " tulips.");
+
     // Create box.
-    return ProducerFlowers(this->_producerId, this->_producerName, rosesToBox, tulipsToBox);
+    return FlowerBox(this->_producerId, this->_producerName, rosesToBox, tulipsToBox);
 
 }
 
 int ProducerJob::run() {
     while (this->_rosesStock != 0 or this->_tulipsStock != 0) {
         auto box = this->generateFlowerBox();
-        Logger::info("Producer #" + std::to_string(this->_center) + "." + std::to_string(this->_producerId) + " (" + this->_producerName + ") sent a box with " + std::to_string(box.rosesStock) + " roses and " + std::to_string(box.tulipsStock) + " tulips to the Distribution Center #" + std::to_string(this->_center) + ".");
-        this->_distributionPipe->write(this->generateFlowerBox().serialize());
+        Logger::info("Producer #" + std::to_string(this->_center) + "." + std::to_string(this->_producerId) + " (" +
+                     this->_producerName + ") sent a box with " + std::to_string(box.rosesStock) + " roses and " +
+                     std::to_string(box.tulipsStock) + " tulips to the Distribution Center #" +
+                     std::to_string(this->_center) + ".");
+        this->_distributionPipe->write(box.serialize());
     }
 
-    exit(EXIT_SUCCESS);
+    return EXIT_SUCCESS;
+}
 
+int ProducerJob::finish() {
+    this->_distributionPipe->~Pipe();
+    Logger::info("Producer #" + std::to_string(this->_center) + "." + std::to_string(this->_producerId) + " (" +
+                 this->_producerName + ") pipe destroyed.");
+
+    exit(EXIT_SUCCESS);
 }

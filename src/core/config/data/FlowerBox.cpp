@@ -1,10 +1,10 @@
-#include "ProducerFlowers.h"
+#include "FlowerBox.h"
 
 
-ProducerFlowers::ProducerFlowers(int producerId, std::string producerName, int rosesStock, int tulipsStock) :
+FlowerBox::FlowerBox(int producerId, std::string producerName, int rosesStock, int tulipsStock) :
         producerId(producerId), producerName(std::move(producerName)), rosesStock(rosesStock), tulipsStock(tulipsStock) {}
 
-std::string ProducerFlowers::serialize() {
+std::string FlowerBox::serialize() {
     std::string data;
     data += std::to_string(this->producerId);
     data += "|";
@@ -18,7 +18,7 @@ std::string ProducerFlowers::serialize() {
     return data;
 }
 
-ProducerFlowers ProducerFlowers::deserialize(std::string data) {
+FlowerBox FlowerBox::deserialize(std::string data) {
     std::vector<std::string> values;
     std::string value;
 
@@ -38,6 +38,6 @@ ProducerFlowers ProducerFlowers::deserialize(std::string data) {
     int rosesStock = std::stoi(values[2]);
     int tulipsStock = std::stoi(values[3]);
 
-    return ProducerFlowers(producerId, producerName, rosesStock, tulipsStock);
+    return FlowerBox(producerId, producerName, rosesStock, tulipsStock);
 
 }

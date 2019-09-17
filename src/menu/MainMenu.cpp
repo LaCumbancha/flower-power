@@ -11,12 +11,12 @@ int MainMenu::show() {
                 cout << "Thanks for using Flower Power System!" << endl;
                 break;
             case 1:
-                coreSystem.run();
+                coreSystem->run();
                 cout << endl;
                 display();
                 break;
             case 2:
-                settingsMenu.show();
+                settingsMenu->show();
                 cout << endl;
                 display();
                 break;

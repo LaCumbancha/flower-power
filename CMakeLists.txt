@@ -28,14 +28,19 @@ add_executable(
         src/core/DistributionCenter.h
         src/utils/CSVReader.cpp
         src/utils/CSVReader.h
-        src/core/config/data/ProducerFlowers.h
+        src/core/config/data/FlowerBox.cpp
+        src/core/config/data/FlowerBox.h
         src/utils/Definitions.h
         src/utils/Pipe.cpp
         src/utils/Pipe.h
-        src/core/config/data/ProducerFlowers.cpp
         src/utils/Logger.cpp
         src/utils/Logger.h
         src/core/config/data/Seller.h
         src/core/config/data/Seller.cpp
-        tests/test1.cpp tests/SellerTests.cpp tests/DistributionCenterTests.cpp
+        src/core/job/classifier/ClassifierJob.cpp
+        src/core/job/classifier/ClassifierJob.h
+        src/core/config/data/Flower.cpp
+        src/core/config/data/Flower.h
+        src/core/job/classifier/ClassifierJob.cpp
+        src/core/job/classifier/ClassifierJob.h
 )
