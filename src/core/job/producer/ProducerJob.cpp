@@ -67,7 +67,7 @@ int ProducerJob::run() {
                      this->_producerName + ") sent a box with " + std::to_string(box.rosesStock) + " roses and " +
                      std::to_string(box.tulipsStock) + " tulips to the Distribution Center #" +
                      std::to_string(this->_center) + ".");
-        this->_distributionPipe->write(this->generateFlowerBox().serialize());
+        this->_distributionPipe->write(box.serialize());
     }
 
     exit(EXIT_SUCCESS);
