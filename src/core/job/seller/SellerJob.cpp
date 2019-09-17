@@ -1,7 +1,6 @@
 #include "SellerJob.h"
 
-SellerJob::SellerJob(const int center, const int sellerId, int clients, Pipe *requestPipe, Pipe *distributionPipe) : Job() {
-    this->_center = center;
+SellerJob::SellerJob(std::string sellerId, int clients, Pipe *requestPipe, Pipe *distributionPipe) : Job() {
     this->_clients = clients;
     this->_sellerId = sellerId;
     this->_requestPipe = requestPipe;
@@ -15,12 +14,11 @@ int SellerJob::run() {
     if (pid == CHILD_PROCESS_PID) {
         // Child process.
         this->_clientPipe->setWriteMode();
-        ClientSimulator clientSimulator = ClientSimulator(this->_center, this->_sellerId, this->_clients, this->_clientPipe);
-        clientSimulator.run();
+        ClientSimulator* clientSimulator = new ClientSimulator(this->_sellerId, this->_clients, this->_clientPipe);
+        clientSimulator->run();
     } else {
         // Seller process.
-        Logger::info("Client Simulator # " + std::to_string(this->_center) + "." + std::to_string(this->_sellerId) +
-                     " running in process " + std::to_string(pid) + ".");
+        Logger::info("Client Simulator # " + this->_sellerId + " running in process " + std::to_string(pid) + ".");
         this->_clientSimulatorPID = pid;
         this->_clientPipe->setReadMode();
 
@@ -34,8 +32,7 @@ int SellerJob::run() {
 int SellerJob::listenRequests() {
     std::string incoming;
     int status;
-    Logger::info("Seller # " + std::to_string(this->_center) + "." + std::to_string(this->_sellerId) +
-                 " started to listen for requests.");
+    Logger::info("Seller # " + this->_sellerId + " started to listen for requests.");
     while (this->_clientPipe->read(incoming, &status)) {
         if (status == EXIT_SUCCESS) {
             BouquetRequest bouquetRequest = BouquetRequest::deserialize(incoming);
@@ -47,9 +44,8 @@ int SellerJob::listenRequests() {
 }
 
 void SellerJob::handleRequest(BouquetRequest bouquetRequest) {
-    Logger::info("Seller # " + std::to_string(this->_center) + "." + std::to_string(this->_sellerId) +
-                 " received a request for " + std::to_string(bouquetRequest.rosesAmount) + " roses and " +
-                 std::to_string(bouquetRequest.tulipsAmount) + " tulips.");
+    Logger::info("Seller # " + this->_sellerId + " received a request for " + std::to_string(bouquetRequest.rosesAmount) +
+            " roses and " + std::to_string(bouquetRequest.tulipsAmount) + " tulips.");
 
     if (this->_rosesStock < bouquetRequest.rosesAmount || this->_tulipsStock < bouquetRequest.tulipsAmount) {
         // TODO: Request stock to Distribution Center and handle case of not having anymore stock.
@@ -70,8 +66,7 @@ int SellerJob::finish() {
         Logger::error("Client simulator in process " + std::to_string(this->_clientSimulatorPID) +
                       " finished with error code " + std::to_string(processStatus));
     } else {
-        Logger::info("Client Simulator #" + std::to_string(this->_center) + "." + std::to_string(this->_sellerId) +
-                     " successfully ended without errors.");
+        Logger::info("Client Simulator #" + this->_sellerId + " successfully ended without errors.");
     }
 
     this->_distributionPipe->~Pipe();

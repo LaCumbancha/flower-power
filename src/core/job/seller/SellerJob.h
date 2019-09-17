@@ -14,14 +14,13 @@
 class SellerJob : public Job {
 
 public:
-    explicit SellerJob(int center, int sellerId, int clients, Pipe *requestPipe, Pipe *distributionPipe);
+    explicit SellerJob(std::string sellerId, int clients, Pipe *requestPipe, Pipe *distributionPipe);
     int run() override;
     int finish() override;
 
 private:
-    int _center;
     int _clients;
-    int _sellerId;
+    std::string _sellerId;
     Pipe* _clientPipe{};
     Pipe* _requestPipe;
     Pipe* _distributionPipe;

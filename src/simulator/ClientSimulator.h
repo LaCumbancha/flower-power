@@ -13,13 +13,12 @@
 class ClientSimulator {
 
 public:
-    explicit ClientSimulator(int centerId, int sellerId, int clients, Pipe *clientPipe);
+    explicit ClientSimulator(std::string sellerId, int clients, Pipe *clientPipe);
     void run();
 
 private:
-    int _centerId;
-    int _sellerId;
     int _clients;
+    std::string _sellerId;
     Pipe * _clientPipe;
 
     static BouquetRequest simulateBouquetRequest();
