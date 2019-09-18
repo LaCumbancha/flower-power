@@ -9,6 +9,8 @@
 #include <vector>
 #include "Flower.h"
 
+#define CLASSIFIER_BOX_SIZE 100
+
 /**
  * ClassifierBox
  * Box of 100 flowers of a single kind coming from

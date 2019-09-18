@@ -12,17 +12,17 @@
 class ClassifierJob : public Job {
 
 public:
-    explicit ClassifierJob(int center, Pipe* producersPipe);
+    explicit ClassifierJob(int center, Pipe* producersPipe, Pipe* distributorPipe);
     int run() override;
     int finish() override;
 
 private:
     int _center;
     Pipe* _producersPipe;
+    Pipe* _distributorPipe;
 
-    // TODO: Delete after implementing shared memory.
-    std::vector<Flower*> _roses;
-    std::vector<Flower*> _tulips;
+    std::vector<Flower> _roses;
+    std::vector<Flower> _tulips;
 
 };
 
