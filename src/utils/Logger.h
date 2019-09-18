@@ -7,7 +7,11 @@
 #include <fcntl.h>
 #include <iostream>
 #include <ctime>
+#include <map>
 #include "Pipe.h"
+
+
+enum LogLevel { DEBUG, INFO, WARN, ERROR };
 
 class Logger {
 
@@ -22,9 +26,24 @@ public:
     static void warn(const std::string& text);
     static void error(const std::string& text);
 
+    static std::string getLoggingLevel();
+    static std::map<LogLevel, std::string> createLevelsMap() {
+        std::map<LogLevel, std::string> map;
+        map[DEBUG] = "DEBUG";
+        map[INFO] = "INFO";
+        map[WARN] = "WARN";
+        map[ERROR] = "ERROR";
+        return map;
+    }
+
+    static void setLoggingLevel(int newLevel);
+
 private:
     static Pipe* logPipe;
     static std::string logFile;
+
+    static LogLevel level;
+    static std::map<LogLevel, std::string> levelsMap;
 
     static std::string time();
     static std::string mainLog();
@@ -32,6 +51,5 @@ private:
     static std::string date(const char* format = "%Y-%m-%d.%X");
 
 };
-
 
 #endif //FLOWER_POWER_LOGGER_H
