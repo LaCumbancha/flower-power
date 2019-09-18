@@ -1,8 +1,11 @@
 #include "SellerJob.h"
 
+#include <utility>
+#include "../../config/data/SellerRequest.h"
+
 SellerJob::SellerJob(std::string sellerId, int clients, Pipe *requestPipe, Pipe *distributionPipe) : Job() {
     this->_clients = clients;
-    this->_sellerId = sellerId;
+    this->_sellerId = std::move(sellerId);
     this->_requestPipe = requestPipe;
     this->_distributionPipe = distributionPipe;
 }
@@ -14,7 +17,7 @@ int SellerJob::run() {
     if (pid == CHILD_PROCESS_PID) {
         // Child process.
         this->_clientPipe->setWriteMode();
-        ClientSimulator* clientSimulator = new ClientSimulator(this->_sellerId, this->_clients, this->_clientPipe);
+        auto* clientSimulator = new ClientSimulator(this->_sellerId, this->_clients, this->_clientPipe);
         clientSimulator->run();
     } else {
         // Seller process.
@@ -48,6 +51,16 @@ void SellerJob::handleRequest(BouquetRequest bouquetRequest) {
             " roses and " + std::to_string(bouquetRequest.tulipsAmount) + " tulips.");
 
     if (this->_rosesStock < bouquetRequest.rosesAmount || this->_tulipsStock < bouquetRequest.tulipsAmount) {
+        SellerRequest sellerRequest = SellerRequest(_sellerId, 5, 5);
+        ssize_t i = _requestPipe->write(sellerRequest.serialize());
+        if (i == ERROR) {
+            //TODO: handle that the pipe es closed due to lack of stock in the distribution center
+        }
+        std::string data;
+        int status;
+        _distributionPipe->read(data, &status);
+        std::cout << data << std::endl;
+        //TODO Increment stocks
         // TODO: Request stock to Distribution Center and handle case of not having anymore stock.
     }
 

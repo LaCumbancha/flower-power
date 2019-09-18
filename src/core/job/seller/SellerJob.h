@@ -30,8 +30,8 @@ private:
     void handleRequest(BouquetRequest bouquetRequest);
 
     // TODO: Delete after implementing shared memory.
-    int _rosesStock = 1000;
-    int _tulipsStock = 1000;
+    int _rosesStock = 10;
+    int _tulipsStock = 10;
 
 };
 

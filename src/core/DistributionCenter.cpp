@@ -48,9 +48,9 @@ DistributionCenter::DistributionCenter(Config *config, int id) : Job() {
             sellerJob->run();
             sellerJob->finish();
         }
-        this->_sellersPIDs.push_back(pid);
+        this->_distributionPipes.insert(std::pair<pid_t, Pipe*>(pid, distributionPipe));
         Logger::info("Seller #" + sellerId + " running in process with PID #" + std::to_string(pid) + ".");
-        this->_distributionPipes.push_back(distributionPipe);
+        this->_sellersPIDs.push_back(pid);
     }
     requestsPipe->setReadMode();
     this->_requestsPipe = requestsPipe;
@@ -135,17 +135,14 @@ void DistributionCenter::closePipes() {
     int pipeIdx = 0;
     for (auto pipe : this->_distributionPipes) {
         pipeIdx++;
-        pipe->~Pipe();
+        pipe.second->~Pipe();
         Logger::info("Distribution pipe #" + std::to_string(pipeIdx) + " in Distribution Center #" +
                      std::to_string(this->_id) + " destroyed.");
     }
 }
 
-const std::vector<Pipe *> &DistributionCenter::getDistributionPipes() const {
+const std::map<pid_t, Pipe*> &DistributionCenter::getDistributionPipes() const {
     return this->_distributionPipes;
 }
 
-void DistributionCenter::setDistributionPipes(const std::vector<Pipe *> &distributionPipes) {
-    this->_distributionPipes = distributionPipes;
-}
 
