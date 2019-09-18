@@ -45,11 +45,18 @@ add_executable(
         src/core/job/classifier/ClassifierJob.h
         src/simulator/ClientSimulator.cpp
         src/simulator/ClientSimulator.h
-        # tests/test1.cpp
-        # tests/SellerTests.cpp
-        # tests/DistributionCenterTests.cpp
-        # tests/ClientSimulatorTests.cpp
-        src/core/config/data/BouquetRequest.cpp src/core/config/data/BouquetRequest.h)
+
+#         tests/test1.cpp
+#         tests/SellerTests.cpp
+#         tests/DistributionCenterTests.cpp
+#         tests/ClientSimulatorTests.cpp
+
+        src/core/config/data/BouquetRequest.cpp
+        src/core/config/data/BouquetRequest.h
+        src/core/config/data/SellerRequest.h
+        src/core/config/data/SellerRequest.cpp
+        src/core/job/distributor/DistributorJob.h
+        src/core/job/distributor/DistributorJob.cpp)
 
 # # Download and unpack googletest at configure time
 # configure_file(CMakeLists.txt.in googletest-download/CMakeLists.txt)
