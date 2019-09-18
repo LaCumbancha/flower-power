@@ -1,7 +1,9 @@
 #ifndef FLOWER_POWER_SETTINGSMENU_H
 #define FLOWER_POWER_SETTINGSMENU_H
 
+#include <string>
 #include "Menu.h"
+#include "../utils/Logger.h"
 #include "../core/config/Config.h"
 
 

@@ -2,22 +2,21 @@
 #define FLOWER_POWER_PRODUCERJOB_H
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
 #include <iostream>
 #include "../Job.h"
 #include "../../../utils/Pipe.h"
+#include "../../../utils/Logger.h"
+
 
 class ProducerJob : public Job {
 
 public:
-    explicit ProducerJob(int center, const FlowerBox& producerData, Pipe* distributionPipe);
+    explicit ProducerJob(int centerId, const FlowerBox* producerData, Pipe* distributionPipe);
     int run() override;
     int finish() override;
 
 private:
-    int _center;
+    int _centerId;
     int _producerId;
     int _rosesStock;
     int _tulipsStock;

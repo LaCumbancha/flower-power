@@ -49,7 +49,7 @@ add_executable(
         # tests/SellerTests.cpp
         # tests/DistributionCenterTests.cpp
         # tests/ClientSimulatorTests.cpp
-)
+        src/core/config/data/BouquetRequest.cpp src/core/config/data/BouquetRequest.h)
 
 # # Download and unpack googletest at configure time
 # configure_file(CMakeLists.txt.in googletest-download/CMakeLists.txt)

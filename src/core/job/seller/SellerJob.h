@@ -3,35 +3,35 @@
 
 
 #include <iostream>
+#include <sys/wait.h>
 #include "../Job.h"
 #include "../../config/Config.h"
 #include "../../../utils/Pipe.h"
-#include "../../../simulator/ClientSimulator.h"
 #include "../../../utils/Logger.h"
+#include "../../../simulator/ClientSimulator.h"
 
 
 class SellerJob : public Job {
 
 public:
-    explicit SellerJob(int center, const Seller& sellerData, Pipe* requestPipe, Pipe* distributionPipe);
+    explicit SellerJob(std::string sellerId, int clients, Pipe *requestPipe, Pipe *distributionPipe);
     int run() override;
     int finish() override;
 
 private:
-    pid_t _clientSimulatorPID{};
-    int _center;
-    int _sellerId;
-    std::string _sellerName;
+    int _clients;
+    std::string _sellerId;
     Pipe* _clientPipe{};
     Pipe* _requestPipe;
     Pipe* _distributionPipe;
+    pid_t _clientSimulatorPID{};
 
     int listenRequests();
     void handleRequest(BouquetRequest bouquetRequest);
 
     // TODO: Delete after implementing shared memory.
-    int _rosesStock;
-    int _tulipsStock;
+    int _rosesStock = 1000;
+    int _tulipsStock = 1000;
 
 };
 

@@ -1,23 +1,34 @@
 #include "ClientSimulator.h"
 
-ClientSimulator::ClientSimulator(int distributionCenterId, int sellerId, int sellerProcessId, Pipe *clientPipe) {
-    this->_centerId = distributionCenterId;
-    this->_sellerId = sellerId;
-    this->_sellerPID = sellerProcessId;
+#include <utility>
+
+
+ClientSimulator::ClientSimulator(std::string sellerId, int clients, Pipe *clientPipe) {
+    this->_sellerId = std::move(sellerId);
+    this->_clients = clients;
     this->_clientPipe = clientPipe;
+
+    // Initializing random number generator
+    srand(time(NULL) * getpid());
 }
 
 void ClientSimulator::run() {
 
-    for (int i = 0; i < 10; i++) {
+    for (int client = 1; client <= this->_clients; client++) {
         BouquetRequest request = simulateBouquetRequest();
+
+        Logger::info("Generating request for Client #" + std::to_string(client) + " in Sale Point #" + this->_sellerId + ": " +
+                     std::to_string(request.rosesAmount) + " roses and " + std::to_string(request.tulipsAmount) + " tulips.");
         this->_clientPipe->write(request.serialize());
     }
+
+    exit(EXIT_SUCCESS);
 }
 
 BouquetRequest ClientSimulator::simulateBouquetRequest() {
+    // Generating random flower request.
     int rosesAmount = rand() % 10;
     int tulipsAmount = rand() % 10;
-    BouquetRequest request(rosesAmount, tulipsAmount);
-    return request;
+
+    return BouquetRequest(rosesAmount, tulipsAmount);
 }

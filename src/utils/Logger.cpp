@@ -1,8 +1,11 @@
 #include <sys/time.h>
+#include <vector>
 #include "Logger.h"
 
+LogLevel Logger::level = DEBUG;
 Pipe* Logger::logPipe = new Pipe();
 std::string Logger::logFile = "./logs/" + date("%Y%m%d") + ".log";
+std::map<LogLevel, std::string> Logger::levelsMap = Logger::createLevelsMap();
 
 void Logger::writing() {
     Logger::logPipe->setWriteMode();
@@ -34,27 +37,35 @@ void Logger::close() {
 }
 
 void Logger::debug(const std::string& text) {
-    std::string log = mainLog();
-    log += "[DEBUG] " + text + "|||";
-    Logger::logPipe->write(log);
+    if (Logger::level <= DEBUG) {
+        std::string log = mainLog();
+        log += "[DEBUG] " + text + "|||";
+        Logger::logPipe->write(log);
+    }
 }
 
 void Logger::info(const std::string& text) {
-    std::string log = mainLog();
-    log += "[INFO] " + text + "|||";
-    Logger::logPipe->write(log);
+    if (Logger::level <= INFO) {
+        std::string log = mainLog();
+        log += "[INFO] " + text + "|||";
+        Logger::logPipe->write(log);
+    }
 }
 
 void Logger::warn(const std::string& text) {
-    std::string log = mainLog();
-    log += "[WARN] " + text + "|||";
-    Logger::logPipe->write(log);
+    if (Logger::level <= WARN) {
+        std::string log = mainLog();
+        log += "[WARN] " + text + "|||";
+        Logger::logPipe->write(log);
+    }
 }
 
 void Logger::error(const std::string& text) {
-    std::string log = mainLog();
-    log += "[ERROR] " + text + "|||";
-    Logger::logPipe->write(log);
+    if (Logger::level <= ERROR) {
+        std::string log = mainLog();
+        log += "[ERROR] " + text + "|||";
+        Logger::logPipe->write(log);
+    }
 }
 
 std::string Logger::date(const char* format) {
@@ -107,4 +118,12 @@ void Logger::cleanLog(std::string& log) {
         // If found then erase it from string.
         log.erase(pos, log.length() - pos);
     }
+}
+
+std::string Logger::getLoggingLevel() {
+    return Logger::levelsMap[Logger::level];
+}
+
+void Logger::setLoggingLevel(int newLevel) {
+    Logger::level = LogLevel(newLevel);
 }

@@ -18,7 +18,7 @@ std::string FlowerBox::serialize() {
     return data;
 }
 
-FlowerBox FlowerBox::deserialize(std::string data) {
+FlowerBox FlowerBox::deserialize(const std::string& data) {
     std::vector<std::string> values;
     std::string value;
 
