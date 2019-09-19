@@ -23,7 +23,7 @@ private:
     int _rosesStock = 0;
     int _tulipsStock = 0;
     void handleRequest(const SellerRequest& request);
-
+    void resupply(const SellerRequest& request);
 public:
     DistributorJob(int centerId, Pipe *classifierPipe, Pipe *requestsPipe, std::map<std::string, Pipe*> distributionPipes)
             : _classifierPipe(classifierPipe), _requestsPipe(requestsPipe),
@@ -40,6 +40,7 @@ public:
     int getTulipsStock() const;
 
     void setTulipsStock(int tulipsStock);
+
 };
 
 

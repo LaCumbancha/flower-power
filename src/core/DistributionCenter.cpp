@@ -1,4 +1,5 @@
 #include "DistributionCenter.h"
+#include "job/distributor/DistributorJob.h"
 
 DistributionCenter::DistributionCenter(Config *config, int id) : Job() {
 
@@ -48,27 +49,41 @@ DistributionCenter::DistributionCenter(Config *config, int id) : Job() {
             sellerJob->run();
             sellerJob->finish();
         }
-        this->_distributionPipes.insert(std::pair<pid_t, Pipe*>(pid, distributionPipe));
+        this->_distributionPipes.insert(std::pair<std::string, Pipe*>(sellerId, distributionPipe));
         Logger::info("Seller #" + sellerId + " running in process with PID #" + std::to_string(pid) + ".");
         this->_sellersPIDs.push_back(pid);
     }
     requestsPipe->setReadMode();
     this->_requestsPipe = requestsPipe;
+
+    /******** Classifier-Distributor pipe creation *********/
+    this->_innerPipe = new Pipe();
 }
 
 int DistributionCenter::run() {
 
     /*********** Classifier processes creation. **********/
     pid_t pid = fork();
+
     if (pid == CHILD_PROCESS_PID) {
         // Child process.
-        auto classifierJob = new ClassifierJob(this->_id, this->_producersPipe);
+        this->_innerPipe->setWriteMode();
+        auto classifierJob = new ClassifierJob(this->_id, this->_producersPipe, this->_innerPipe);
         classifierJob->run();
         classifierJob->finish();
     }
 
     Logger::info("Classifier #" + std::to_string(this->_id) + " running in process with PID #" + std::to_string(pid) + ".");
     this->_classifierPID = pid;
+
+    /********** Distributor process creation *************/
+    pid = fork();
+    if (pid == CHILD_PROCESS_PID) {
+        this->_innerPipe->setReadMode();
+        auto distributorJob = new DistributorJob(this->_id, _innerPipe, _requestsPipe, _distributionPipes);
+        distributorJob->run();
+        distributorJob->finish();
+    }
 
     return EXIT_SUCCESS;
 }
@@ -127,6 +142,10 @@ void DistributionCenter::closePipes() {
     this->_producersPipe->~Pipe();
     Logger::info("Producers pipe in Distribution Center #" + std::to_string(this->_id) + " destroyed.");
 
+    // Closing classifier - distributor pipe.
+    this->_innerPipe->~Pipe();
+    Logger::info("Classifier-distributor pipe in Distribution Center #" + std::to_string(this->_id) + " destroyed.");
+
     // Closing Requests pipe.
     this->_requestsPipe->~Pipe();
     Logger::info("Requests pipe in Distribution Center #" + std::to_string(this->_id) + " destroyed.");
@@ -139,10 +158,6 @@ void DistributionCenter::closePipes() {
         Logger::info("Distribution pipe #" + std::to_string(pipeIdx) + " in Distribution Center #" +
                      std::to_string(this->_id) + " destroyed.");
     }
-}
-
-const std::map<pid_t, Pipe*> &DistributionCenter::getDistributionPipes() const {
-    return this->_distributionPipes;
 }
 
 

@@ -17,11 +17,11 @@
  * different producers
  */
 class ClassifierBox {
-private:
+public:
     FlowerType flowerType;
+
     std::vector<Flower> _flowers;
 
-public:
     ClassifierBox(FlowerType  flowerType, std::vector<Flower> flowers) : flowerType(flowerType), _flowers(std::move(flowers)) {}
 
     std::string serialize();

@@ -6,18 +6,16 @@
 
 std::string ClassifierBox::serialize() {
     std::string body;
-    std::string head;
 
     body = std::to_string(flowerType) + "|";
-    for (auto flower : _flowers) {
+    for (const auto& flower : _flowers) {
         body += std::to_string(flower.producerId)
                 + "|"
                 + flower.producerName
                 + "|";
     }
-    head = "|" + std::to_string(body.length()) + "|";
 
-    return head + body;
+    return body;
 }
 
 ClassifierBox ClassifierBox::deserialize(const std::string& serializedCB) {
