@@ -1,3 +1,5 @@
+#include <iostream>
+#include <cstring>
 #include "Pipe.h"
 
 Pipe::Pipe() {
@@ -39,7 +41,7 @@ ssize_t Pipe::read(std::string& data, int* status) {
     if (character == '|') {
 
         std::string size;
-        while(::read(this->_readFileDescriptor, &character, 1)) {
+        while(readReturn += ::read(this->_readFileDescriptor, &character, 1)) {
             if (character != '|') {
                 size += character;
             } else {
@@ -49,8 +51,9 @@ ssize_t Pipe::read(std::string& data, int* status) {
         }
 
         char* buffer;
-        buffer = new char[bufferSize];
-        readReturn = ::read(this->_readFileDescriptor, buffer, bufferSize);
+        buffer = new char[bufferSize + 1];
+        memset(buffer, '\0', bufferSize + 1);
+        readReturn += ::read(this->_readFileDescriptor, buffer, bufferSize);
 
         data = buffer;
         delete[] buffer;

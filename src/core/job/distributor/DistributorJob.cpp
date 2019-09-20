@@ -48,7 +48,6 @@ void DistributorJob::handleRequest(const SellerRequest &request) {
 
 void DistributorJob::resupply(const SellerRequest &request) {
     int status;
-    std::string data;
 
     Logger::info("Distributor job #" + std::to_string(_centerId) +
                  " has not enough stock to deliver the request of flowers made by seller #" + request.sellerId +
@@ -58,9 +57,12 @@ void DistributorJob::resupply(const SellerRequest &request) {
                  "[roses boxes stock: " + std::to_string(_rosesStock) + " ; tulip boxes stock: " +
                  std::to_string(_tulipsStock) + "]");
 
-    while ((_rosesStock - request.rosesBoxAmount) < 0 &&
-           (_tulipsStock - request.tulipsBoxAmount) < 0) {
+    while ((_rosesStock < request.rosesBoxAmount) &&
+           (_tulipsStock < request.tulipsBoxAmount)) {
+        std::string data;
         ssize_t readAmount = _classifierPipe->read(data, &status);
+        Logger::debug("Distibutor job just read " + std::to_string(readAmount) + " from serialized classifier box: \n" + data);
+
         if (readAmount == -1) {
             Logger::error("Distributor job #" + std::to_string(_centerId) + " could not resupply due to a pipe error.");
             //TODO: handle
@@ -72,6 +74,7 @@ void DistributorJob::resupply(const SellerRequest &request) {
             Logger::info("Distributor job #" + std::to_string(_centerId) + " could not resupply because of closed pipe.");
             return;
         }
+
         if (status == EXIT_SUCCESS) {
             ClassifierBox cb = ClassifierBox::deserialize(data);
             switch (cb.flowerType) {
@@ -83,13 +86,12 @@ void DistributorJob::resupply(const SellerRequest &request) {
                     _tulipsStock ++;
                     break;
             }
+
+            Logger::info("Distributor job #" + std::to_string(_centerId) + " stock after resupply: \n" +
+                         "[roses boxes stock: " + std::to_string(_rosesStock) + " ; tulip boxes stock: " +
+                         std::to_string(_tulipsStock) + "]");
         }
-
-        Logger::info("Distributor job #" + std::to_string(_centerId) + " stock after resupply: \n" +
-                     "[roses boxes stock: " + std::to_string(_rosesStock) + " ; tulip boxes stock: " +
-                     std::to_string(_tulipsStock) + "]");
     };
-
 }
 
 int DistributorJob::finish() {

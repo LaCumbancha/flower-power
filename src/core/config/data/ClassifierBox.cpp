@@ -38,19 +38,14 @@ ClassifierBox ClassifierBox::deserialize(const std::string& serializedCB) {
     auto flowerType = (FlowerType) std::stoi(values[0]);
     std::vector<Flower> flowers;
     try {
-        for (auto iter = values.begin() + 1; iter < values.end(); iter += 2) {
-
-            Flower flower = Flower(std::stoi(*iter), *(iter + 1));
+        for (unsigned long i = 1; i < values.size(); i += 2) {
+            Flower flower = Flower(std::stoi(values.at(i)), values.at(i+1));
             flowers.push_back(flower);
-
         }
-        Logger::debug("Classifier box deserialization success!");
-
         return ClassifierBox(flowerType, flowers);
     } catch (std::exception& e) {
         Logger::debug("Classifier box deserialization error: " + std::string(e.what()) + "\n : serializedCB: " + serializedCB);
         return ClassifierBox(flowerType, flowers);
     }
-
 
 }
