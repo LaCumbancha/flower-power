@@ -14,6 +14,7 @@ DistributionCenter::DistributionCenter(Config *config, int id) : Job() {
     // Creating pipe for producers.
     auto producersPipe = new Pipe();
     for (auto producerData : config->getProducers()) {
+
         std::string producerId = std::to_string(this->_id) + "." + std::to_string(producerData->producerId);
         pid = fork();
 

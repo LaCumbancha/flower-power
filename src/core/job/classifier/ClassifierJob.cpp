@@ -30,7 +30,9 @@ int ClassifierJob::run() {
                 if (_roses.size() == CLASSIFIER_BOX_SIZE) {
                     ClassifierBox rosesBox = ClassifierBox(ROSE, _roses);
                     _distributorPipe->write(rosesBox.serialize());
-                    //TODO: Log
+                    Logger::debug("Classifier #" + std::to_string(this->_center) +
+                                 " sent a 'classifier box' of roses to the distributor #" +
+                                 std::to_string(this->_center) + ".");
                     _roses = std::vector<Flower>();
                 }
             }
@@ -40,7 +42,9 @@ int ClassifierJob::run() {
                 if (_tulips.size() == CLASSIFIER_BOX_SIZE) {
                     ClassifierBox tulipsBox = ClassifierBox(TULIP, _tulips);
                     _distributorPipe->write(tulipsBox.serialize());
-                    //TODO: Log
+                    Logger::debug("Classifier #" + std::to_string(this->_center) +
+                                 " sent a 'classifier box' of tulips to the distributor #" +
+                                 std::to_string(this->_center) + ".");
                     _tulips = std::vector<Flower>();
                 }
             }
@@ -51,6 +55,7 @@ int ClassifierJob::run() {
         }
     }
 
+    Logger::info("Classifier #" + std::to_string(this->_center) + " stock: \n" + "[roses: " + std::to_string(_roses.size()) + " ; tulips: " + std::to_string(_tulips.size()) + "]");
     return EXIT_SUCCESS;
 }
 

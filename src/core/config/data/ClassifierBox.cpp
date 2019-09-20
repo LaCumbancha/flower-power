@@ -2,7 +2,9 @@
 // Created by darius on 18/9/19.
 //
 
+#include <iostream>
 #include "ClassifierBox.h"
+#include "../../../utils/Logger.h"
 
 std::string ClassifierBox::serialize() {
     std::string body;
@@ -33,12 +35,22 @@ ClassifierBox ClassifierBox::deserialize(const std::string& serializedCB) {
         }
     }
 
-    auto flowerType = (FlowerType)std::stoi(values[1]);
-
+    auto flowerType = (FlowerType) std::stoi(values[0]);
     std::vector<Flower> flowers;
-    for(auto iter = values.begin() + 2; iter < values.end(); iter += 2) {
-        Flower flower = Flower(std::stoi(*iter), *(iter+1));
-        flowers.push_back(flower);
+    try {
+        for (auto iter = values.begin() + 1; iter < values.end(); iter += 2) {
+
+            Flower flower = Flower(std::stoi(*iter), *(iter + 1));
+            flowers.push_back(flower);
+
+        }
+        Logger::debug("Classifier box deserialization success!");
+
+        return ClassifierBox(flowerType, flowers);
+    } catch (std::exception& e) {
+        Logger::debug("Classifier box deserialization error: " + std::string(e.what()) + "\n : serializedCB: " + serializedCB);
+        return ClassifierBox(flowerType, flowers);
     }
-    return ClassifierBox(flowerType, flowers);
+
+
 }
