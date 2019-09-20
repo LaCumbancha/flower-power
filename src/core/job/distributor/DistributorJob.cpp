@@ -29,21 +29,39 @@ void DistributorJob::handleRequest(const SellerRequest &request) {
                  std::to_string(request.rosesBoxAmount)
                  + " of roses classifier boxes and " + std::to_string(request.tulipsBoxAmount) +
                  " of tulip classifier boxes.\n" +
-                 "Current stock: " + "[roses boxes stock: " + std::to_string(_rosesStock) + " ; tulip boxes stock: " +
-                 std::to_string(_tulipsStock) + "]");
+                 "Current stock: " + "[roses boxes stock: " + std::to_string(_rosesStock.size()) + " ; tulip boxes stock: " +
+                 std::to_string(_tulipsStock.size()) + "]");
 
     Pipe* responsePipe = _distributionPipes.find(request.sellerId)->second;
-    if (request.rosesBoxAmount > _rosesStock || request.tulipsBoxAmount > _tulipsStock) {
+    if (request.rosesBoxAmount > _rosesStock.size() || request.tulipsBoxAmount > _tulipsStock.size()) {
         resupply(request);
     }
 
-    //TODO: send back to the sellers what they requested
+    for(int i = 0; i < request.rosesBoxAmount || _rosesStock.empty(); i++){
+        ClassifierBox cb = _rosesStock.back();
+        _rosesStock.pop_back();
+        ssize_t wroteAmount = responsePipe->write(cb.serialize());
+        if (wroteAmount == -1) {
+            //TODO: handle broken pipe
+        }
 
-    _rosesStock -= request.rosesBoxAmount;
-    _tulipsStock -= request.tulipsBoxAmount;
+        if (wroteAmount == 0) {
+            //TODO handle
+        }
+    }
 
-//    std::cout << _rosesStock << std::endl;
-//    std::cout << _tulipsStock << std::endl;
+    for(int i = 0; i < request.tulipsBoxAmount || _tulipsStock.empty(); i++){
+        ClassifierBox cb = _tulipsStock.back();
+        _tulipsStock.pop_back();
+        ssize_t wroteAmount = responsePipe->write(cb.serialize());
+        if (wroteAmount == -1) {
+            //TODO: handle broken pipe
+        }
+
+        if (wroteAmount == 0) {
+            //TODO handle
+        }
+    }
 }
 
 void DistributorJob::resupply(const SellerRequest &request) {
@@ -54,11 +72,11 @@ void DistributorJob::resupply(const SellerRequest &request) {
                  " consisting of " + std::to_string(request.rosesBoxAmount)
                  + " roses classifier boxes and " + std::to_string(request.tulipsBoxAmount) +
                  " of tulip classifier boxes: \n" +
-                 "[roses boxes stock: " + std::to_string(_rosesStock) + " ; tulip boxes stock: " +
-                 std::to_string(_tulipsStock) + "]");
+                 "[roses boxes stock: " + std::to_string(_rosesStock.size()) + " ; tulip boxes stock: " +
+                 std::to_string(_tulipsStock.size()) + "]");
 
-    while ((_rosesStock < request.rosesBoxAmount) &&
-           (_tulipsStock < request.tulipsBoxAmount)) {
+    while ((_rosesStock.size() < request.rosesBoxAmount) &&
+           (_tulipsStock.size() < request.tulipsBoxAmount)) {
         std::string data;
         ssize_t readAmount = _classifierPipe->read(data, &status);
         Logger::debug("Distibutor job just read " + std::to_string(readAmount) + " from serialized classifier box: \n" + data);
@@ -78,38 +96,21 @@ void DistributorJob::resupply(const SellerRequest &request) {
         if (status == EXIT_SUCCESS) {
             ClassifierBox cb = ClassifierBox::deserialize(data);
             switch (cb.flowerType) {
-                //TODO handle with flowers and not with ints
                 case ROSE:
-                    _rosesStock ++;
+                    _rosesStock.push_back(cb);
                     break;
                 case TULIP:
-                    _tulipsStock ++;
+                    _tulipsStock.push_back(cb);
                     break;
             }
 
             Logger::info("Distributor job #" + std::to_string(_centerId) + " stock after resupply: \n" +
-                         "[roses boxes stock: " + std::to_string(_rosesStock) + " ; tulip boxes stock: " +
-                         std::to_string(_tulipsStock) + "]");
+                         "[roses boxes stock: " + std::to_string(_rosesStock.size()) + " ; tulip boxes stock: " +
+                         std::to_string(_tulipsStock.size()) + "]");
         }
     };
 }
 
 int DistributorJob::finish() {
     return Job::finish();
-}
-
-int DistributorJob::getRosesStock() const {
-    return _rosesStock;
-}
-
-void DistributorJob::setRosesStock(int rosesStock) {
-    _rosesStock = rosesStock;
-}
-
-int DistributorJob::getTulipsStock() const {
-    return _tulipsStock;
-}
-
-void DistributorJob::setTulipsStock(int tulipsStock) {
-    _tulipsStock = tulipsStock;
 }

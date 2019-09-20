@@ -12,6 +12,7 @@
 #include "../../../utils/Pipe.h"
 #include "../Job.h"
 #include "../../config/data/SellerRequest.h"
+#include "../../config/data/ClassifierBox.h"
 
 class DistributorJob : public Job {
 private:
@@ -19,9 +20,10 @@ private:
     Pipe *_classifierPipe;
     Pipe *_requestsPipe;
     std::map<std::string, Pipe*> _distributionPipes;
+    std::vector<ClassifierBox> _rosesStock;
+    std::vector<ClassifierBox> _tulipsStock;
 
-    int _rosesStock = 0;
-    int _tulipsStock = 0;
+    int _tulipsStockAmount = 0;
     void handleRequest(const SellerRequest& request);
     void resupply(const SellerRequest& request);
 public:
@@ -32,15 +34,6 @@ public:
 
     int run() override;
     int finish() override;
-
-    int getRosesStock() const;
-
-    void setRosesStock(int rosesStock);
-
-    int getTulipsStock() const;
-
-    void setTulipsStock(int tulipsStock);
-
 };
 
 
