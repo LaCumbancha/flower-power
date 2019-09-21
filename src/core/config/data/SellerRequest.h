@@ -8,10 +8,10 @@
 
 class SellerRequest {
 public:
-    int rosesBoxAmount;
-    int tulipsBoxAmount;
+    unsigned int rosesBoxAmount;
+    unsigned int tulipsBoxAmount;
 
-    explicit SellerRequest(std::string sellerId, int rosesBoxAmount, int tulipsBoxAmount) :
+    explicit SellerRequest(std::string sellerId, unsigned int rosesBoxAmount, unsigned int tulipsBoxAmount) :
             sellerId(std::move(sellerId)), rosesBoxAmount(rosesBoxAmount), tulipsBoxAmount(tulipsBoxAmount) {};
     std::string sellerId;
 

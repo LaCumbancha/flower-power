@@ -9,6 +9,7 @@
 #include "../../../utils/Pipe.h"
 #include "../../../utils/Logger.h"
 #include "../../../simulator/ClientSimulator.h"
+#include "../../config/data/ClassifierBox.h"
 
 
 class SellerJob : public Job {
@@ -28,10 +29,10 @@ private:
 
     int listenRequests();
     void handleRequest(BouquetRequest bouquetRequest);
+    void resupply(BouquetRequest request);
 
-    // TODO: Delete after implementing shared memory.
-    int _rosesStock = 10;
-    int _tulipsStock = 10;
+    std::vector<Flower> _rosesStock;
+    std::vector<Flower> _tulipsStock;
 
 };
 

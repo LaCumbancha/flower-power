@@ -8,6 +8,8 @@ SellerJob::SellerJob(std::string sellerId, int clients, Pipe *requestPipe, Pipe 
     this->_sellerId = std::move(sellerId);
     this->_requestPipe = requestPipe;
     this->_distributionPipe = distributionPipe;
+    this->_rosesStock = std::vector<Flower>();
+    this->_tulipsStock = std::vector<Flower>();
 }
 
 int SellerJob::run() {
@@ -17,7 +19,7 @@ int SellerJob::run() {
     if (pid == CHILD_PROCESS_PID) {
         // Child process.
         this->_clientPipe->setWriteMode();
-        auto* clientSimulator = new ClientSimulator(this->_sellerId, this->_clients, this->_clientPipe);
+        auto *clientSimulator = new ClientSimulator(this->_sellerId, this->_clients, this->_clientPipe);
         clientSimulator->run();
     } else {
         // Seller process.
@@ -47,27 +49,88 @@ int SellerJob::listenRequests() {
 }
 
 void SellerJob::handleRequest(BouquetRequest bouquetRequest) {
-    Logger::info("Seller # " + this->_sellerId + " received a request for " + std::to_string(bouquetRequest.rosesAmount) +
+    Logger::info(
+            "Seller # " + this->_sellerId + " received a request for " + std::to_string(bouquetRequest.rosesAmount) +
             " roses and " + std::to_string(bouquetRequest.tulipsAmount) + " tulips.");
 
-    if (this->_rosesStock < bouquetRequest.rosesAmount || this->_tulipsStock < bouquetRequest.tulipsAmount) {
-        SellerRequest sellerRequest = SellerRequest(_sellerId, 5, 5);
-        ssize_t i = _requestPipe->write(sellerRequest.serialize());
-        if (i == ERROR) {
-            //TODO: handle that the pipe es closed due to lack of stock in the distribution center
-        }
-        std::string data;
-        int status;
-        _distributionPipe->read(data, &status);
-        std::cout << data << std::endl;
-        //TODO Increment stocks
-        // TODO: Request stock to Distribution Center and handle case of not having anymore stock.
+    if (this->_rosesStock.size() < bouquetRequest.rosesAmount ||
+        this->_tulipsStock.size() < bouquetRequest.tulipsAmount) {
+        resupply(bouquetRequest);
+        Logger::debug("Seller # " + this->_sellerId + " stock after resupply:" +
+                      "[rose flowers: " + std::to_string(_rosesStock.size()) + " | tulips flowers: " +
+                      std::to_string(_tulipsStock.size()) + "]");
     }
 
-    // TODO: Remove when Stock Manager is implemented.
-    this->_rosesStock -= bouquetRequest.rosesAmount;
-    this->_tulipsStock -= bouquetRequest.tulipsAmount;
+    for (int i = 0; i < bouquetRequest.rosesAmount && !_rosesStock.empty(); i++) {
+        Flower flower = _rosesStock.back();
+        Logger::debug("A rose from producer id#" + std::to_string(flower.producerId) + " and name " +
+                      flower.producerName + " was selled by seller # " + this->_sellerId);
+        _rosesStock.pop_back();
+
+        //TODO: Increment producer statistics
+    }
+
+    for (int i = 0; i < bouquetRequest.tulipsAmount && !_tulipsStock.empty(); i++) {
+        Flower flower = _tulipsStock.back();
+        Logger::debug("A tulips from producer id#" + std::to_string(flower.producerId) + " and name " +
+                      flower.producerName + " was selled by seller # " + this->_sellerId);
+        _rosesStock.pop_back();
+
+        //TODO: Increment producer statistics
+
+    }
 }
+
+void SellerJob::resupply(BouquetRequest request) {
+    unsigned int rosesBoxAmount =
+            div((int) (request.rosesAmount - _rosesStock.size()), CLASSIFIER_BOX_SIZE).quot + 1;
+    unsigned int tulipsBoxAmount =
+            div((int) (request.tulipsAmount - _tulipsStock.size()), CLASSIFIER_BOX_SIZE).quot + 1;
+
+    SellerRequest sellerRequest = SellerRequest(_sellerId, rosesBoxAmount, tulipsBoxAmount);
+    ssize_t wroteAmount = _requestPipe->write(sellerRequest.serialize());
+    if (wroteAmount == ERROR) {
+        //TODO: handle that the pipe es closed due to lack of stock in the distribution center
+    }
+
+    unsigned int receivedBoxes = 0;
+    while (receivedBoxes < (rosesBoxAmount + tulipsBoxAmount)) {
+        std::string serializedCb;
+        int status;
+
+        int readAmount = _distributionPipe->read(serializedCb, &status);
+
+        if (readAmount == -1) {
+            std::cerr << "Broken pipe" << std::endl;
+            //TODO: handle broken pipe
+        }
+
+        if (readAmount == 0) {
+            std::cerr << "End of file" << std::endl;
+            //TODO handle
+        }
+
+        if (status == EXIT_SUCCESS) {
+            Logger::debug("XXX: " + serializedCb);
+            ClassifierBox cb = ClassifierBox::deserialize(serializedCb);
+            switch (cb.flowerType) {
+                case ROSE:
+                    for (const auto &flower: cb._flowers) {
+                        _rosesStock.push_back(flower);
+                    }
+                    break;
+                case TULIP:
+                    for (const auto &flower: cb._flowers) {
+                        _tulipsStock.push_back(flower);
+                    }
+                    break;
+            }
+            receivedBoxes++;
+        }
+    }
+
+}
+
 
 int SellerJob::finish() {
     int processStatus;

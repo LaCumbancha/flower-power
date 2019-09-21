@@ -29,15 +29,17 @@ void DistributorJob::handleRequest(const SellerRequest &request) {
                  std::to_string(request.rosesBoxAmount)
                  + " of roses classifier boxes and " + std::to_string(request.tulipsBoxAmount) +
                  " of tulip classifier boxes.\n" +
-                 "Current stock: " + "[roses boxes stock: " + std::to_string(_rosesStock.size()) + " ; tulip boxes stock: " +
+                 "Current stock: " + "[roses boxes stock: " + std::to_string(_rosesStock.size()) +
+                 " ; tulip boxes stock: " +
                  std::to_string(_tulipsStock.size()) + "]");
 
-    Pipe* responsePipe = _distributionPipes.find(request.sellerId)->second;
+    Pipe *responsePipe = _distributionPipes.find(request.sellerId)->second;
     if (request.rosesBoxAmount > _rosesStock.size() || request.tulipsBoxAmount > _tulipsStock.size()) {
         resupply(request);
     }
 
-    for(int i = 0; i < request.rosesBoxAmount || _rosesStock.empty(); i++){
+
+    for (int i = 0; i < request.rosesBoxAmount && !_rosesStock.empty(); i++) {
         ClassifierBox cb = _rosesStock.back();
         _rosesStock.pop_back();
         ssize_t wroteAmount = responsePipe->write(cb.serialize());
@@ -50,7 +52,7 @@ void DistributorJob::handleRequest(const SellerRequest &request) {
         }
     }
 
-    for(int i = 0; i < request.tulipsBoxAmount || _tulipsStock.empty(); i++){
+    for (int i = 0; i < request.tulipsBoxAmount && !_tulipsStock.empty(); i++) {
         ClassifierBox cb = _tulipsStock.back();
         _tulipsStock.pop_back();
         ssize_t wroteAmount = responsePipe->write(cb.serialize());
@@ -75,7 +77,7 @@ void DistributorJob::resupply(const SellerRequest &request) {
                  "[roses boxes stock: " + std::to_string(_rosesStock.size()) + " ; tulip boxes stock: " +
                  std::to_string(_tulipsStock.size()) + "]");
 
-    while ((_rosesStock.size() < request.rosesBoxAmount) &&
+    while ((_rosesStock.size() < request.rosesBoxAmount) ||
            (_tulipsStock.size() < request.tulipsBoxAmount)) {
         std::string data;
         ssize_t readAmount = _classifierPipe->read(data, &status);
