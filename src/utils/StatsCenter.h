@@ -27,6 +27,7 @@ private:
     static std::vector<Flower> _tulips;
 
     static bool isSaleIncoming(const std::string& data);
+    static bool isQuitIncoming(const std::string &data);
     static bool isRequestIncoming(const std::string& data);
     static bool isRoseIncoming(const std::string& flower);
     static bool isTulipIncoming(const std::string& flower);
