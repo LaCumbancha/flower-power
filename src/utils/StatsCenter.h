@@ -14,7 +14,7 @@ public:
 
     static void run();
     static void addingMode();
-    static void addSale(Flower flower, std::string flowerType);
+    static void addSale(Flower flower, FlowerType type);
 
     static std::string getMostSoldFlower();
     static std::string getMostSoldProducer();

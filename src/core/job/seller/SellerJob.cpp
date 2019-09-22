@@ -2,6 +2,7 @@
 
 #include <utility>
 #include "../../config/data/SellerRequest.h"
+#include "../../../utils/StatsCenter.h"
 
 SellerJob::SellerJob(std::string sellerId, int clients, Pipe *requestPipe, Pipe *distributionPipe) : Job() {
     this->_clients = clients;
@@ -66,7 +67,8 @@ void SellerJob::handleRequest(BouquetRequest bouquetRequest) {
                       flower.producerName + ") was sold by Seller #" + this->_sellerId);
         _rosesStock.pop_back();
 
-        //TODO: Increment producer statistics
+        // Adding information to Stats Center.
+        StatsCenter::addSale(flower, ROSE);
     }
 
     for (int i = 0; i < bouquetRequest.tulipsAmount && !_tulipsStock.empty(); i++) {
@@ -75,8 +77,8 @@ void SellerJob::handleRequest(BouquetRequest bouquetRequest) {
                       flower.producerName + ") was sold by Seller #" + this->_sellerId);
         _rosesStock.pop_back();
 
-        //TODO: Increment producer statistics
-
+        // Adding information to Stats Center.
+        StatsCenter::addSale(flower, TULIP);
     }
 }
 

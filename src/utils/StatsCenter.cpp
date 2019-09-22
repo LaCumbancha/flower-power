@@ -40,8 +40,9 @@ void StatsCenter::wroteStats(const std::string& request) {
     }
 }
 
-void StatsCenter::addSale(Flower flower, std::string flowerType) {
-    // TODO: Add flower data.
+void StatsCenter::addSale(Flower flower, FlowerType type) {
+    if (type == ROSE) StatsCenter::_sellerPipe->write("R|" + flower.serialize());
+    else if (type == TULIP) StatsCenter::_sellerPipe->write("T|" + flower.serialize());
 }
 
 std::string StatsCenter::getMostSoldFlower() {
