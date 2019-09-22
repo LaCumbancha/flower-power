@@ -1,9 +1,5 @@
 #include "SellerJob.h"
 
-#include <utility>
-#include "../../config/data/SellerRequest.h"
-#include "../../../utils/StatsCenter.h"
-
 SellerJob::SellerJob(std::string sellerId, int clients, Pipe *requestPipe, Pipe *distributionPipe) : Job() {
     this->_clients = clients;
     this->_sellerId = std::move(sellerId);
@@ -155,9 +151,26 @@ int SellerJob::finish() {
         Logger::info("Client Simulator #" + this->_sellerId + " successfully ended without errors.");
     }
 
-    delete _distributionPipe;
+    ContextStorage::saveContext(this->contextState());
 
+    delete _distributionPipe;
     delete _requestPipe;
 
     exit(EXIT_SUCCESS);
+}
+
+std::string SellerJob::contextState() {
+    std::string state = 'S' + this->_sellerId + ',';
+
+    for (auto rose : this->_rosesStock) {
+        state += rose.serialize() + '!';
+    }
+
+    state += ',';
+
+    for (auto tulip : this->_tulipsStock) {
+        state += tulip.serialize() + '!';
+    }
+
+    return state;
 }

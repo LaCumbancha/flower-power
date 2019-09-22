@@ -66,6 +66,8 @@ int ClassifierJob::run() {
         Logger::debug("Classifier #" + std::to_string(this->_center) + " producers pipe got closed.");
     }
 
+    ContextStorage::saveContext(this->contextState());
+
     return EXIT_SUCCESS;
 }
 
@@ -78,4 +80,20 @@ int ClassifierJob::finish() {
             "Classifier #" + std::to_string(this->_center) + " pipe connected to the distributor process destroyed.");
 
     exit(EXIT_SUCCESS);
+}
+
+std::string ClassifierJob::contextState() {
+    std::string state = 'C' + std::to_string(this->_center) + ',';
+
+    for (auto rose : this->_roses) {
+        state += rose.serialize() + '!';
+    }
+
+    state += ',';
+
+    for (auto tulip : this->_tulips) {
+        state += tulip.serialize() + '!';
+    }
+
+    return state;
 }

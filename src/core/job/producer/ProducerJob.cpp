@@ -1,5 +1,4 @@
 #include "ProducerJob.h"
-#include "../../../utils/csv/CSVWriter.h"
 
 ProducerJob::ProducerJob(const int centerId, const FlowerBox *producerData, Pipe *producerPipe) : Job() {
 
@@ -61,6 +60,9 @@ FlowerBox ProducerJob::generateFlowerBox() {
 }
 
 int ProducerJob::run() {
+
+    ContextStorage::saveContext(this->contextState());
+
     while (this->_rosesStock != 0 or this->_tulipsStock != 0) {
         auto box = this->generateFlowerBox();
 
@@ -80,4 +82,9 @@ int ProducerJob::finish() {
                  this->_producerName + ") pipe destroyed.");
 
     exit(EXIT_SUCCESS);
+}
+
+std::string ProducerJob::contextState() {
+    return 'P' + std::to_string(this->_centerId) + '.' + std::to_string(this->_producerId) + ',' +
+           std::to_string(this->_rosesStock) + ',' + std::to_string(this->_tulipsStock);
 }

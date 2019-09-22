@@ -4,11 +4,15 @@
 
 #include <iostream>
 #include <sys/wait.h>
+#include <utility>
 #include "../Job.h"
 #include "../../config/Config.h"
+#include "../../../utils/StatsCenter.h"
+#include "../../../utils/ContextStorage.h"
 #include "../../../utils/Pipe.h"
 #include "../../../utils/Logger.h"
 #include "../../../simulator/ClientSimulator.h"
+#include "../../config/data/SellerRequest.h"
 #include "../../config/data/ClassifierBox.h"
 
 
@@ -31,6 +35,7 @@ private:
     int listenRequests();
     void handleRequest(BouquetRequest bouquetRequest);
     void resupply(BouquetRequest request);
+    std::string contextState();
 
     std::vector<Flower> _rosesStock;
     std::vector<Flower> _tulipsStock;

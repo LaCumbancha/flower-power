@@ -1,11 +1,4 @@
-//
-// Created by darius on 17/9/19.
-//
-
-#include <cstring>
 #include "DistributorJob.h"
-#include "../../config/data/ClassifierBox.h"
-#include "../../../utils/Logger.h"
 
 int DistributorJob::run() {
 
@@ -121,6 +114,8 @@ void DistributorJob::resupply(const SellerRequest &request) {
 
 int DistributorJob::finish() {
 
+    ContextStorage::saveContext(this->contextState());
+
     delete _classifierPipe;
     Logger::info("Distributor job #" + std::to_string(_centerId) + " pipe connected to classifier destroyed.");
 
@@ -133,5 +128,21 @@ int DistributorJob::finish() {
                      distributionPipe.first + " destroyed.");
     }
     exit(EXIT_SUCCESS);
+}
+
+std::string DistributorJob::contextState() {
+    std::string state = 'D' + std::to_string(this->_centerId) + ',';
+
+    for (auto rose : this->_rosesStock) {
+        state += rose.serialize() + '!';
+    }
+
+    state += ',';
+
+    for (auto tulip : this->_tulipsStock) {
+        state += tulip.serialize() + '!';
+    }
+
+    return state;
 }
 

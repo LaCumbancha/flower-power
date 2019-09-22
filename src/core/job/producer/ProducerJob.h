@@ -6,6 +6,8 @@
 #include "../Job.h"
 #include "../../../utils/Pipe.h"
 #include "../../../utils/Logger.h"
+#include "../../../utils/ContextStorage.h"
+#include "../../../utils/csv/CSVWriter.h"
 
 
 class ProducerJob : public Job {
@@ -24,7 +26,7 @@ private:
     Pipe* _producerPipe;
 
     FlowerBox generateFlowerBox();
-    void saveState();
+    std::string contextState();
 
 };
 

@@ -9,7 +9,7 @@ void CSVWriter::saveData(const std::string& data) {
 
     // Creating CSV file file.
     std::ofstream outfile;
-    outfile.open(this->_filename, std::ios::app);
+    outfile.open(this->_filename, std::ios::out);
 
     // Saving data.
     outfile << data << std::endl;

@@ -1,7 +1,3 @@
-//
-// Created by darius on 17/9/19.
-//
-
 #ifndef FLOWER_POWER_DISTRIBUTORJOB_H
 #define FLOWER_POWER_DISTRIBUTORJOB_H
 
@@ -9,10 +5,14 @@
 #include <utility>
 #include <vector>
 #include <map>
-#include "../../../utils/Pipe.h"
 #include "../Job.h"
+#include "../../../utils/Pipe.h"
+#include "../../../utils/Logger.h"
+#include "../../../utils/ContextStorage.h"
 #include "../../config/data/SellerRequest.h"
 #include "../../config/data/ClassifierBox.h"
+#include "../../config/data/ClassifierBox.h"
+
 
 class DistributorJob : public Job {
 private:
@@ -27,6 +27,7 @@ private:
 
     void handleRequest(const SellerRequest& request);
     void resupply(const SellerRequest& request);
+    std::string contextState();
 
 public:
     DistributorJob(int centerId, Pipe *classifierPipe, Pipe *requestsPipe, std::map<std::string, Pipe*> distributionPipes)

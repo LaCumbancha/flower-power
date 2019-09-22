@@ -9,7 +9,7 @@ void ContextStorage::run() {
     int status;
 
     // Creating CSV Writer.
-    auto writer = new CSVWriter("/tmp/state.csv");
+    auto writer = new CSVWriter("./tmp/state.csv");
 
     // Reading incoming stats.
     ContextStorage::_incomingPipe->setReadMode();
@@ -17,7 +17,7 @@ void ContextStorage::run() {
     while (ContextStorage::_incomingPipe->read(data, &status)) {
         if (status == EXIT_SUCCESS) {
             if (isSaveIncoming(data)) {
-                writer->saveData(data);
+                writer->saveData(data.substr(2, data.size()));
             } else if (isRetrieveIncoming(data)) {
                 // TODO: Not implemented.
             } else if (isQuitIncoming(data)) {
