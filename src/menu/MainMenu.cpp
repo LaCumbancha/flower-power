@@ -10,13 +10,26 @@ int MainMenu::show() {
             case 0:
                 cout << "Thanks for using Flower Power System!" << endl;
                 break;
-            case 1:
-                coreSystem->run();
+            case 1: {
+                pid_t pid = fork();
+
+                if (pid == CHILD_PROCESS_PID) {
+                    // System process.
+                    coreSystem->run();
+                    coreSystem->finish();
+                }
+
                 cout << endl;
                 display();
                 break;
+            }
             case 2:
                 settingsMenu->show();
+                cout << endl;
+                display();
+                break;
+            case 3:
+                statsMenu->show();
                 cout << endl;
                 display();
                 break;
@@ -34,5 +47,6 @@ void MainMenu::display() {
     cout << "Select your option:" << endl;
     cout << "[1] Run system" << endl;
     cout << "[2] Settings" << endl;
+    cout << "[3] Stats" << endl;
     cout << "Selection: [0 for quit] ";
 }

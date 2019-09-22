@@ -11,7 +11,7 @@ int DistributorJob::run() {
 
     int status;
     std::string incoming;
-    Logger::info("Distributor job from distribution center #" + std::to_string(_centerId) + " running.");
+    Logger::info("Distributor job from Distribution Center #" + std::to_string(_centerId) + " running.");
 
     while (this->_requestsPipe->read(incoming, &status)) {
         if (status == EXIT_SUCCESS) {
@@ -24,14 +24,11 @@ int DistributorJob::run() {
 
 void DistributorJob::handleRequest(const SellerRequest &request) {
 
-    Logger::info("Distributor job #" + std::to_string(_centerId) +
-                 " received a request from seller #" + request.sellerId + " asking for " +
-                 std::to_string(request.rosesBoxAmount)
-                 + " of roses classifier boxes and " + std::to_string(request.tulipsBoxAmount) +
-                 " of tulip classifier boxes.\n" +
-                 "Current stock: " + "[roses boxes stock: " + std::to_string(_rosesStock.size()) +
-                 " ; tulip boxes stock: " +
-                 std::to_string(_tulipsStock.size()) + "]");
+    Logger::info("Distributor #" + std::to_string(_centerId) + " received a request from Seller #"
+                 + request.sellerId + " asking for " + std::to_string(request.rosesBoxAmount) + " roses boxes and " +
+                 std::to_string(request.tulipsBoxAmount) + " tulips boxes. Current DC stock: " +
+                 std::to_string(_rosesStock.size()) + " roses boxes and " + std::to_string(_tulipsStock.size()) +
+                 " tulips boxes.");
 
     auto responsePipeInfo = _distributionPipes.find(request.sellerId);
     Pipe *responsePipe = responsePipeInfo->second;
@@ -52,7 +49,7 @@ void DistributorJob::handleRequest(const SellerRequest &request) {
         _rosesStock.pop_back();
         ssize_t wroteAmount = responsePipe->write(cb.serialize());
         if (wroteAmount == -1) {
-            Logger::error("Distributor job #" + std::to_string(_centerId) + " could not supply the seller #" +
+            Logger::error("Distributor #" + std::to_string(_centerId) + " could not supply the Seller #" +
                           request.sellerId + " due to a pipe error.");
             return;
         }
@@ -64,7 +61,7 @@ void DistributorJob::handleRequest(const SellerRequest &request) {
         _tulipsStock.pop_back();
         ssize_t wroteAmount = responsePipe->write(cb.serialize());
         if (wroteAmount == -1) {
-            Logger::error("Distributor job #" + std::to_string(_centerId) + " could not supply the seller #" +
+            Logger::error("Distributor #" + std::to_string(_centerId) + " could not supply the Seller #" +
                           request.sellerId + " due to a pipe error.");
             return;
         }
@@ -75,13 +72,11 @@ void DistributorJob::handleRequest(const SellerRequest &request) {
 void DistributorJob::resupply(const SellerRequest &request) {
     int status;
 
-    Logger::info("Distributor job #" + std::to_string(_centerId) +
-                 " has not enough stock to deliver the request of flowers made by seller #" + request.sellerId +
-                 " consisting of " + std::to_string(request.rosesBoxAmount)
-                 + " roses classifier boxes and " + std::to_string(request.tulipsBoxAmount) +
-                 " of tulip classifier boxes: \n" +
-                 "[roses boxes stock: " + std::to_string(_rosesStock.size()) + " ; tulip boxes stock: " +
-                 std::to_string(_tulipsStock.size()) + "]");
+    Logger::info("Distributor #" + std::to_string(_centerId) + " has not enough stock to deliver the request "
+                 +"of flowers made by Seller #" + request.sellerId + ", consisting of " + std::to_string(request.rosesBoxAmount)
+                 + " roses boxes and " + std::to_string(request.tulipsBoxAmount) + " of tulips boxes. Current DC stock: " +
+                 std::to_string(_rosesStock.size()) + " roses boxes and " + std::to_string(_tulipsStock.size()) +
+                 " tulips boxes.");
 
     while ((_rosesStock.size() < request.rosesBoxAmount) ||
            (_tulipsStock.size() < request.tulipsBoxAmount)) {
@@ -89,8 +84,9 @@ void DistributorJob::resupply(const SellerRequest &request) {
         std::string data;
         ssize_t readAmount = _classifierPipe->read(data, &status);
 
+
         if (readAmount == -1) {
-            Logger::error("Distributor job #" + std::to_string(_centerId) + " could not resupply due to a pipe error.");
+            Logger::error("Distributor #" + std::to_string(_centerId) + " could not resupply due to a pipe error.");
             return;
         }
 
@@ -99,9 +95,8 @@ void DistributorJob::resupply(const SellerRequest &request) {
                          " could not fully resupply because of closed pipe. Remnant stock: " + "[roses boxes stock: " +
                          std::to_string(_rosesStock.size()) + " ; tulip boxes stock: " +
                          std::to_string(_tulipsStock.size()) + "]");
-            Logger::debug("Distibutor job  #" + std::to_string(_centerId) +
-                          " won't be able to resupply due to producers having exhausted their production.");
             resupplyPipeIsOpen = false;
+
             return;
         }
 
@@ -117,14 +112,15 @@ void DistributorJob::resupply(const SellerRequest &request) {
                     break;
             }
 
-            Logger::info("Distributor job #" + std::to_string(_centerId) + " stock after resupply: \n" +
-                         "[roses boxes stock: " + std::to_string(_rosesStock.size()) + " ; tulip boxes stock: " +
-                         std::to_string(_tulipsStock.size()) + "]");
+            Logger::info("Distributor #" + std::to_string(_centerId) + " stock after resupply: " +
+                         std::to_string(_rosesStock.size()) + " roses boxes and " + std::to_string(_tulipsStock.size()) +
+                         " tulips boxes.");
         }
     };
 }
 
 int DistributorJob::finish() {
+
     delete _classifierPipe;
     Logger::info("Distributor job #" + std::to_string(_centerId) + " pipe connected to classifier destroyed.");
 

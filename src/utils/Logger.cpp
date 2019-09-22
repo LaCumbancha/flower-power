@@ -29,6 +29,7 @@ void Logger::run() {
 
     outfile << mainLog() << "[INFO] Closing log." << std::endl;
     outfile.close();
+    Logger::close();
     exit(EXIT_SUCCESS);
 }
 

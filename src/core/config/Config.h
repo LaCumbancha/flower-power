@@ -32,7 +32,7 @@ private:
     int _distributionCenters = 1;
     std::vector<FlowerBox*> _producers;
 
-    std::string _producersPath = "../data/producers.csv";
+    std::string _producersPath = "./data/producers.csv";
 
 };
 

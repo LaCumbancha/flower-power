@@ -29,7 +29,7 @@ ssize_t Pipe::write(const std::string& data) {
     stream += std::to_string(data.size());
     stream += "|";
     stream += data;
-    return ::write(this->_writeFileDescriptor, stream.c_str(), stream.length() + 1);
+    return ::write(this->_writeFileDescriptor, stream.c_str(), stream.length());
 }
 
 // Expected protocol: |<size in chars>|<element 1>|<element 2>|...|<element n>|

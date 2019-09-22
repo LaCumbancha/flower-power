@@ -1,7 +1,3 @@
-//
-// Created by darius on 18/9/19.
-//
-
 #include <iostream>
 #include "ClassifierBox.h"
 #include "../../../utils/Logger.h"
@@ -11,7 +7,7 @@ std::string ClassifierBox::serialize() {
 
     body = std::to_string(flowerType) + "|";
     for (const auto& flower : _flowers) {
-        body += std::to_string(flower.producerId)
+        body += flower.producerId
                 + "|"
                 + flower.producerName
                 + "|";
@@ -39,12 +35,12 @@ ClassifierBox ClassifierBox::deserialize(const std::string& serializedCB) {
     std::vector<Flower> flowers;
     try {
         for (unsigned long i = 1; i < values.size(); i += 2) {
-            Flower flower = Flower(std::stoi(values.at(i)), values.at(i+1));
+            Flower flower = Flower(values.at(i), values.at(i+1));
             flowers.push_back(flower);
         }
         return ClassifierBox(flowerType, flowers);
     } catch (std::exception& e) {
-        Logger::debug("Classifier box deserialization error: " + std::string(e.what()) + "\n : serializedCB: " + serializedCB);
+        Logger::error("Classifier box deserialization error: " + std::string(e.what()) + "\n : serializedCB: " + serializedCB);
         return ClassifierBox(flowerType, flowers);
     }
 

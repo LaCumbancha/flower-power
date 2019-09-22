@@ -2,6 +2,7 @@
 
 #include <utility>
 #include "../../config/data/SellerRequest.h"
+#include "../../../utils/StatsCenter.h"
 
 SellerJob::SellerJob(std::string sellerId, int clients, Pipe *requestPipe, Pipe *distributionPipe) : Job() {
     this->_clients = clients;
@@ -52,8 +53,9 @@ int SellerJob::listenRequests() {
 }
 
 void SellerJob::handleRequest(BouquetRequest bouquetRequest) {
-    Logger::info(
-            "Seller # " + this->_sellerId + " received a request for " + std::to_string(bouquetRequest.rosesAmount) +
+    // Uncomment the following line to measure stats real time.
+    // sleep(10);
+    Logger::info("Seller # " + this->_sellerId + " received a request for " + std::to_string(bouquetRequest.rosesAmount) +
             " roses and " + std::to_string(bouquetRequest.tulipsAmount) + " tulips.");
 
     if ((this->_rosesStock.size() < bouquetRequest.rosesAmount ||
@@ -64,21 +66,22 @@ void SellerJob::handleRequest(BouquetRequest bouquetRequest) {
 
     for (int i = 0; i < bouquetRequest.rosesAmount && !_rosesStock.empty(); i++) {
         Flower flower = _rosesStock.back();
-        Logger::debug("A rose from producer id#" + std::to_string(flower.producerId) + " and name " +
-                      flower.producerName + " was selled by seller # " + this->_sellerId);
+        Logger::info("A rose from Producer #" + flower.producerId + " (" + flower.producerName + ") was sold by Seller #" + this->_sellerId);
         _rosesStock.pop_back();
 
-        //TODO: Increment producer statistics
+        // Adding information to Stats Center.
+        StatsCenter::addSale(flower, ROSE);
+        Logger::debug("Seller #" + this->_sellerId + " added a rose to the Stats Center.");
     }
 
     for (int i = 0; i < bouquetRequest.tulipsAmount && !_tulipsStock.empty(); i++) {
         Flower flower = _tulipsStock.back();
-        Logger::debug("A tulips from producer id#" + std::to_string(flower.producerId) + " and name " +
-                      flower.producerName + " was selled by seller # " + this->_sellerId);
+        Logger::info("A tulip from Producer #" + flower.producerId + " (" + flower.producerName + ") was sold by Seller #" + this->_sellerId);
         _rosesStock.pop_back();
 
-        //TODO: Increment producer statistics
-
+        // Adding information to Stats Center.
+        StatsCenter::addSale(flower, TULIP);
+        Logger::debug("Seller #" + this->_sellerId + " added a tulip to the Stats Center.");
     }
 }
 
