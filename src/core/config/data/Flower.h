@@ -10,8 +10,8 @@ enum FlowerType {ROSE, TULIP};
 
 class Flower {
 public:
-    explicit Flower(int producerId, std::string producerName);
-    int producerId;
+    explicit Flower(std::string producerId, std::string producerName);
+    std::string producerId;
     std::string producerName;
 
     std::string serialize();

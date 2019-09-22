@@ -63,8 +63,7 @@ void SellerJob::handleRequest(BouquetRequest bouquetRequest) {
 
     for (int i = 0; i < bouquetRequest.rosesAmount && !_rosesStock.empty(); i++) {
         Flower flower = _rosesStock.back();
-        Logger::info("A rose from Producer #" + std::to_string(flower.producerId) + " (" +
-                      flower.producerName + ") was sold by Seller #" + this->_sellerId);
+        Logger::info("A rose from Producer #" + flower.producerId + " (" + flower.producerName + ") was sold by Seller #" + this->_sellerId);
         _rosesStock.pop_back();
 
         // Adding information to Stats Center.
@@ -74,8 +73,7 @@ void SellerJob::handleRequest(BouquetRequest bouquetRequest) {
 
     for (int i = 0; i < bouquetRequest.tulipsAmount && !_tulipsStock.empty(); i++) {
         Flower flower = _tulipsStock.back();
-        Logger::info("A tulip from Producer #" + std::to_string(flower.producerId) + " (" +
-                      flower.producerName + ") was sold by Seller #" + this->_sellerId);
+        Logger::info("A tulip from Producer #" + flower.producerId + " (" + flower.producerName + ") was sold by Seller #" + this->_sellerId);
         _rosesStock.pop_back();
 
         // Adding information to Stats Center.
