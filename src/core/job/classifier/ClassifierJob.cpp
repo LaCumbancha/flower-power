@@ -33,7 +33,7 @@ int ClassifierJob::run() {
                     _distributorPipe->write(rosesBox.serialize());
                     Logger::debug("Classifier #" + std::to_string(this->_center) +
                                  " sent a 'classifier box' of roses to the distributor #" +
-                                 std::to_string(this->_center) + ":\n" + rosesBox.serialize());
+                                 std::to_string(this->_center) + ": " + rosesBox.serialize());
                     _roses = std::vector<Flower>();
                 }
             }

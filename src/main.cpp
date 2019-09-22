@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
     }
 
     Logger::writing();
-    Logger::info("Initilized logger in process with PID #" + std::to_string(pid));
+    Logger::info("Initialized logger in process with PID #" + std::to_string(pid));
     MainMenu menu = MainMenu();
     menu.show();
 

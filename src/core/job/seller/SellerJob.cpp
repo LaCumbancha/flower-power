@@ -49,22 +49,21 @@ int SellerJob::listenRequests() {
 }
 
 void SellerJob::handleRequest(BouquetRequest bouquetRequest) {
-    Logger::info(
-            "Seller # " + this->_sellerId + " received a request for " + std::to_string(bouquetRequest.rosesAmount) +
+    Logger::info("Seller # " + this->_sellerId + " received a request for " + std::to_string(bouquetRequest.rosesAmount) +
             " roses and " + std::to_string(bouquetRequest.tulipsAmount) + " tulips.");
 
     if (this->_rosesStock.size() < bouquetRequest.rosesAmount ||
         this->_tulipsStock.size() < bouquetRequest.tulipsAmount) {
         resupply(bouquetRequest);
-        Logger::debug("Seller # " + this->_sellerId + " stock after resupply:" +
-                      "[rose flowers: " + std::to_string(_rosesStock.size()) + " | tulips flowers: " +
-                      std::to_string(_tulipsStock.size()) + "]");
+        Logger::info("Seller #" + this->_sellerId + " stock after resupply:"
+                      + std::to_string(_rosesStock.size()) + " roses and " +
+                      std::to_string(_tulipsStock.size()) + " tulips.");
     }
 
     for (int i = 0; i < bouquetRequest.rosesAmount && !_rosesStock.empty(); i++) {
         Flower flower = _rosesStock.back();
-        Logger::debug("A rose from producer id#" + std::to_string(flower.producerId) + " and name " +
-                      flower.producerName + " was selled by seller # " + this->_sellerId);
+        Logger::info("A rose from Producer #" + std::to_string(flower.producerId) + " (" +
+                      flower.producerName + ") was sold by Seller #" + this->_sellerId);
         _rosesStock.pop_back();
 
         //TODO: Increment producer statistics
@@ -72,8 +71,8 @@ void SellerJob::handleRequest(BouquetRequest bouquetRequest) {
 
     for (int i = 0; i < bouquetRequest.tulipsAmount && !_tulipsStock.empty(); i++) {
         Flower flower = _tulipsStock.back();
-        Logger::debug("A tulips from producer id#" + std::to_string(flower.producerId) + " and name " +
-                      flower.producerName + " was selled by seller # " + this->_sellerId);
+        Logger::info("A tulip from Producer #" + std::to_string(flower.producerId) + " (" +
+                      flower.producerName + ") was sold by Seller #" + this->_sellerId);
         _rosesStock.pop_back();
 
         //TODO: Increment producer statistics
