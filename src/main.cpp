@@ -1,5 +1,4 @@
 #include "menu/MainMenu.h"
-#include "utils/Logger.h"
 #include "utils/StatsCenter.h"
 
 using namespace std;
@@ -13,7 +12,7 @@ int main(int argc, char *argv[]) {
     }
 
     Logger::writing();
-    Logger::info("Initialized logger in process with PID #" + std::to_string(pid));
+    Logger::info("Initialized Logger in process with PID #" + std::to_string(pid));
 
     // Creating stats center.
     pid = fork();
@@ -28,6 +27,7 @@ int main(int argc, char *argv[]) {
     menu.show();
 
     Logger::info("Main program finished.");
+    StatsCenter::close();
     Logger::close();
     wait(nullptr);
     return EXIT_SUCCESS;

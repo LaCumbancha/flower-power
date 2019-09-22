@@ -35,16 +35,18 @@ void StatsCenter::updateStats(const std::string& flower) {
 void StatsCenter::outputStats(const std::string& request) {
     if (isProducerRequest(request)) {
         // TODO: Calculate best producer.
-        StatsCenter::_statsPipe->write("Ningún producto vendió nada porque #macrisis.");
+        std::string answer = "Ningún producto vendió nada porque #macrisis.";
+        StatsCenter::_statsPipe->write(answer);
     } else if (isFlowerRequest(request)) {
         // TODO: Calculate best flower.
-        StatsCenter::_statsPipe->write("No se vendió ninguna flor porque #macrisis.");
+        std::string answer = "No se vendió ninguna flor porque #macrisis.";
+        StatsCenter::_statsPipe->write(answer);
     }
 }
 
 void StatsCenter::addSale(Flower flower, FlowerType type) {
-    if (type == ROSE) StatsCenter::_sellerPipe->write("R|" + flower.serialize());
-    else if (type == TULIP) StatsCenter::_sellerPipe->write("T|" + flower.serialize());
+    if (type == ROSE) StatsCenter::_sellerPipe->write("R|" + flower.serialize() + '\0');
+    else if (type == TULIP) StatsCenter::_sellerPipe->write("T|" + flower.serialize() + '\0');
 }
 
 std::string StatsCenter::getMostSoldFlower() {
@@ -100,4 +102,9 @@ bool StatsCenter::isProducerRequest(const std::string& request) {
 
 bool StatsCenter::isFlowerRequest(const std::string& request) {
     return request.substr(2, 2) == "F|";
+}
+
+void StatsCenter::close() {
+    StatsCenter::_statsPipe->~Pipe();
+    StatsCenter::_sellerPipe->~Pipe();
 }

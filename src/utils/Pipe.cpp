@@ -37,7 +37,7 @@ ssize_t Pipe::read(std::string& data, int* status) {
     int bufferSize = 0;
     char character;
     ssize_t readReturn = ::read(this->_readFileDescriptor, &character, 1);
-
+    
     if (character == '|') {
 
         std::string size;

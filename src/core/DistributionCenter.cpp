@@ -145,7 +145,7 @@ void DistributionCenter::closePipes() {
 
     // Closing classifier - distributor pipe.
     this->_innerPipe->~Pipe();
-    Logger::info("Classifier-distributor pipe in Distribution Center #" + std::to_string(this->_id) + " destroyed.");
+    Logger::info("Classifier-Distributor pipe in Distribution Center #" + std::to_string(this->_id) + " destroyed.");
 
     // Closing Requests pipe.
     this->_requestsPipe->~Pipe();

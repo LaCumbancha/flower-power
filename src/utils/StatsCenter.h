@@ -13,6 +13,7 @@ public:
     explicit StatsCenter() = default;
 
     static void run();
+    static void close();
     static void addingMode();
     static void addSale(Flower flower, FlowerType type);
 
@@ -31,7 +32,6 @@ private:
     static bool isFlowerRequest(const std::string& request);
 
     static void updateStats(const std::string& flower);
-
     static void outputStats(const std::string& request);
 };
 
