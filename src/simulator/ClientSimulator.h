@@ -16,6 +16,7 @@ public:
     explicit ClientSimulator(std::string sellerId, int clients, Pipe *clientPipe);
     void run();
 
+    ~ClientSimulator();
 private:
     int _clients;
     std::string _sellerId;

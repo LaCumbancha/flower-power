@@ -32,3 +32,7 @@ BouquetRequest ClientSimulator::simulateBouquetRequest() {
 
     return BouquetRequest(rosesAmount, tulipsAmount);
 }
+
+ClientSimulator::~ClientSimulator() {
+    delete _clientPipe;
+}

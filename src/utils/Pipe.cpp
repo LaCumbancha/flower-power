@@ -38,6 +38,11 @@ ssize_t Pipe::read(std::string& data, int* status) {
     char character;
     ssize_t readReturn = ::read(this->_readFileDescriptor, &character, 1);
 
+    if (readReturn <= 0) {
+        *status = EXIT_FAILURE;
+        return readReturn;
+    }
+
     if (character == '|') {
 
         std::string size;

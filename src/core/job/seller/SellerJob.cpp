@@ -21,6 +21,7 @@ int SellerJob::run() {
         this->_clientPipe->setWriteMode();
         auto *clientSimulator = new ClientSimulator(this->_sellerId, this->_clients, this->_clientPipe);
         clientSimulator->run();
+        delete clientSimulator;
     } else {
         // Seller process.
         Logger::info("Client Simulator # " + this->_sellerId + " running in process " + std::to_string(pid) + ".");
@@ -29,6 +30,7 @@ int SellerJob::run() {
 
         // Listening for incoming requests.
         this->listenRequests();
+        this->finish();
     }
 
     return EXIT_SUCCESS;
@@ -37,14 +39,22 @@ int SellerJob::run() {
 int SellerJob::listenRequests() {
     std::string incoming;
     int status;
+    bool canHandleRequests = true;
     Logger::info("Seller # " + this->_sellerId + " started to listen for requests.");
-    while (this->_clientPipe->read(incoming, &status)) {
+    while (this->_clientPipe->read(incoming, &status) && _distributionPipeIsOpen) {
         if (status == EXIT_SUCCESS) {
             BouquetRequest bouquetRequest = BouquetRequest::deserialize(incoming);
             this->handleRequest(bouquetRequest);
+//            if (!_distributionPipeIsOpen) {
+//                Logger::debug("HH2 : " + std::to_string(bouquetRequest.rosesAmount) + " - " +
+//                std::to_string(bouquetRequest.tulipsAmount) + " | " + std::to_string(_rosesStock.size()) + " - " +
+//                std::to_string(_tulipsStock.size()) + "\nCan handle requests: " + std::to_string(canHandleRequests));
+//            }
         }
+        canHandleRequests = _distributionPipeIsOpen || !_rosesStock.empty() || !_tulipsStock.empty();
     }
 
+    Logger::debug("III");
     return EXIT_SUCCESS;
 }
 
@@ -53,12 +63,13 @@ void SellerJob::handleRequest(BouquetRequest bouquetRequest) {
             "Seller # " + this->_sellerId + " received a request for " + std::to_string(bouquetRequest.rosesAmount) +
             " roses and " + std::to_string(bouquetRequest.tulipsAmount) + " tulips.");
 
-    if (this->_rosesStock.size() < bouquetRequest.rosesAmount ||
-        this->_tulipsStock.size() < bouquetRequest.tulipsAmount) {
+    if ((this->_rosesStock.size() < bouquetRequest.rosesAmount ||
+        this->_tulipsStock.size() < bouquetRequest.tulipsAmount) && _distributionPipeIsOpen) {
         resupply(bouquetRequest);
         Logger::debug("Seller # " + this->_sellerId + " stock after resupply:" +
                       "[rose flowers: " + std::to_string(_rosesStock.size()) + " | tulips flowers: " +
                       std::to_string(_tulipsStock.size()) + "]");
+        return;
     }
 
     for (int i = 0; i < bouquetRequest.rosesAmount && !_rosesStock.empty(); i++) {
@@ -94,7 +105,7 @@ void SellerJob::resupply(BouquetRequest request) {
     }
 
     unsigned int receivedBoxes = 0;
-    while (receivedBoxes < (rosesBoxAmount + tulipsBoxAmount)) {
+    while (_distributionPipeIsOpen && receivedBoxes < (rosesBoxAmount + tulipsBoxAmount)) {
         std::string serializedCb;
         int status;
 
@@ -106,8 +117,10 @@ void SellerJob::resupply(BouquetRequest request) {
         }
 
         if (readAmount == 0) {
-            std::cerr << "End of file" << std::endl;
-            //TODO handle
+            Logger::debug("OOO");
+            Logger::debug("Seller # " + this->_sellerId + " could not resupply due to the distributor pipe being closed.");
+            _distributionPipeIsOpen = false;
+            return;
         }
 
         if (status == EXIT_SUCCESS) {
@@ -144,7 +157,12 @@ int SellerJob::finish() {
         Logger::info("Client Simulator #" + this->_sellerId + " successfully ended without errors.");
     }
 
-    this->_distributionPipe->~Pipe();
-    this->_requestPipe->~Pipe();
+
+    delete _clientPipe;
+
+    delete _distributionPipe;
+//    this->_distributionPipe->~Pipe();
+    delete _requestPipe;
+//    this->_requestPipe->~Pipe();
     exit(EXIT_SUCCESS);
 }

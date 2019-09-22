@@ -27,6 +27,7 @@ private:
     Pipe* _distributionPipe;
     pid_t _clientSimulatorPID{};
 
+    bool _distributionPipeIsOpen = true;
     int listenRequests();
     void handleRequest(BouquetRequest bouquetRequest);
     void resupply(BouquetRequest request);

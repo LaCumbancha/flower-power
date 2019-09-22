@@ -23,9 +23,11 @@ private:
     std::vector<ClassifierBox> _rosesStock;
     std::vector<ClassifierBox> _tulipsStock;
 
-    int _tulipsStockAmount = 0;
+    bool resupplyPipeIsOpen = true;
+
     void handleRequest(const SellerRequest& request);
     void resupply(const SellerRequest& request);
+
 public:
     DistributorJob(int centerId, Pipe *classifierPipe, Pipe *requestsPipe, std::map<std::string, Pipe*> distributionPipes)
             : _classifierPipe(classifierPipe), _requestsPipe(requestsPipe),

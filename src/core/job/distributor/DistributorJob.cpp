@@ -33,11 +33,17 @@ void DistributorJob::handleRequest(const SellerRequest &request) {
                  " ; tulip boxes stock: " +
                  std::to_string(_tulipsStock.size()) + "]");
 
-    Pipe *responsePipe = _distributionPipes.find(request.sellerId)->second;
-    if (request.rosesBoxAmount > _rosesStock.size() || request.tulipsBoxAmount > _tulipsStock.size()) {
+    auto responsePipeInfo = _distributionPipes.find(request.sellerId);
+    Pipe *responsePipe = responsePipeInfo->second;
+    if ((request.rosesBoxAmount > _rosesStock.size() || request.tulipsBoxAmount > _tulipsStock.size()) && resupplyPipeIsOpen) {
         resupply(request);
     }
 
+    if (!resupplyPipeIsOpen && (request.rosesBoxAmount > _rosesStock.size() || request.tulipsBoxAmount > _tulipsStock.size())) {
+        delete responsePipe;
+        _distributionPipes.erase(responsePipeInfo);
+        return;
+    }
 
     for (int i = 0; i < request.rosesBoxAmount && !_rosesStock.empty(); i++) {
         ClassifierBox cb = _rosesStock.back();
@@ -61,6 +67,7 @@ void DistributorJob::handleRequest(const SellerRequest &request) {
             return;
         }
     }
+
 }
 
 void DistributorJob::resupply(const SellerRequest &request) {
@@ -76,9 +83,10 @@ void DistributorJob::resupply(const SellerRequest &request) {
 
     while ((_rosesStock.size() < request.rosesBoxAmount) ||
            (_tulipsStock.size() < request.tulipsBoxAmount)) {
+
         std::string data;
         ssize_t readAmount = _classifierPipe->read(data, &status);
-        Logger::debug("Distibutor job just read " + std::to_string(readAmount) + " from serialized classifier box: \n" + data);
+        Logger::debug("ZZZ: " + std::to_string(readAmount));
 
         if (readAmount == -1) {
             Logger::error("Distributor job #" + std::to_string(_centerId) + " could not resupply due to a pipe error.");
@@ -90,10 +98,14 @@ void DistributorJob::resupply(const SellerRequest &request) {
                          " could not fully resupply because of closed pipe. Remnant stock: " + "[roses boxes stock: " +
                          std::to_string(_rosesStock.size()) + " ; tulip boxes stock: " +
                          std::to_string(_tulipsStock.size()) + "]");
+            Logger::debug("Distibutor job  #" + std::to_string(_centerId) +
+                          " won't be able to resupply due to producers having exhausted their production.");
+            resupplyPipeIsOpen = false;
             return;
         }
 
         if (status == EXIT_SUCCESS) {
+            Logger::debug("Distibutor job  #"  + std::to_string(_centerId) + " just read " + std::to_string(readAmount) + " from serialized classifier box: \n" + data);
             ClassifierBox cb = ClassifierBox::deserialize(data);
             switch (cb.flowerType) {
                 case ROSE:
@@ -112,16 +124,20 @@ void DistributorJob::resupply(const SellerRequest &request) {
 }
 
 int DistributorJob::finish() {
-    _classifierPipe->~Pipe();
+//    _classifierPipe->~Pipe();
+    delete _classifierPipe;
     Logger::info("Distributor job #" + std::to_string(_centerId) + " pipe connected to classifier destroyed.");
 
-    _requestsPipe->~Pipe();
+//    _requestsPipe->~Pipe();
+    delete _requestsPipe;
     Logger::info("Distributor job #" + std::to_string(_centerId) + " requests pipe destroyed.");
 
-    for (auto distributionPipe : _distributionPipes ) {
-        distributionPipe.second->~Pipe();
+    for (const auto& distributionPipe : _distributionPipes ) {
+        delete distributionPipe.second;
+//        distributionPipe.second->~Pipe();
         Logger::info("Distributor job #" + std::to_string(_centerId) + " distribution pipe connected to seller #" +
                      distributionPipe.first + " destroyed.");
     }
     exit(EXIT_SUCCESS);
 }
+
