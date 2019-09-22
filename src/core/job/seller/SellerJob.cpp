@@ -13,20 +13,19 @@ SellerJob::SellerJob(std::string sellerId, int clients, Pipe *requestPipe, Pipe 
 }
 
 int SellerJob::run() {
-    this->_clientPipe = new Pipe();
+    this->_clientPipe = Pipe();
     pid_t pid = fork();
 
     if (pid == CHILD_PROCESS_PID) {
         // Child process.
-        this->_clientPipe->setWriteMode();
-        auto *clientSimulator = new ClientSimulator(this->_sellerId, this->_clients, this->_clientPipe);
-        clientSimulator->run();
-        delete clientSimulator;
+        this->_clientPipe.setWriteMode();
+        auto clientSimulator = ClientSimulator(this->_sellerId, this->_clients, _clientPipe);
+        clientSimulator.run();
     } else {
         // Seller process.
         Logger::info("Client Simulator # " + this->_sellerId + " running in process " + std::to_string(pid) + ".");
         this->_clientSimulatorPID = pid;
-        this->_clientPipe->setReadMode();
+        this->_clientPipe.setReadMode();
 
         // Listening for incoming requests.
         this->listenRequests();
@@ -41,20 +40,14 @@ int SellerJob::listenRequests() {
     int status;
     bool canHandleRequests = true;
     Logger::info("Seller # " + this->_sellerId + " started to listen for requests.");
-    while (this->_clientPipe->read(incoming, &status) && _distributionPipeIsOpen) {
+    while (canHandleRequests && (this->_clientPipe.read(incoming, &status) > 0)) {
         if (status == EXIT_SUCCESS) {
             BouquetRequest bouquetRequest = BouquetRequest::deserialize(incoming);
             this->handleRequest(bouquetRequest);
-//            if (!_distributionPipeIsOpen) {
-//                Logger::debug("HH2 : " + std::to_string(bouquetRequest.rosesAmount) + " - " +
-//                std::to_string(bouquetRequest.tulipsAmount) + " | " + std::to_string(_rosesStock.size()) + " - " +
-//                std::to_string(_tulipsStock.size()) + "\nCan handle requests: " + std::to_string(canHandleRequests));
-//            }
         }
         canHandleRequests = _distributionPipeIsOpen || !_rosesStock.empty() || !_tulipsStock.empty();
     }
 
-    Logger::debug("III");
     return EXIT_SUCCESS;
 }
 
@@ -66,9 +59,6 @@ void SellerJob::handleRequest(BouquetRequest bouquetRequest) {
     if ((this->_rosesStock.size() < bouquetRequest.rosesAmount ||
         this->_tulipsStock.size() < bouquetRequest.tulipsAmount) && _distributionPipeIsOpen) {
         resupply(bouquetRequest);
-        Logger::debug("Seller # " + this->_sellerId + " stock after resupply:" +
-                      "[rose flowers: " + std::to_string(_rosesStock.size()) + " | tulips flowers: " +
-                      std::to_string(_tulipsStock.size()) + "]");
         return;
     }
 
@@ -100,8 +90,9 @@ void SellerJob::resupply(BouquetRequest request) {
 
     SellerRequest sellerRequest = SellerRequest(_sellerId, rosesBoxAmount, tulipsBoxAmount);
     ssize_t wroteAmount = _requestPipe->write(sellerRequest.serialize());
-    if (wroteAmount == ERROR) {
-        //TODO: handle that the pipe es closed due to lack of stock in the distribution center
+    if (wroteAmount == -1) {
+        Logger::error("Seller # " + this->_sellerId + " tried to ask for a resupply to the distribution center while the requests pipe is closed.");
+        return;
     }
 
     unsigned int receivedBoxes = 0;
@@ -112,8 +103,8 @@ void SellerJob::resupply(BouquetRequest request) {
         int readAmount = _distributionPipe->read(serializedCb, &status);
 
         if (readAmount == -1) {
-            std::cerr << "Broken pipe" << std::endl;
-            //TODO: handle broken pipe
+            Logger::debug("Seller # " + this->_sellerId + " : broken pipe.");
+            return;
         }
 
         if (readAmount == 0) {
@@ -140,7 +131,9 @@ void SellerJob::resupply(BouquetRequest request) {
             receivedBoxes++;
         }
     }
-
+    Logger::debug("Seller # " + this->_sellerId + " stock after resupply:" +
+                  "[rose flowers: " + std::to_string(_rosesStock.size()) + " | tulips flowers: " +
+                  std::to_string(_tulipsStock.size()) + "]");
 }
 
 
@@ -156,9 +149,6 @@ int SellerJob::finish() {
     } else {
         Logger::info("Client Simulator #" + this->_sellerId + " successfully ended without errors.");
     }
-
-
-    delete _clientPipe;
 
     delete _distributionPipe;
 //    this->_distributionPipe->~Pipe();

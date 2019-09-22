@@ -42,6 +42,8 @@ void DistributorJob::handleRequest(const SellerRequest &request) {
     if (!resupplyPipeIsOpen && (request.rosesBoxAmount > _rosesStock.size() || request.tulipsBoxAmount > _tulipsStock.size())) {
         delete responsePipe;
         _distributionPipes.erase(responsePipeInfo);
+        Logger::info("Distributor job #" + std::to_string(_centerId) + " destroyed the pipe connecting to the seller #" +
+                      request.sellerId + " due to the fact that his resupply request cannot be satisfied.");
         return;
     }
 
@@ -86,7 +88,6 @@ void DistributorJob::resupply(const SellerRequest &request) {
 
         std::string data;
         ssize_t readAmount = _classifierPipe->read(data, &status);
-        Logger::debug("ZZZ: " + std::to_string(readAmount));
 
         if (readAmount == -1) {
             Logger::error("Distributor job #" + std::to_string(_centerId) + " could not resupply due to a pipe error.");
@@ -124,17 +125,14 @@ void DistributorJob::resupply(const SellerRequest &request) {
 }
 
 int DistributorJob::finish() {
-//    _classifierPipe->~Pipe();
     delete _classifierPipe;
     Logger::info("Distributor job #" + std::to_string(_centerId) + " pipe connected to classifier destroyed.");
 
-//    _requestsPipe->~Pipe();
     delete _requestsPipe;
     Logger::info("Distributor job #" + std::to_string(_centerId) + " requests pipe destroyed.");
 
     for (const auto& distributionPipe : _distributionPipes ) {
         delete distributionPipe.second;
-//        distributionPipe.second->~Pipe();
         Logger::info("Distributor job #" + std::to_string(_centerId) + " distribution pipe connected to seller #" +
                      distributionPipe.first + " destroyed.");
     }
