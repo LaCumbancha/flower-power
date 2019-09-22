@@ -24,6 +24,7 @@ private:
     Pipe* _producerPipe;
 
     FlowerBox generateFlowerBox();
+    void saveState();
 
 };
 

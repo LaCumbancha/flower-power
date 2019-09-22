@@ -22,6 +22,7 @@ void Logger::run() {
     Logger::logPipe->setReadMode();
     while(Logger::logPipe->read(data, &status)){
         if (status == EXIT_SUCCESS) {
+            if (isQuitIncoming(data)) break;
             Logger::cleanLog(data);
             outfile << data << std::endl;
         }
@@ -33,7 +34,12 @@ void Logger::run() {
     exit(EXIT_SUCCESS);
 }
 
+bool Logger::isQuitIncoming(const std::string &data) {
+    return data == "QUIT";
+}
+
 void Logger::close() {
+    Logger::logPipe->write("QUIT");
     Logger::logPipe->~Pipe();
 }
 

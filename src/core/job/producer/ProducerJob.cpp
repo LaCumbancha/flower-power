@@ -1,4 +1,5 @@
 #include "ProducerJob.h"
+#include "../../../utils/csv/CSVWriter.h"
 
 ProducerJob::ProducerJob(const int centerId, const FlowerBox *producerData, Pipe *producerPipe) : Job() {
 
