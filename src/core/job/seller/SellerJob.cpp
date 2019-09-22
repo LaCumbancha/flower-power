@@ -111,7 +111,6 @@ void SellerJob::resupply(BouquetRequest request) {
         }
 
         if (status == EXIT_SUCCESS) {
-            Logger::debug("XXX: " + serializedCb);
             ClassifierBox cb = ClassifierBox::deserialize(serializedCb);
             switch (cb.flowerType) {
                 case ROSE:

@@ -17,11 +17,12 @@ ClassifierJob::ClassifierJob(const int center, Pipe *producersPipe, Pipe* distri
 int ClassifierJob::run() {
     std::string data;
     int status;
+    int readAmount;
 
-    while (this->_producersPipe->read(data, &status)) {
+    while ((readAmount = this->_producersPipe->read(data, &status)) > 0) {
         if (status == EXIT_SUCCESS) {
             FlowerBox box = FlowerBox::deserialize(data);
-            Logger::info("Classifier #" + std::to_string(this->_center) + " received a box with " +
+            Logger::debug("Classifier #" + std::to_string(this->_center) + " received a box with " +
                          std::to_string(box.rosesStock) + " roses and " + std::to_string(box.tulipsStock) +
                          " tulips from provider #" + std::to_string(box.producerId) + " (" + box.producerName + ").");
 
@@ -55,7 +56,15 @@ int ClassifierJob::run() {
         }
     }
 
-    Logger::info("Classifier #" + std::to_string(this->_center) + " stock: \n" + "[roses: " + std::to_string(_roses.size()) + " ; tulips: " + std::to_string(_tulips.size()) + "]");
+    if (readAmount == -1) {
+        Logger::error("Classifier #" + std::to_string(this->_center) + " could not keep receiving boxes from producers due to a pipe error.");
+        return EXIT_FAILURE;
+    }
+
+    if (readAmount == 0) {
+        Logger::debug("Classifier #" + std::to_string(this->_center) + " producers pipe got closed.");
+    }
+
     return EXIT_SUCCESS;
 }
 

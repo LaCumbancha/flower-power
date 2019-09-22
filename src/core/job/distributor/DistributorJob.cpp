@@ -44,12 +44,11 @@ void DistributorJob::handleRequest(const SellerRequest &request) {
         _rosesStock.pop_back();
         ssize_t wroteAmount = responsePipe->write(cb.serialize());
         if (wroteAmount == -1) {
-            //TODO: handle broken pipe
+            Logger::error("Distributor job #" + std::to_string(_centerId) + " could not supply the seller #" +
+                          request.sellerId + " due to a pipe error.");
+            return;
         }
 
-        if (wroteAmount == 0) {
-            //TODO handle
-        }
     }
 
     for (int i = 0; i < request.tulipsBoxAmount && !_tulipsStock.empty(); i++) {
@@ -57,11 +56,9 @@ void DistributorJob::handleRequest(const SellerRequest &request) {
         _tulipsStock.pop_back();
         ssize_t wroteAmount = responsePipe->write(cb.serialize());
         if (wroteAmount == -1) {
-            //TODO: handle broken pipe
-        }
-
-        if (wroteAmount == 0) {
-            //TODO handle
+            Logger::error("Distributor job #" + std::to_string(_centerId) + " could not supply the seller #" +
+                          request.sellerId + " due to a pipe error.");
+            return;
         }
     }
 }
@@ -85,13 +82,14 @@ void DistributorJob::resupply(const SellerRequest &request) {
 
         if (readAmount == -1) {
             Logger::error("Distributor job #" + std::to_string(_centerId) + " could not resupply due to a pipe error.");
-            //TODO: handle
             return;
         }
 
         if (readAmount == 0) {
-            //TODO: handle end of file
-            Logger::info("Distributor job #" + std::to_string(_centerId) + " could not resupply because of closed pipe.");
+            Logger::info("Distributor job #" + std::to_string(_centerId) +
+                         " could not fully resupply because of closed pipe. Remnant stock: " + "[roses boxes stock: " +
+                         std::to_string(_rosesStock.size()) + " ; tulip boxes stock: " +
+                         std::to_string(_tulipsStock.size()) + "]");
             return;
         }
 
@@ -114,5 +112,16 @@ void DistributorJob::resupply(const SellerRequest &request) {
 }
 
 int DistributorJob::finish() {
-    return Job::finish();
+    _classifierPipe->~Pipe();
+    Logger::info("Distributor job #" + std::to_string(_centerId) + " pipe connected to classifier destroyed.");
+
+    _requestsPipe->~Pipe();
+    Logger::info("Distributor job #" + std::to_string(_centerId) + " requests pipe destroyed.");
+
+    for (auto distributionPipe : _distributionPipes ) {
+        distributionPipe.second->~Pipe();
+        Logger::info("Distributor job #" + std::to_string(_centerId) + " distribution pipe connected to seller #" +
+                     distributionPipe.first + " destroyed.");
+    }
+    exit(EXIT_SUCCESS);
 }
