@@ -13,6 +13,15 @@ int main(int argc, char *argv[]) {
 
     Logger::writing();
     Logger::info("Initialized logger in process with PID #" + std::to_string(pid));
+
+    // Creating stats center.
+    pid = fork();
+    if (pid == CHILD_PROCESS_PID) {
+        StatsCenter::run();
+    }
+
+    StatsCenter::adding();
+
     MainMenu menu = MainMenu();
     menu.show();
 

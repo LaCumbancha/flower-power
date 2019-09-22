@@ -35,6 +35,8 @@ add_executable(
         src/utils/Pipe.h
         src/utils/Logger.cpp
         src/utils/Logger.h
+        src/utils/StatsCenter.cpp
+        src/utils/StatsCenter.h
         src/core/config/data/Seller.h
         src/core/config/data/Seller.cpp
         src/core/job/classifier/ClassifierJob.cpp
