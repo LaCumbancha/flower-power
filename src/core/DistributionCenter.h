@@ -18,9 +18,6 @@ public:
     int run() override;
     int finish() override;
 
-    const std::vector<Pipe *> &getDistributionPipes() const;
-    void setDistributionPipes(const std::vector<Pipe *> &distributionPipes);
-
 private:
     int _id;
     pid_t _classifierPID{};
@@ -28,10 +25,10 @@ private:
     Config* _config;
     Pipe* _producersPipe;
     Pipe* _requestsPipe;
-    std::vector<Pipe*> _distributionPipes;
+    Pipe* _innerPipe;
     std::vector<pid_t> _producersPIDs;
+    std::map<string, Pipe *> _distributionPipes;
     std::vector<pid_t> _sellersPIDs;
-
     void closePipes();
 };
 

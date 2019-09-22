@@ -8,8 +8,8 @@
 class BouquetRequest {
 public:
     explicit BouquetRequest(int rosesAmount, int tulipsAmount);
-    int rosesAmount;
-    int tulipsAmount;
+    unsigned int rosesAmount;
+    unsigned int tulipsAmount;
 
     std::string serialize();
     static BouquetRequest deserialize(const std::string& data);

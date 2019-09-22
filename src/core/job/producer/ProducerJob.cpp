@@ -1,9 +1,9 @@
 #include "ProducerJob.h"
 
-ProducerJob::ProducerJob(const int centerId, const FlowerBox *producerData, Pipe *distributionPipe) : Job() {
+ProducerJob::ProducerJob(const int centerId, const FlowerBox *producerData, Pipe *producerPipe) : Job() {
 
     // Assigning pipe to communicate with the distribution center.
-    this->_distributionPipe = distributionPipe;
+    this->_producerPipe = producerPipe;
 
     // Initializing producer data.
     this->_producerId = producerData->producerId;
@@ -62,18 +62,19 @@ FlowerBox ProducerJob::generateFlowerBox() {
 int ProducerJob::run() {
     while (this->_rosesStock != 0 or this->_tulipsStock != 0) {
         auto box = this->generateFlowerBox();
+
         Logger::info("Producer #" + std::to_string(this->_centerId) + "." + std::to_string(this->_producerId) + " (" +
                      this->_producerName + ") sent a box with " + std::to_string(box.rosesStock) + " roses and " +
                      std::to_string(box.tulipsStock) + " tulips to the Distribution Center #" +
                      std::to_string(this->_centerId) + ".");
-        this->_distributionPipe->write(box.serialize());
+        this->_producerPipe->write(box.serialize());
     }
 
     return EXIT_SUCCESS;
 }
 
 int ProducerJob::finish() {
-    this->_distributionPipe->~Pipe();
+    this->_producerPipe->~Pipe();
     Logger::info("Producer #" + std::to_string(this->_centerId) + "." + std::to_string(this->_producerId) + " (" +
                  this->_producerName + ") pipe destroyed.");
 

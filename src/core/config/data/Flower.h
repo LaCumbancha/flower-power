@@ -5,6 +5,8 @@
 #include <string>
 #include <utility>
 
+enum FlowerType {ROSE, TULIP};
+
 class Flower {
 
 public:
