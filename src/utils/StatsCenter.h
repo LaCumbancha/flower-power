@@ -32,7 +32,7 @@ private:
 
     static void updateStats(const std::string& flower);
 
-    static void wroteStats(const std::string& request);
+    static void outputStats(const std::string& request);
 };
 
 

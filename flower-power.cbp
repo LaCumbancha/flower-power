@@ -177,6 +177,12 @@
 		<Unit filename="/home/cristianrana/FIUBA/Repos/Concurrencia/TP1/src/menu/SettingsMenu.h">
 			<Option target="TP1"/>
 		</Unit>
+		<Unit filename="/home/cristianrana/FIUBA/Repos/Concurrencia/TP1/src/menu/StatsMenu.cpp">
+			<Option target="TP1"/>
+		</Unit>
+		<Unit filename="/home/cristianrana/FIUBA/Repos/Concurrencia/TP1/src/menu/StatsMenu.h">
+			<Option target="TP1"/>
+		</Unit>
 		<Unit filename="/home/cristianrana/FIUBA/Repos/Concurrencia/TP1/src/simulator/ClientSimulator.cpp">
 			<Option target="TP1"/>
 		</Unit>

@@ -1,5 +1,6 @@
 #include "menu/MainMenu.h"
 #include "utils/Logger.h"
+#include "utils/StatsCenter.h"
 
 using namespace std;
 
@@ -20,7 +21,8 @@ int main(int argc, char *argv[]) {
         StatsCenter::run();
     }
 
-    StatsCenter::adding();
+    StatsCenter::addingMode();
+    Logger::info("Initialized Stats Center in process with PID #" + std::to_string(pid));
 
     MainMenu menu = MainMenu();
     menu.show();

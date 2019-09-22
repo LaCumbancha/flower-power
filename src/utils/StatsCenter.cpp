@@ -10,12 +10,12 @@ void StatsCenter::run() {
     // Reading incoming stats.
     StatsCenter::_sellerPipe->setReadMode();
     StatsCenter::_statsPipe->setWriteMode();
-    while(StatsCenter::_statsPipe->read(data, &status)){
+    while(StatsCenter::_sellerPipe->read(data, &status)){
         if (status == EXIT_SUCCESS) {
             if (isSaleIncoming(data)) {
                 StatsCenter::updateStats(data);
             } else if (isRequestIncoming(data)) {
-                StatsCenter::wroteStats(data);
+                StatsCenter::outputStats(data);
             }
         }
     }
@@ -32,11 +32,13 @@ void StatsCenter::updateStats(const std::string& flower) {
     }
 }
 
-void StatsCenter::wroteStats(const std::string& request) {
+void StatsCenter::outputStats(const std::string& request) {
     if (isProducerRequest(request)) {
         // TODO: Calculate best producer.
+        StatsCenter::_statsPipe->write("Ningún producto vendió nada porque #macrisis.");
     } else if (isFlowerRequest(request)) {
         // TODO: Calculate best flower.
+        StatsCenter::_statsPipe->write("No se vendió ninguna flor porque #macrisis.");
     }
 }
 

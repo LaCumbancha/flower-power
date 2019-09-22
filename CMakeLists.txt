@@ -12,6 +12,8 @@ add_executable(
         src/menu/SettingsMenu.h
         src/menu/MainMenu.cpp
         src/menu/MainMenu.h
+        src/menu/StatsMenu.cpp
+        src/menu/StatsMenu.h
         src/core/System.cpp
         src/core/System.h
         src/core/job/producer/ProducerJob.cpp
