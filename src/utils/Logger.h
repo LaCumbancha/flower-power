@@ -49,7 +49,6 @@ private:
     static std::string mainLog();
     static void cleanLog(std::string& log);
     static std::string date(const char* format = "%Y-%m-%d.%X");
-    static bool isQuitIncoming(const std::string &data);
 };
 
 #endif //FLOWER_POWER_LOGGER_H
