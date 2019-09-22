@@ -45,5 +45,8 @@ Makefile
 # Logs
 logs/
 
-#Tests
+# Tests
 *Tests.cpp
+
+# Temps
+tmp/
