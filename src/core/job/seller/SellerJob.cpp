@@ -151,8 +151,6 @@ int SellerJob::finish() {
     }
 
     delete _distributionPipe;
-//    this->_distributionPipe->~Pipe();
     delete _requestPipe;
-//    this->_requestPipe->~Pipe();
     exit(EXIT_SUCCESS);
 }

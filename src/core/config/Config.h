@@ -28,7 +28,7 @@ public:
     void setProducers(std::vector<FlowerBox*> producersDTO);
 
 private:
-    int _clients = 5;
+    int _clients = 10;
     int _salePoints = 5;
     int _distributionCenters = 1;
     std::vector<FlowerBox*> _producers;

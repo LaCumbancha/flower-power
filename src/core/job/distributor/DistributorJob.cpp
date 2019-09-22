@@ -13,7 +13,7 @@ int DistributorJob::run() {
     std::string incoming;
     Logger::info("Distributor job from distribution center #" + std::to_string(_centerId) + " running.");
 
-    while (this->_requestsPipe->read(incoming, &status)) {
+    while (this->_requestsPipe->read(incoming, &status) > 0) {
         if (status == EXIT_SUCCESS) {
             SellerRequest sellerRequest = SellerRequest::deserialize(incoming);
             handleRequest(sellerRequest);
@@ -136,6 +136,7 @@ int DistributorJob::finish() {
         Logger::info("Distributor job #" + std::to_string(_centerId) + " distribution pipe connected to seller #" +
                      distributionPipe.first + " destroyed.");
     }
+
     exit(EXIT_SUCCESS);
 }
 
