@@ -71,11 +71,11 @@ void StatsCenter::outputStats(const std::string &request) {
 
         std::string bestProducerName;
         for (const auto& flower : StatsCenter::_roses) {
-            if (flower.producerId == bestProducerId) bestProducerName = bestProducerId;
+            if (flower.producerId == bestProducerId) bestProducerName = flower.producerName;
         }
 
         for (const auto& flower : StatsCenter::_tulips) {
-            if (flower.producerId == bestProducerId) bestProducerName = bestProducerId;
+            if (flower.producerId == bestProducerId) bestProducerName = flower.producerName;
         }
 
         if (maxSold == 0) {
@@ -89,16 +89,13 @@ void StatsCenter::outputStats(const std::string &request) {
 
         if (StatsCenter::_roses.size() > StatsCenter::_tulips.size()) {
             StatsCenter::_statsPipe->write(
-                    "The roses are the most sold flowers with " + std::to_string(StatsCenter::_roses.size()) +
-                    " units.");
+                    "The roses are the most sold flowers with " + std::to_string(StatsCenter::_roses.size()) + " units.");
         } else if (StatsCenter::_tulips.size() > StatsCenter::_roses.size()) {
             StatsCenter::_statsPipe->write(
-                    "The tulips are the most sold flowers with " + std::to_string(StatsCenter::_tulips.size()) +
-                    " units.");
+                    "The tulips are the most sold flowers with " + std::to_string(StatsCenter::_tulips.size()) + " units.");
         } else {
             StatsCenter::_statsPipe->write(
-                    "Both roses and tulips are evenly sold with " + std::to_string(StatsCenter::_tulips.size()) +
-                    " units.");
+                    "Both roses and tulips are evenly sold with " + std::to_string(StatsCenter::_tulips.size()) + " units.");
         }
 
     }
