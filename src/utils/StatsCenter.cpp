@@ -40,7 +40,7 @@ void StatsCenter::wroteStats(const std::string& request) {
     }
 }
 
-void StatsCenter::addSale(Flower flower) {
+void StatsCenter::addSale(Flower flower, std::string flowerType) {
     // TODO: Add flower data.
 }
 
@@ -75,26 +75,26 @@ void StatsCenter::addingMode() {
     StatsCenter::_sellerPipe->setWriteMode();
 }
 
-bool StatsCenter::isSaleIncoming(std::string data) {
-    return false;
+bool StatsCenter::isSaleIncoming(const std::string& data) {
+    return data.substr(0, 2) == "F|";
 }
 
-bool StatsCenter::isRequestIncoming(std::string data) {
-    return false;
+bool StatsCenter::isRequestIncoming(const std::string& data) {
+    return data.substr(0, 2) == "R|";
 }
 
-bool StatsCenter::isRoseIncoming(std::string flower) {
-    return false;
+bool StatsCenter::isRoseIncoming(const std::string& flower) {
+    return flower.substr(2, 2) == "R|";
 }
 
-bool StatsCenter::isTulipIncoming(std::string flower) {
-    return false;
+bool StatsCenter::isTulipIncoming(const std::string& flower) {
+    return flower.substr(2, 2) == "T|";
 }
 
-bool StatsCenter::isProducerRequest(std::string request) {
-    return false;
+bool StatsCenter::isProducerRequest(const std::string& request) {
+    return request.substr(2, 2) == "P|";
 }
 
-bool StatsCenter::isFlowerRequest(std::string request) {
-    return false;
+bool StatsCenter::isFlowerRequest(const std::string& request) {
+    return request.substr(2, 2) == "F|";
 }
