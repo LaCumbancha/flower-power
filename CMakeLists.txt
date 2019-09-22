@@ -35,8 +35,6 @@ add_executable(
         src/utils/Pipe.h
         src/utils/Logger.cpp
         src/utils/Logger.h
-        src/core/config/data/Seller.h
-        src/core/config/data/Seller.cpp
         src/core/job/classifier/ClassifierJob.cpp
         src/core/job/classifier/ClassifierJob.h
         src/core/config/data/Flower.cpp

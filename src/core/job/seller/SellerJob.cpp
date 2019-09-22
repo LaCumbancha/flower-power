@@ -57,7 +57,7 @@ void SellerJob::handleRequest(BouquetRequest bouquetRequest) {
             " roses and " + std::to_string(bouquetRequest.tulipsAmount) + " tulips.");
 
     if ((this->_rosesStock.size() < bouquetRequest.rosesAmount ||
-        this->_tulipsStock.size() < bouquetRequest.tulipsAmount) && _distributionPipeIsOpen) {
+         this->_tulipsStock.size() < bouquetRequest.tulipsAmount) && _distributionPipeIsOpen) {
         resupply(bouquetRequest);
         return;
     }
@@ -91,7 +91,8 @@ void SellerJob::resupply(BouquetRequest request) {
     SellerRequest sellerRequest = SellerRequest(_sellerId, rosesBoxAmount, tulipsBoxAmount);
     ssize_t wroteAmount = _requestPipe->write(sellerRequest.serialize());
     if (wroteAmount == -1) {
-        Logger::error("Seller # " + this->_sellerId + " tried to ask for a resupply to the distribution center while the requests pipe is closed.");
+        Logger::error("Seller # " + this->_sellerId +
+                      " tried to ask for a resupply to the distribution center while the requests pipe is closed.");
         return;
     }
 
@@ -109,7 +110,8 @@ void SellerJob::resupply(BouquetRequest request) {
 
         if (readAmount == 0) {
             Logger::debug("OOO");
-            Logger::debug("Seller # " + this->_sellerId + " could not resupply due to the distributor pipe being closed.");
+            Logger::debug(
+                    "Seller # " + this->_sellerId + " could not resupply due to the distributor pipe being closed.");
             _distributionPipeIsOpen = false;
             return;
         }
@@ -151,8 +153,8 @@ int SellerJob::finish() {
     }
 
     delete _distributionPipe;
-//    this->_distributionPipe->~Pipe();
+
     delete _requestPipe;
-//    this->_requestPipe->~Pipe();
+
     exit(EXIT_SUCCESS);
 }

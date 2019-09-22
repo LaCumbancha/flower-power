@@ -69,11 +69,9 @@ int ClassifierJob::run() {
 }
 
 int ClassifierJob::finish() {
-//    this->_producersPipe->~Pipe();
     delete _producersPipe;
     Logger::info("Classifier #" + std::to_string(this->_center) + " pipe connected to producer's processes destroyed.");
 
-//    this->_distributorPipe->~Pipe();
     delete _distributorPipe;
     Logger::info(
             "Classifier #" + std::to_string(this->_center) + " pipe connected to the distributor process destroyed.");
