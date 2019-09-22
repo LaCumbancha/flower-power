@@ -69,7 +69,7 @@ void SellerJob::handleRequest(BouquetRequest bouquetRequest) {
 
         // Adding information to Stats Center.
         StatsCenter::addSale(flower, ROSE);
-        Logger::debug("Seller #" + this->_sellerId + " added a rose to the Stats Center");
+        Logger::debug("Seller #" + this->_sellerId + " added a rose to the Stats Center.");
     }
 
     for (int i = 0; i < bouquetRequest.tulipsAmount && !_tulipsStock.empty(); i++) {
@@ -80,7 +80,7 @@ void SellerJob::handleRequest(BouquetRequest bouquetRequest) {
 
         // Adding information to Stats Center.
         StatsCenter::addSale(flower, TULIP);
-        Logger::debug("Seller #" + this->_sellerId + " added a tulip to the Stats Center");
+        Logger::debug("Seller #" + this->_sellerId + " added a tulip to the Stats Center.");
     }
 }
 

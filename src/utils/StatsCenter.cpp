@@ -2,6 +2,8 @@
 
 Pipe* StatsCenter::_statsPipe = new Pipe();
 Pipe* StatsCenter::_sellerPipe = new Pipe();
+std::vector<Flower> StatsCenter::_roses = std::vector<Flower>();
+std::vector<Flower> StatsCenter::_tulips = std::vector<Flower>();
 
 void StatsCenter::run() {
     std::string data;
@@ -24,29 +26,38 @@ void StatsCenter::run() {
     exit(EXIT_SUCCESS);
 }
 
-void StatsCenter::updateStats(const std::string& flower) {
-    if (isRoseIncoming(flower)) {
-        // TODO: Add rose.
-    } else if (isTulipIncoming(flower)) {
-        // TODO: Add tulip.
+void StatsCenter::updateStats(const std::string& flowerData) {
+    auto flower = Flower::deserialize(flowerData.substr(4, flowerData.size()));
+    if (isRoseIncoming(flowerData)) {
+        StatsCenter::_roses.push_back(flower);
+    } else if (isTulipIncoming(flowerData)) {
+        StatsCenter::_tulips.push_back(flower);
     }
 }
 
 void StatsCenter::outputStats(const std::string& request) {
     if (isProducerRequest(request)) {
+
         // TODO: Calculate best producer.
         std::string answer = "Ningún producto vendió nada porque #macrisis.";
         StatsCenter::_statsPipe->write(answer);
+
     } else if (isFlowerRequest(request)) {
-        // TODO: Calculate best flower.
-        std::string answer = "No se vendió ninguna flor porque #macrisis.";
-        StatsCenter::_statsPipe->write(answer);
+
+        if (StatsCenter::_roses.size() > StatsCenter::_tulips.size()) {
+            StatsCenter::_statsPipe->write("The roses are the most sold flowers with " + std::to_string(StatsCenter::_roses.size()) + " units.");
+        } else if (StatsCenter::_tulips.size() > StatsCenter::_roses.size()) {
+            StatsCenter::_statsPipe->write("The tulips are the most sold flowers with " + std::to_string(StatsCenter::_tulips.size()) + " units.");
+        } else {
+            StatsCenter::_statsPipe->write("Both roses and tulips are evenly sold with " + std::to_string(StatsCenter::_tulips.size()) + " units.");
+        }
+
     }
 }
 
 void StatsCenter::addSale(Flower flower, FlowerType type) {
-    if (type == ROSE) StatsCenter::_sellerPipe->write("R|" + flower.serialize() + '\0');
-    else if (type == TULIP) StatsCenter::_sellerPipe->write("T|" + flower.serialize() + '\0');
+    if (type == ROSE) StatsCenter::_sellerPipe->write("F|R|" + flower.serialize());
+    else if (type == TULIP) StatsCenter::_sellerPipe->write("F|T|" + flower.serialize());
 }
 
 std::string StatsCenter::getMostSoldFlower() {

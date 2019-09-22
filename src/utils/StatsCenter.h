@@ -23,6 +23,8 @@ public:
 private:
     static Pipe* _sellerPipe;
     static Pipe* _statsPipe;
+    static std::vector<Flower> _roses;
+    static std::vector<Flower> _tulips;
 
     static bool isSaleIncoming(const std::string& data);
     static bool isRequestIncoming(const std::string& data);
