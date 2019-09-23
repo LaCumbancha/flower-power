@@ -59,7 +59,7 @@ bool ProcessKiller::isKillIncoming(const std::string& data) {
 void ProcessKiller::killPIDs() {
     int result;
     for (auto pid : ProcessKiller::_pids) {
-        result = kill(pid, SIGKILL);
+        result = kill(pid, SIGTERM);
         Logger::debug("Killing process " + std::to_string(pid) + ". Result: " + std::to_string(result) + ".");
     }
 }
