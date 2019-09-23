@@ -31,7 +31,12 @@ int ClassifierJob::run() {
                 this->_roses.emplace_back(producerId, box.producerName);
                 if (_roses.size() == CLASSIFIER_BOX_SIZE) {
                     ClassifierBox rosesBox = ClassifierBox(ROSE, _roses);
-                    _distributorPipe->write(rosesBox.serialize());
+                    int wroteAmount = _distributorPipe->write(rosesBox.serialize());
+                    if (wroteAmount == -1) {
+                        Logger::info("Classifier #" + std::to_string(this->_center) +
+                                     " just found the distributor pipe was closed!");
+                        return EXIT_SUCCESS;
+                    }
                     Logger::debug("Classifier #" + std::to_string(this->_center) +
                                  " sent a 'classifier box' of roses to the distributor #" +
                                  std::to_string(this->_center) + ": " + rosesBox.serialize());
@@ -43,7 +48,12 @@ int ClassifierJob::run() {
                 this->_tulips.emplace_back(producerId, box.producerName);
                 if (_tulips.size() == CLASSIFIER_BOX_SIZE) {
                     ClassifierBox tulipsBox = ClassifierBox(TULIP, _tulips);
-                    _distributorPipe->write(tulipsBox.serialize());
+                    int wroteAmount = _distributorPipe->write(tulipsBox.serialize());
+                    if (wroteAmount == -1) {
+                        Logger::info("Classifier #" + std::to_string(this->_center) +
+                                     " just found the distributor pipe was closed!");
+                        return EXIT_SUCCESS;
+                    }
                     Logger::debug("Classifier #" + std::to_string(this->_center) +
                                  " sent a 'classifier box' of tulips to the distributor #" +
                                  std::to_string(this->_center) + ":\n" + tulipsBox.serialize());

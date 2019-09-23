@@ -86,6 +86,7 @@ int DistributionCenter::run() {
         distributorJob->finish();
     }
 
+
     this->closePipes();
 
     return EXIT_SUCCESS;
@@ -142,14 +143,16 @@ int DistributionCenter::finish() {
 void DistributionCenter::closePipes() {
     // Closing Producers pipe.
     delete this->_producersPipe;
+
     Logger::info("Producers pipe in Distribution Center #" + std::to_string(this->_id) + " destroyed.");
 
     // Closing classifier - distributor pipe.
     delete this->_innerPipe;
-    Logger::info("Classifier-distributor pipe in Distribution Center #" + std::to_string(this->_id) + " destroyed.");
+//    Logger::info("Classifier-distributor pipe in Distribution Center #" + std::to_string(this->_id) + " destroyed.");
 
     // Closing Requests pipe.
     delete this->_requestsPipe;
+
     Logger::info("Requests pipe in Distribution Center #" + std::to_string(this->_id) + " destroyed.");
 
     // Closing Distribution pipes.
@@ -157,6 +160,7 @@ void DistributionCenter::closePipes() {
     for (const auto& pipe : this->_distributionPipes) {
         pipeIdx++;
         delete pipe.second;
+
         Logger::info("Distribution pipe #" + std::to_string(pipeIdx) + " in Distribution Center #" +
                      std::to_string(this->_id) + " destroyed.");
     }

@@ -26,7 +26,7 @@ public:
 private:
     int _clients;
     std::string _sellerId;
-    Pipe _clientPipe{};
+    Pipe* _clientPipe{};
     Pipe* _requestPipe;
     Pipe* _distributionPipe;
     pid_t _clientSimulatorPID{};

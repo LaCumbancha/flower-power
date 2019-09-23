@@ -63,17 +63,18 @@ FlowerBox ProducerJob::generateFlowerBox() {
 }
 
 int ProducerJob::run() {
-
-    ContextStorage::saveContext(this->contextState());
-
-    while (this->_rosesStock != 0 or this->_tulipsStock != 0) {
+    bool producerPipeIsOpen = true;
+    while (producerPipeIsOpen && (this->_rosesStock != 0 || this->_tulipsStock != 0)) {
         auto box = this->generateFlowerBox();
 
         Logger::info("Producer #" + std::to_string(this->_centerId) + "." + std::to_string(this->_producerId) + " (" +
                      this->_producerName + ") sent a box with " + std::to_string(box.rosesStock) + " roses and " +
                      std::to_string(box.tulipsStock) + " tulips to the Distribution Center #" +
                      std::to_string(this->_centerId) + ".");
-        this->_producerPipe->write(box.serialize());
+        int wroteAmount = this->_producerPipe->write(box.serialize());
+        if (wroteAmount == -1) {
+            producerPipeIsOpen = false;
+        }
     }
 
     return EXIT_SUCCESS;

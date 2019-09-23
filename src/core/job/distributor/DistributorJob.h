@@ -27,6 +27,7 @@ private:
 
     void handleRequest(const SellerRequest& request);
     void resupply(const SellerRequest& request);
+    void takeClassifierBox();
     std::string contextState();
 
 public:
