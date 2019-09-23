@@ -1,5 +1,4 @@
 #include "DistributionCenter.h"
-#include "job/distributor/DistributorJob.h"
 
 DistributionCenter::DistributionCenter(Config *config, int id) : Job() {
 
@@ -26,6 +25,7 @@ DistributionCenter::DistributionCenter(Config *config, int id) : Job() {
             producerJob->finish();
         }
         this->_producersPIDs.push_back(pid);
+        ProcessKiller::addPID(pid);
         Logger::info("Producer #" + producerId + " running in process with PID #" + std::to_string(pid) + ".");
     }
     producersPipe->setReadMode();
@@ -51,8 +51,9 @@ DistributionCenter::DistributionCenter(Config *config, int id) : Job() {
             sellerJob->finish();
         }
         this->_distributionPipes.insert(std::pair<std::string, Pipe*>(sellerId, distributionPipe));
-        Logger::info("Seller #" + sellerId + " running in process with PID #" + std::to_string(pid) + ".");
         this->_sellersPIDs.push_back(pid);
+        ProcessKiller::addPID(pid);
+        Logger::info("Seller #" + sellerId + " running in process with PID #" + std::to_string(pid) + ".");
     }
     requestsPipe->setReadMode();
     this->_requestsPipe = requestsPipe;
@@ -76,6 +77,7 @@ int DistributionCenter::run() {
 
     Logger::info("Classifier #" + std::to_string(this->_id) + " running in process with PID #" + std::to_string(pid) + ".");
     this->_classifierPID = pid;
+    ProcessKiller::addPID(pid);
 
     /********** Distributor process creation *************/
     pid = fork();
@@ -86,6 +88,7 @@ int DistributionCenter::run() {
         distributorJob->finish();
     }
 
+    ProcessKiller::addPID(pid);
 
     this->closePipes();
 

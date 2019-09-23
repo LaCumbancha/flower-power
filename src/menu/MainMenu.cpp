@@ -24,18 +24,25 @@ int MainMenu::show() {
                             coreSystem->finish();
                         }
 
+                        ProcessKiller::addPID(pid);
                         cout << endl;
                         display();
                         break;
                     }
                     case RUNNING1: {
                         // Stopping system.
+                        ProcessKiller::killAll();
                         this->status = STOPPED;
+                        cout << endl;
+                        display();
                         break;
                     }
                     case RUNNING2: {
                         // Stopping system.
+                        ProcessKiller::killAll();
                         this->status = STOPPED;
+                        cout << endl;
+                        display();
                         break;
                     }
                     case STOPPED: {

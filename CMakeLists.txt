@@ -55,4 +55,4 @@ add_executable(
         src/core/job/distributor/DistributorJob.cpp
         src/core/config/data/ClassifierBox.cpp
         src/core/config/data/ClassifierBox.h
-        src/utils/csv/CSVWriter.cpp src/utils/csv/CSVWriter.h src/utils/ContextStatus.cpp src/utils/ContextStatus.h)
+        src/utils/csv/CSVWriter.cpp src/utils/csv/CSVWriter.h src/utils/ContextStatus.cpp src/utils/ContextStatus.h src/utils/ProcessKiller.cpp src/utils/ProcessKiller.h)

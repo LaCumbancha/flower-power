@@ -23,6 +23,7 @@ int System::run() {
             } else {
                 Logger::info("Distribution Center #" + std::to_string(idx) + " running in process with PID #" + std::to_string(pid) + ".");
                 this->_distributionCentersPIDs.push_back(pid);
+                ProcessKiller::addPID(pid);
             }
         }
 

@@ -9,6 +9,8 @@
 #include "job/seller/SellerJob.h"
 #include "job/producer/ProducerJob.h"
 #include "job/classifier/ClassifierJob.h"
+#include "job/distributor/DistributorJob.h"
+#include "../utils/ProcessKiller.h"
 
 
 class DistributionCenter : public Job {

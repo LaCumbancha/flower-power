@@ -5,6 +5,7 @@
 #include <sys/wait.h>
 #include "config/Config.h"
 #include "DistributionCenter.h"
+#include "../utils/ProcessKiller.h"
 
 class System {
 

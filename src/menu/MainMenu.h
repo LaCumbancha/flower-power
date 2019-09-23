@@ -5,8 +5,9 @@
 #include <sys/wait.h>
 #include "Menu.h"
 #include "SettingsMenu.h"
-#include "../core/System.h"
 #include "StatsMenu.h"
+#include "../core/System.h"
+#include "../utils/ProcessKiller.h"
 
 
 enum SYSTEM_STATUS { NONE, RUNNING1, RUNNING2, STOPPED };

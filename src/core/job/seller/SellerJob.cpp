@@ -1,5 +1,6 @@
 #include "SellerJob.h"
 
+
 SellerJob::SellerJob(std::string sellerId, int clients, Pipe *requestPipe, Pipe *distributionPipe) : Job() {
     this->_clients = clients;
     this->_sellerId = std::move(sellerId);
@@ -22,6 +23,7 @@ int SellerJob::run() {
         // Seller process.
         Logger::info("Client Simulator # " + this->_sellerId + " running in process " + std::to_string(pid) + ".");
         this->_clientSimulatorPID = pid;
+        ProcessKiller::addPID(pid);
         this->_clientPipe->setReadMode();
 
         // Listening for incoming requests.
@@ -51,7 +53,7 @@ int SellerJob::listenRequests() {
 void SellerJob::handleRequest(BouquetRequest bouquetRequest) {
 
     // Uncomment the following line to measure stats in real time.
-    sleep(1);
+    sleep(3);
 
     Logger::info("Seller # " + this->_sellerId + " received a request for " + std::to_string(bouquetRequest.rosesAmount) +
             " roses and " + std::to_string(bouquetRequest.tulipsAmount) + " tulips.");

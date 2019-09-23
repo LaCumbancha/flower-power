@@ -9,6 +9,7 @@
 #include "../../config/Config.h"
 #include "../../../utils/StatsCenter.h"
 #include "../../../utils/ContextStatus.h"
+#include "../../../utils/ProcessKiller.h"
 #include "../../../utils/Pipe.h"
 #include "../../../utils/Logger.h"
 #include "../../../simulator/ClientSimulator.h"
