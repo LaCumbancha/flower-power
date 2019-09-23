@@ -49,8 +49,10 @@ int SellerJob::listenRequests() {
 }
 
 void SellerJob::handleRequest(BouquetRequest bouquetRequest) {
-    // Uncomment the following line to measure stats real time.
-    // sleep(10);
+
+    // Uncomment the following line to measure stats in real time.
+    // sleep(3);
+
     Logger::info("Seller # " + this->_sellerId + " received a request for " + std::to_string(bouquetRequest.rosesAmount) +
             " roses and " + std::to_string(bouquetRequest.tulipsAmount) + " tulips.");
 
