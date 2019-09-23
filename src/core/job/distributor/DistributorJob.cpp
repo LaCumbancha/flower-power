@@ -4,6 +4,9 @@ int DistributorJob::run() {
 
     int status;
     std::string incoming;
+
+    signal(SIGTERM, this->handler());
+
     Logger::info("Distributor job from Distribution Center #" + std::to_string(_centerId) + " running.");
 
     while (this->_requestsPipe->read(incoming, &status) > 0) {
@@ -152,4 +155,8 @@ std::string DistributorJob::contextState() {
     }
 
     return state;
+}
+
+__sighandler_t DistributorJob::handler() {
+    Logger::debug("HANDLER: Distributor Job");
 }

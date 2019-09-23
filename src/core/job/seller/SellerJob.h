@@ -41,6 +41,7 @@ private:
     std::vector<Flower> _rosesStock;
     std::vector<Flower> _tulipsStock;
 
+    __sighandler_t handler();
 };
 
 

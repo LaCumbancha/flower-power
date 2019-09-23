@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <iostream>
+#include <signal.h>
 #include "../Job.h"
 #include "../../config/data/Flower.h"
 #include "../../../utils/Pipe.h"
@@ -25,6 +26,7 @@ private:
     std::vector<Flower> _tulips;
 
     std::string contextState();
+    __sighandler_t handler();
 
 };
 

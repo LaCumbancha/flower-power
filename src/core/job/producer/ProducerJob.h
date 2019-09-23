@@ -3,6 +3,7 @@
 
 
 #include <iostream>
+#include <signal.h>
 #include "../Job.h"
 #include "../../../utils/Pipe.h"
 #include "../../../utils/Logger.h"
@@ -27,6 +28,8 @@ private:
 
     FlowerBox generateFlowerBox();
     std::string contextState();
+
+    __sighandler_t handler();
 
 };
 

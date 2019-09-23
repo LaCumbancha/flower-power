@@ -21,6 +21,8 @@ ProducerJob::ProducerJob(const int centerId, const FlowerBox *producerData, Pipe
     // Initializing random number generator
     srand(time(NULL) * getpid());
 
+    signal(SIGTERM, this->handler());
+
 }
 
 FlowerBox ProducerJob::generateFlowerBox() {
@@ -91,4 +93,8 @@ int ProducerJob::finish() {
 std::string ProducerJob::contextState() {
     return 'P' + std::to_string(this->_centerId) + '.' + std::to_string(this->_producerId) + ',' +
            std::to_string(this->_rosesStock) + ',' + std::to_string(this->_tulipsStock);
+}
+
+__sighandler_t ProducerJob::handler() {
+    Logger::debug("HANDLER: Producer Job");
 }

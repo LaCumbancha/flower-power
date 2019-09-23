@@ -5,6 +5,7 @@
 #include <utility>
 #include <vector>
 #include <map>
+#include <signal.h>
 #include "../Job.h"
 #include "../../../utils/Pipe.h"
 #include "../../../utils/Logger.h"
@@ -29,6 +30,9 @@ private:
     void resupply(const SellerRequest& request);
     void takeClassifierBox();
     std::string contextState();
+
+    __sighandler_t handler();
+
 
 public:
     DistributorJob(int centerId, Pipe *classifierPipe, Pipe *requestsPipe, std::map<std::string, Pipe*> distributionPipes)

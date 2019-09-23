@@ -8,6 +8,8 @@ SellerJob::SellerJob(std::string sellerId, int clients, Pipe *requestPipe, Pipe 
     this->_distributionPipe = distributionPipe;
     this->_rosesStock = std::vector<Flower>();
     this->_tulipsStock = std::vector<Flower>();
+
+    signal(SIGTERM, this->handler());
 }
 
 int SellerJob::run() {
@@ -174,4 +176,8 @@ std::string SellerJob::contextState() {
     }
 
     return state;
+}
+
+__sighandler_t SellerJob::handler() {
+    Logger::debug("HANDLER: seller job " + _sellerId);
 }

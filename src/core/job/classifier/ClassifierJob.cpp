@@ -3,6 +3,8 @@
 
 ClassifierJob::ClassifierJob(const int center, Pipe *producersPipe, Pipe* distributorPipe) : Job() {
 
+    signal(SIGTERM, this->handler());
+
     // Assigning pipe to communicate with the distribution center.
     this->_producersPipe = producersPipe;
 
@@ -104,4 +106,8 @@ std::string ClassifierJob::contextState() {
     }
 
     return state;
+}
+
+__sighandler_t ClassifierJob::handler() {
+    Logger::debug("HANDLER: Classifier Job");
 }
