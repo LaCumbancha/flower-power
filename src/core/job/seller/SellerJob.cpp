@@ -17,6 +17,7 @@ SellerJob::SellerJob(std::string sellerId, int clients, Pipe *requestPipe, Pipe 
 }
 
 int SellerJob::run() {
+
     this->_clientPipe = new Pipe();
     pid_t pid = fork();
 
@@ -34,7 +35,7 @@ int SellerJob::run() {
 
         // Listening for incoming requests.
         this->listenRequests();
-        this->finish();
+//        this->finish(); TODO: check if necessary
     }
 
     return EXIT_SUCCESS;
@@ -46,6 +47,8 @@ int SellerJob::listenRequests() {
     bool canHandleRequests = true;
     Logger::info("Seller # " + this->_sellerId + " started to listen for requests.");
     while (canHandleRequests && (this->_clientPipe->read(incoming, &status) > 0)) {
+        ContextStatus::saveContext("SellerJobContextStatus");
+
         if (status == EXIT_SUCCESS) {
             BouquetRequest bouquetRequest = BouquetRequest::deserialize(incoming);
             this->handleRequest(bouquetRequest);
@@ -59,7 +62,7 @@ int SellerJob::listenRequests() {
 void SellerJob::handleRequest(BouquetRequest bouquetRequest) {
 
     // Uncomment the following line to measure stats in real time.
-    sleep(3);
+//    sleep(3);
 
     Logger::info("Seller # " + this->_sellerId + " received a request for " + std::to_string(bouquetRequest.rosesAmount) +
             " roses and " + std::to_string(bouquetRequest.tulipsAmount) + " tulips.");
@@ -90,6 +93,7 @@ void SellerJob::handleRequest(BouquetRequest bouquetRequest) {
         Logger::debug("Seller #" + this->_sellerId + " added a tulip to the Stats Center.");
     }
 }
+
 
 void SellerJob::resupply(BouquetRequest request) {
     unsigned int rosesBoxAmount =
@@ -145,7 +149,6 @@ void SellerJob::resupply(BouquetRequest request) {
                   std::to_string(_tulipsStock.size()) + "]");
 }
 
-
 int SellerJob::finish() {
     int processStatus;
 
@@ -185,4 +188,8 @@ std::string SellerJob::contextState() {
 int SellerJob::stopJob() {
     Logger::debug("HANDLER: Seller Job #" + _sellerId + ".");
     return EXIT_SUCCESS;
+}
+
+SellerJob::~SellerJob() {
+    this->finish();
 }

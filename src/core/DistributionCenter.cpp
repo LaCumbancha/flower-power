@@ -22,7 +22,7 @@ DistributionCenter::DistributionCenter(Config *config, int id) : Job() {
             producersPipe->setWriteMode();
             auto producerJob = new ProducerJob(this->_id, producerData, producersPipe);
             producerJob->run();
-            producerJob->finish();
+            delete producerJob;
         }
         this->_producersPIDs.push_back(pid);
         ProcessKiller::addPID(pid);
@@ -48,7 +48,7 @@ DistributionCenter::DistributionCenter(Config *config, int id) : Job() {
             distributionPipe->setReadMode();
             auto sellerJob = new SellerJob(sellerId, config->getClients(), requestsPipe, distributionPipe);
             sellerJob->run();
-            sellerJob->finish();
+            delete sellerJob;
         }
         this->_distributionPipes.insert(std::pair<std::string, Pipe*>(sellerId, distributionPipe));
         this->_sellersPIDs.push_back(pid);
@@ -72,7 +72,7 @@ int DistributionCenter::run() {
         this->_innerPipe->setWriteMode();
         auto classifierJob = new ClassifierJob(this->_id, this->_producersPipe, this->_innerPipe);
         classifierJob->run();
-        classifierJob->finish();
+        delete classifierJob;
     }
 
     Logger::info("Classifier #" + std::to_string(this->_id) + " running in process with PID #" + std::to_string(pid) + ".");
@@ -85,7 +85,7 @@ int DistributionCenter::run() {
         this->_innerPipe->setReadMode();
         auto distributorJob = new DistributorJob(this->_id, _innerPipe, _requestsPipe, _distributionPipes);
         distributorJob->run();
-        distributorJob->finish();
+        delete distributorJob;
     }
 
     ProcessKiller::addPID(pid);

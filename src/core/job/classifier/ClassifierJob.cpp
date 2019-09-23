@@ -116,3 +116,7 @@ int ClassifierJob::stopJob() {
     Logger::debug("HANDLER: Classifier Job #" + std::to_string(this->_center) + ".");
     return EXIT_SUCCESS;
 }
+
+ClassifierJob::~ClassifierJob() {
+    this->finish();
+}

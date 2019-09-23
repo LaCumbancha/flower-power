@@ -165,3 +165,7 @@ int DistributorJob::stopJob() {
     Logger::debug("HANDLER: Distributor Job #" + std::to_string(this->_centerId) + ".");
     return EXIT_SUCCESS;
 }
+
+DistributorJob::~DistributorJob() {
+    this->finish();
+}

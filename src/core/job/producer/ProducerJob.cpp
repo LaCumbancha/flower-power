@@ -72,6 +72,8 @@ FlowerBox ProducerJob::generateFlowerBox() {
 int ProducerJob::run() {
     bool producerPipeIsOpen = true;
     while (producerPipeIsOpen && (this->_rosesStock != 0 || this->_tulipsStock != 0)) {
+        ContextStatus::saveContext("ProducerJobContextStatus");
+
         auto box = this->generateFlowerBox();
 
         Logger::info("Producer #" + std::to_string(this->_centerId) + "." + std::to_string(this->_producerId) + " (" +
@@ -88,7 +90,7 @@ int ProducerJob::run() {
 }
 
 int ProducerJob::finish() {
-    this->_producerPipe->~Pipe();
+    delete this->_producerPipe;
     Logger::info("Producer #" + std::to_string(this->_centerId) + "." + std::to_string(this->_producerId) + " (" +
                  this->_producerName + ") pipe destroyed.");
 
@@ -101,6 +103,12 @@ std::string ProducerJob::contextState() {
 }
 
 int ProducerJob::stopJob() {
-    Logger::debug("HANDLER: Producer Job #" + std::to_string(this->_centerId) + "." + std::to_string(this->_producerId) + ".");
+    Logger::debug(
+            "HANDLER: Producer Job #" + std::to_string(this->_centerId) + "." + std::to_string(this->_producerId) +
+            ".");
     return EXIT_SUCCESS;
+}
+
+ProducerJob::~ProducerJob() {
+    this->finish();
 }
