@@ -1,4 +1,6 @@
 #include "SellerJob.h"
+#include "../../../utils/signals/SignalHandler.h"
+#include "../../../utils/signals/StopHandler.h"
 
 
 SellerJob::SellerJob(std::string sellerId, int clients, Pipe *requestPipe, Pipe *distributionPipe) : Job() {
@@ -9,7 +11,9 @@ SellerJob::SellerJob(std::string sellerId, int clients, Pipe *requestPipe, Pipe 
     this->_rosesStock = std::vector<Flower>();
     this->_tulipsStock = std::vector<Flower>();
 
-    signal(SIGTERM, this->handler());
+    // Registering SIGTERM handler.
+    auto handler = new StopHandler(this);
+    SignalHandler::getInstance()->registerHandler(SIGTERM, handler);
 }
 
 int SellerJob::run() {
@@ -178,6 +182,7 @@ std::string SellerJob::contextState() {
     return state;
 }
 
-__sighandler_t SellerJob::handler() {
-    Logger::debug("HANDLER: seller job " + _sellerId);
+int SellerJob::stopJob() {
+    Logger::debug("HANDLER: Seller Job #" + _sellerId + ".");
+    return EXIT_SUCCESS;
 }

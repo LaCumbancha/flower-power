@@ -10,6 +10,7 @@ public:
     explicit Job() = default;
     virtual int run();
     virtual int finish();
+    virtual int stopJob();
 
 };
 

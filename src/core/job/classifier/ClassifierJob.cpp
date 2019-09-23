@@ -1,9 +1,13 @@
 #include "ClassifierJob.h"
 #include "../../config/data/ClassifierBox.h"
+#include "../../../utils/signals/StopHandler.h"
+#include "../../../utils/signals/SignalHandler.h"
 
 ClassifierJob::ClassifierJob(const int center, Pipe *producersPipe, Pipe* distributorPipe) : Job() {
 
-    signal(SIGTERM, this->handler());
+    // Registering SIGTERM handler.
+    auto handler = new StopHandler(this);
+    SignalHandler::getInstance()->registerHandler(SIGTERM, handler);
 
     // Assigning pipe to communicate with the distribution center.
     this->_producersPipe = producersPipe;
@@ -108,6 +112,7 @@ std::string ClassifierJob::contextState() {
     return state;
 }
 
-__sighandler_t ClassifierJob::handler() {
-    Logger::debug("HANDLER: Classifier Job");
+int ClassifierJob::stopJob() {
+    Logger::debug("HANDLER: Classifier Job #" + std::to_string(this->_center) + ".");
+    return EXIT_SUCCESS;
 }

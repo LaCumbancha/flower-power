@@ -1,6 +1,13 @@
+#include <cstring>
 #include "ProducerJob.h"
+#include "../../../utils/signals/SignalHandler.h"
+#include "../../../utils/signals/StopHandler.h"
 
 ProducerJob::ProducerJob(const int centerId, const FlowerBox *producerData, Pipe *producerPipe) : Job() {
+
+    // Registering SIGTERM handler.
+    auto handler = new StopHandler(this);
+    SignalHandler::getInstance()->registerHandler(SIGTERM, handler);
 
     // Assigning pipe to communicate with the distribution center.
     this->_producerPipe = producerPipe;
@@ -20,8 +27,6 @@ ProducerJob::ProducerJob(const int centerId, const FlowerBox *producerData, Pipe
 
     // Initializing random number generator
     srand(time(NULL) * getpid());
-
-    signal(SIGTERM, this->handler());
 
 }
 
@@ -95,6 +100,7 @@ std::string ProducerJob::contextState() {
            std::to_string(this->_rosesStock) + ',' + std::to_string(this->_tulipsStock);
 }
 
-__sighandler_t ProducerJob::handler() {
-    Logger::debug("HANDLER: Producer Job");
+int ProducerJob::stopJob() {
+    Logger::debug("HANDLER: Producer Job #" + std::to_string(this->_centerId) + "." + std::to_string(this->_producerId) + ".");
+    return EXIT_SUCCESS;
 }

@@ -31,9 +31,6 @@ private:
     void takeClassifierBox();
     std::string contextState();
 
-    __sighandler_t handler();
-
-
 public:
     DistributorJob(int centerId, Pipe *classifierPipe, Pipe *requestsPipe, std::map<std::string, Pipe*> distributionPipes)
             : _classifierPipe(classifierPipe), _requestsPipe(requestsPipe),
@@ -42,6 +39,7 @@ public:
 
     int run() override;
     int finish() override;
+    int stopJob() override;
 };
 
 

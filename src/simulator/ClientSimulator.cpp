@@ -1,6 +1,5 @@
 #include "ClientSimulator.h"
 
-#include <utility>
 
 
 ClientSimulator::ClientSimulator(std::string sellerId, int clients, Pipe * clientPipe) {
@@ -10,20 +9,28 @@ ClientSimulator::ClientSimulator(std::string sellerId, int clients, Pipe * clien
 
     // Initializing random number generator
     srand(time(NULL) * getpid());
+
+    // Registering SIGTERM handler.
+    auto handler = new StopHandler(this);
+    SignalHandler::getInstance()->registerHandler(SIGTERM, handler);
 }
 
-void ClientSimulator::run() {
+int ClientSimulator::run() {
 
     for (int client = 1; client <= this->_clients; client++) {
+
+        // Uncomment the following line to measure stats in real time.
+        sleep(3);
+
         BouquetRequest request = simulateBouquetRequest();
 
         Logger::info("Generating request for Client #" + std::to_string(client) + " in Sale Point #" + this->_sellerId +
-                     ": " +
-                     std::to_string(request.rosesAmount) + " roses and " + std::to_string(request.tulipsAmount) +
+                     ": " + std::to_string(request.rosesAmount) + " roses and " + std::to_string(request.tulipsAmount) +
                      " tulips.");
         this->_clientPipe->write(request.serialize());
     }
     Logger::info("Client simulator #" + _sellerId + " finished it's work.");
+    return EXIT_SUCCESS;
 }
 
 BouquetRequest ClientSimulator::simulateBouquetRequest() {
@@ -38,4 +45,9 @@ ClientSimulator::~ClientSimulator() {
     Logger::debug("Client simulator #" + _sellerId + " destroyed.");
     delete _clientPipe;
     exit(EXIT_SUCCESS);
+}
+
+int ClientSimulator::stopJob() {
+    Logger::debug("HANDLER: Client Simulator #" + _sellerId + ".");
+    return EXIT_SUCCESS;
 }

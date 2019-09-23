@@ -7,3 +7,7 @@ int Job::run() {
 int Job::finish() {
     return EXIT_SUCCESS;
 }
+
+int Job::stopJob() {
+    return EXIT_SUCCESS;
+}

@@ -5,17 +5,23 @@
 #include <cstdlib>
 #include <vector>
 #include <iostream>
+#include <utility>
 #include "../utils/Pipe.h"
 #include "../utils/Logger.h"
 #include "../core/config/data/BouquetRequest.h"
+#include "../core/job/Job.h"
+#include "../utils/signals/SignalHandler.h"
+#include "../utils/signals/StopHandler.h"
 
 
-class ClientSimulator {
+class ClientSimulator : public Job {
 
 public:
     explicit ClientSimulator(std::string sellerId, int clients, Pipe * clientPipe);
-    void run();
+    int run() override;
+    int stopJob() override;
     ~ClientSimulator();
+
 private:
     int _clients;
     std::string _sellerId;

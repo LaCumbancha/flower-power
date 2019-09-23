@@ -17,6 +17,7 @@ public:
     explicit ClassifierJob(int center, Pipe* producersPipe, Pipe* distributorPipe);
     int run() override;
     int finish() override;
+    int stopJob() override;
 
 private:
     int _center;
@@ -26,7 +27,6 @@ private:
     std::vector<Flower> _tulips;
 
     std::string contextState();
-    __sighandler_t handler();
 
 };
 

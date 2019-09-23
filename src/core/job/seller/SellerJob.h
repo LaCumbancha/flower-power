@@ -23,6 +23,7 @@ public:
     explicit SellerJob(std::string sellerId, int clients, Pipe *requestPipe, Pipe *distributionPipe);
     int run() override;
     int finish() override;
+    int stopJob() override;
 
 private:
     int _clients;
@@ -40,8 +41,6 @@ private:
 
     std::vector<Flower> _rosesStock;
     std::vector<Flower> _tulipsStock;
-
-    __sighandler_t handler();
 };
 
 

@@ -19,6 +19,7 @@ public:
     explicit DistributionCenter(Config *config, int id);
     int run() override;
     int finish() override;
+    int stopJob() override;
 
 private:
     int _id;

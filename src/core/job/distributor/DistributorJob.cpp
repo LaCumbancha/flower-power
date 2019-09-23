@@ -1,11 +1,15 @@
 #include "DistributorJob.h"
+#include "../../../utils/signals/SignalHandler.h"
+#include "../../../utils/signals/StopHandler.h"
 
 int DistributorJob::run() {
 
     int status;
     std::string incoming;
 
-    signal(SIGTERM, this->handler());
+    // Registering SIGTERM handler.
+    auto handler = new StopHandler(this);
+    SignalHandler::getInstance()->registerHandler(SIGTERM, handler);
 
     Logger::info("Distributor job from Distribution Center #" + std::to_string(_centerId) + " running.");
 
@@ -157,6 +161,7 @@ std::string DistributorJob::contextState() {
     return state;
 }
 
-__sighandler_t DistributorJob::handler() {
-    Logger::debug("HANDLER: Distributor Job");
+int DistributorJob::stopJob() {
+    Logger::debug("HANDLER: Distributor Job #" + std::to_string(this->_centerId) + ".");
+    return EXIT_SUCCESS;
 }

@@ -17,6 +17,7 @@ public:
     explicit ProducerJob(int centerId, const FlowerBox* producerData, Pipe* producerPipe);
     int run() override;
     int finish() override;
+    int stopJob() override;
 
 private:
     int _centerId;
@@ -28,8 +29,6 @@ private:
 
     FlowerBox generateFlowerBox();
     std::string contextState();
-
-    __sighandler_t handler();
 
 };
 

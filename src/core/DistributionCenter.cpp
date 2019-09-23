@@ -169,4 +169,9 @@ void DistributionCenter::closePipes() {
     }
 }
 
+int DistributionCenter::stopJob() {
+    Logger::debug("HANDLER: Distribution Center Job #" + std::to_string(this->_id) + ".");
+    return EXIT_SUCCESS;
+}
+
 
