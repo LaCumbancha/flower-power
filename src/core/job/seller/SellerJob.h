@@ -8,7 +8,7 @@
 #include "../Job.h"
 #include "../../config/Config.h"
 #include "../../../utils/StatsCenter.h"
-#include "../../../utils/ContextStorage.h"
+#include "../../../utils/ContextStatus.h"
 #include "../../../utils/Pipe.h"
 #include "../../../utils/Logger.h"
 #include "../../../simulator/ClientSimulator.h"

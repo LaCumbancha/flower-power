@@ -8,7 +8,7 @@
 #include "../Job.h"
 #include "../../../utils/Pipe.h"
 #include "../../../utils/Logger.h"
-#include "../../../utils/ContextStorage.h"
+#include "../../../utils/ContextStatus.h"
 #include "../../config/data/SellerRequest.h"
 #include "../../config/data/ClassifierBox.h"
 #include "../../config/data/ClassifierBox.h"

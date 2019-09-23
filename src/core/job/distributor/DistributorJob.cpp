@@ -121,7 +121,7 @@ void DistributorJob::takeClassifierBox() {
     }
 
     if (status == EXIT_SUCCESS) {
-        Logger::debug("Distibutor job  #"  + std::to_string(_centerId) + " just read " + std::to_string(readAmount) + " from serialized classifier box: \n" + data);
+        Logger::debug("Distibutor job  #"  + std::to_string(_centerId) + " just read " + std::to_string(readAmount) + " from serialized classifier box: " + data);
         ClassifierBox cb = ClassifierBox::deserialize(data);
         switch (cb.flowerType) {
             case ROSE:

@@ -8,7 +8,7 @@
 #include "../../config/data/Flower.h"
 #include "../../../utils/Pipe.h"
 #include "../../../utils/Logger.h"
-#include "../../../utils/ContextStorage.h"
+#include "../../../utils/ContextStatus.h"
 
 class ClassifierJob : public Job {
 

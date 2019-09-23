@@ -1,6 +1,6 @@
 #include "menu/MainMenu.h"
 #include "utils/StatsCenter.h"
-#include "utils/ContextStorage.h"
+#include "utils/ContextStatus.h"
 
 using namespace std;
 
@@ -27,16 +27,16 @@ int main(int argc, char *argv[]) {
     // Creating stats center.
     pid = fork();
     if (pid == CHILD_PROCESS_PID) {
-        ContextStorage::run();
+        ContextStatus::run();
     }
 
-    ContextStorage::saveMode();
+    ContextStatus::saveMode();
     Logger::info("Initialized Context Storage in process with PID #" + std::to_string(pid) + ".");
 
     MainMenu menu = MainMenu();
     menu.show();
 
-    ContextStorage::close();
+    ContextStatus::close();
     StatsCenter::close();
 
     Logger::info("Main program finished.");

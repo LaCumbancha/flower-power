@@ -76,8 +76,6 @@ int ClassifierJob::run() {
         Logger::debug("Classifier #" + std::to_string(this->_center) + " producers pipe got closed.");
     }
 
-    ContextStorage::saveContext(this->contextState());
-
     return EXIT_SUCCESS;
 }
 

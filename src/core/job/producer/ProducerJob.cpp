@@ -26,7 +26,7 @@ ProducerJob::ProducerJob(const int centerId, const FlowerBox *producerData, Pipe
 FlowerBox ProducerJob::generateFlowerBox() {
 
     // Uncomment the following line to measure stats in real time.
-    // sleep(3);
+    // sleep(1);
 
     // Take a random number of roses.
     int rosesToBox = rand() % 10;

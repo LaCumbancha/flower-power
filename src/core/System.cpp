@@ -1,6 +1,9 @@
 #include "System.h"
 
 int System::run() {
+    // Set system as not finished
+    ContextStatus::saveSystemFinishStatus(false);
+
     // Loading configuration data.
     this->_config.loadData();
 
@@ -44,6 +47,9 @@ int System::finish() {
         Logger::info("Every Distribution Center finished successfully without errors.");
         Logger::info("System finished successfully.");
     }
+
+    // Set system as finished
+    ContextStatus::saveSystemFinishStatus(true);
 
     exit(EXIT_SUCCESS);
 }

@@ -11,24 +11,51 @@ int MainMenu::show() {
                 cout << "Thanks for using Flower Power System!" << endl;
                 break;
             case 1: {
-                pid_t pid = fork();
 
-                if (pid == CHILD_PROCESS_PID) {
-                    // System process.
-                    coreSystem->run();
-                    coreSystem->finish();
+                switch (this->status) {
+                    case NONE: {
+                        // Running system.
+                        this->status = RUNNING1;
+                        pid_t pid = fork();
+
+                        if (pid == CHILD_PROCESS_PID) {
+                            // System process.
+                            coreSystem->run();
+                            coreSystem->finish();
+                        }
+
+                        cout << endl;
+                        display();
+                        break;
+                    }
+                    case RUNNING1: {
+                        // Stopping system.
+                        this->status = STOPPED;
+                        break;
+                    }
+                    case RUNNING2: {
+                        // Stopping system.
+                        this->status = STOPPED;
+                        break;
+                    }
+                    case STOPPED: {
+                        // Resuming system.
+                        this->status = RUNNING1;
+                        break;
+                    }
                 }
 
-                cout << endl;
-                display();
                 break;
+
             }
             case 2:
+                if (this->status == RUNNING1) this->status = RUNNING2;
                 settingsMenu->show();
                 cout << endl;
                 display();
                 break;
             case 3:
+                if (this->status == RUNNING1) this->status = RUNNING2;
                 statsMenu->show();
                 cout << endl;
                 display();
@@ -45,8 +72,23 @@ int MainMenu::show() {
 void MainMenu::display() {
     cout << "Flower Power Menu!" << endl;
     cout << "Select your option:" << endl;
-    cout << "[1] Run system" << endl;
+    cout << systemStart() << endl;
     cout << "[2] Settings" << endl;
     cout << "[3] Stats" << endl;
     cout << "Selection: [0 for quit] ";
+}
+
+std::string MainMenu::systemStart() {
+    switch (this->status) {
+        case NONE: return "[1] Run system";
+        case RUNNING1: return "[1] Stop system";
+        case RUNNING2: {
+            if (ContextStatus::retrieveSystemFinished()) {
+                this->status = NONE;
+                return "[1] Run system";
+            }
+            return "[1] Stop system";
+        }
+        case STOPPED: return "[1] Resume system";
+    }
 }

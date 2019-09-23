@@ -8,6 +8,9 @@
 #include "../core/System.h"
 #include "StatsMenu.h"
 
+
+enum SYSTEM_STATUS { NONE, RUNNING1, RUNNING2, STOPPED };
+
 using namespace std;
 
 class MainMenu: public Menu {
@@ -20,8 +23,11 @@ private:
     System* coreSystem = new System();
     SettingsMenu* settingsMenu = new SettingsMenu(coreSystem->getConfig());
     StatsMenu* statsMenu = new StatsMenu();
+    SYSTEM_STATUS status = NONE;
+
 
     void display() override;
+    string systemStart();
 };
 
 
