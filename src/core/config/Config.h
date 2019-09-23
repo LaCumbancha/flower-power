@@ -5,7 +5,6 @@
 #include <vector>
 #include <utility>
 #include "data/FlowerBox.h"
-#include "data/Seller.h"
 #include "../../utils/CSVReader.h"
 
 #define CHILD_PROCESS_PID 0
@@ -33,7 +32,7 @@ private:
     int _distributionCenters = 1;
     std::vector<FlowerBox*> _producers;
 
-    std::string _producersPath = "../data/producers.csv";
+    std::string _producersPath = "./data/producers.csv";
 
 };
 

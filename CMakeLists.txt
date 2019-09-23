@@ -12,6 +12,8 @@ add_executable(
         src/menu/SettingsMenu.h
         src/menu/MainMenu.cpp
         src/menu/MainMenu.h
+        src/menu/StatsMenu.cpp
+        src/menu/StatsMenu.h
         src/core/System.cpp
         src/core/System.h
         src/core/job/producer/ProducerJob.cpp
@@ -35,8 +37,8 @@ add_executable(
         src/utils/Pipe.h
         src/utils/Logger.cpp
         src/utils/Logger.h
-        src/core/config/data/Seller.h
-        src/core/config/data/Seller.cpp
+        src/utils/StatsCenter.cpp
+        src/utils/StatsCenter.h
         src/core/job/classifier/ClassifierJob.cpp
         src/core/job/classifier/ClassifierJob.h
         src/core/config/data/Flower.cpp
@@ -45,11 +47,6 @@ add_executable(
         src/core/job/classifier/ClassifierJob.h
         src/simulator/ClientSimulator.cpp
         src/simulator/ClientSimulator.h
-
-#         tests/SellerTests.cpp
-#         tests/DistributionCenterTests.cpp
-#         tests/ClientSimulatorTests.cpp
-
         src/core/config/data/BouquetRequest.cpp
         src/core/config/data/BouquetRequest.h
         src/core/config/data/SellerRequest.h
@@ -57,37 +54,5 @@ add_executable(
         src/core/job/distributor/DistributorJob.h
         src/core/job/distributor/DistributorJob.cpp
         src/core/config/data/ClassifierBox.cpp
-        src/core/config/data/ClassifierBox.h)
-
-  # Download and unpack googletest at configure time
-
-#
-#execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
-# RESULT_VARIABLE result
-# WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/googletest-download )
-# if(result)
-# message(FATAL_ERROR "CMake step for googletest failed: ${result}")
-# endif()
-# execute_process(COMMAND ${CMAKE_COMMAND} --build .
-# RESULT_VARIABLE result
-# WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/googletest-download )
-# if(result)
-# message(FATAL_ERROR "Build step for googletest failed: ${result}")
-# endif()
-#
-# # Prevent overriding the parent project's compiler/linker settings on Windows.
-# set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-#
-# # Add googletest directly to our build. This defines the gtest and gtest_main targets.
-# add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/googletest-src
-# ${CMAKE_CURRENT_BINARY_DIR}/googletest-build
-# EXCLUDE_FROM_ALL)
-#
-# # The gtest/gtest_main targets carry header search path dependencies automatically when using CMake 2.8.11 or later. Otherwise we have to add them here ourselves.
-# if (CMAKE_VERSION VERSION_LESS 2.8.11)
-# include_directories("${gtest_SOURCE_DIR}/include")
-# endif()
-#
-# # Now simply link against gtest or gtest_main as needed. Eg
-# target_link_libraries(TP1 gtest_main)
-# add_test(NAME example_test COMMAND example)
+        src/core/config/data/ClassifierBox.h
+)

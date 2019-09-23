@@ -27,7 +27,7 @@ private:
 
     void handleRequest(const SellerRequest& request);
     void resupply(const SellerRequest& request);
-
+    void takeClassifierBox();
 public:
     DistributorJob(int centerId, Pipe *classifierPipe, Pipe *requestsPipe, std::map<std::string, Pipe*> distributionPipes)
             : _classifierPipe(classifierPipe), _requestsPipe(requestsPipe),

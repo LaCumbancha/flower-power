@@ -11,7 +11,7 @@ int DistributorJob::run() {
 
     int status;
     std::string incoming;
-    Logger::info("Distributor job from distribution center #" + std::to_string(_centerId) + " running.");
+    Logger::info("Distributor job from Distribution Center #" + std::to_string(_centerId) + " running.");
 
     while (this->_requestsPipe->read(incoming, &status) > 0) {
         if (status == EXIT_SUCCESS) {
@@ -19,19 +19,23 @@ int DistributorJob::run() {
             handleRequest(sellerRequest);
         }
     }
+
+    while (resupplyPipeIsOpen) {
+        takeClassifierBox();
+    }
+    Logger::info("Distributor job from Distribution Center #" + std::to_string(_centerId) + " remaining stock: " +
+                 std::to_string(_rosesStock.size()) + " roses boxes and " + std::to_string(_tulipsStock.size()) +
+                 " tulips boxes.");
     return Job::run();
 }
 
 void DistributorJob::handleRequest(const SellerRequest &request) {
 
-    Logger::info("Distributor job #" + std::to_string(_centerId) +
-                 " received a request from seller #" + request.sellerId + " asking for " +
-                 std::to_string(request.rosesBoxAmount)
-                 + " of roses classifier boxes and " + std::to_string(request.tulipsBoxAmount) +
-                 " of tulip classifier boxes.\n" +
-                 "Current stock: " + "[roses boxes stock: " + std::to_string(_rosesStock.size()) +
-                 " ; tulip boxes stock: " +
-                 std::to_string(_tulipsStock.size()) + "]");
+    Logger::info("Distributor #" + std::to_string(_centerId) + " received a request from Seller #"
+                 + request.sellerId + " asking for " + std::to_string(request.rosesBoxAmount) + " roses boxes and " +
+                 std::to_string(request.tulipsBoxAmount) + " tulips boxes. Current DC stock: " +
+                 std::to_string(_rosesStock.size()) + " roses boxes and " + std::to_string(_tulipsStock.size()) +
+                 " tulips boxes.");
 
     auto responsePipeInfo = _distributionPipes.find(request.sellerId);
     Pipe *responsePipe = responsePipeInfo->second;
@@ -52,7 +56,7 @@ void DistributorJob::handleRequest(const SellerRequest &request) {
         _rosesStock.pop_back();
         ssize_t wroteAmount = responsePipe->write(cb.serialize());
         if (wroteAmount == -1) {
-            Logger::error("Distributor job #" + std::to_string(_centerId) + " could not supply the seller #" +
+            Logger::error("Distributor #" + std::to_string(_centerId) + " could not supply the Seller #" +
                           request.sellerId + " due to a pipe error.");
             return;
         }
@@ -64,7 +68,7 @@ void DistributorJob::handleRequest(const SellerRequest &request) {
         _tulipsStock.pop_back();
         ssize_t wroteAmount = responsePipe->write(cb.serialize());
         if (wroteAmount == -1) {
-            Logger::error("Distributor job #" + std::to_string(_centerId) + " could not supply the seller #" +
+            Logger::error("Distributor #" + std::to_string(_centerId) + " could not supply the Seller #" +
                           request.sellerId + " due to a pipe error.");
             return;
         }
@@ -73,58 +77,21 @@ void DistributorJob::handleRequest(const SellerRequest &request) {
 }
 
 void DistributorJob::resupply(const SellerRequest &request) {
-    int status;
 
-    Logger::info("Distributor job #" + std::to_string(_centerId) +
-                 " has not enough stock to deliver the request of flowers made by seller #" + request.sellerId +
-                 " consisting of " + std::to_string(request.rosesBoxAmount)
-                 + " roses classifier boxes and " + std::to_string(request.tulipsBoxAmount) +
-                 " of tulip classifier boxes: \n" +
-                 "[roses boxes stock: " + std::to_string(_rosesStock.size()) + " ; tulip boxes stock: " +
-                 std::to_string(_tulipsStock.size()) + "]");
+    Logger::info("Distributor #" + std::to_string(_centerId) + " has not enough stock to deliver the request "
+                 +"of flowers made by Seller #" + request.sellerId + ", consisting of " + std::to_string(request.rosesBoxAmount)
+                 + " roses boxes and " + std::to_string(request.tulipsBoxAmount) + " of tulips boxes. Current DC stock: " +
+                 std::to_string(_rosesStock.size()) + " roses boxes and " + std::to_string(_tulipsStock.size()) +
+                 " tulips boxes.");
 
     while ((_rosesStock.size() < request.rosesBoxAmount) ||
            (_tulipsStock.size() < request.tulipsBoxAmount)) {
-
-        std::string data;
-        ssize_t readAmount = _classifierPipe->read(data, &status);
-
-        if (readAmount == -1) {
-            Logger::error("Distributor job #" + std::to_string(_centerId) + " could not resupply due to a pipe error.");
-            return;
-        }
-
-        if (readAmount == 0) {
-            Logger::info("Distributor job #" + std::to_string(_centerId) +
-                         " could not fully resupply because of closed pipe. Remnant stock: " + "[roses boxes stock: " +
-                         std::to_string(_rosesStock.size()) + " ; tulip boxes stock: " +
-                         std::to_string(_tulipsStock.size()) + "]");
-            Logger::debug("Distibutor job  #" + std::to_string(_centerId) +
-                          " won't be able to resupply due to producers having exhausted their production.");
-            resupplyPipeIsOpen = false;
-            return;
-        }
-
-        if (status == EXIT_SUCCESS) {
-            Logger::debug("Distibutor job  #"  + std::to_string(_centerId) + " just read " + std::to_string(readAmount) + " from serialized classifier box: \n" + data);
-            ClassifierBox cb = ClassifierBox::deserialize(data);
-            switch (cb.flowerType) {
-                case ROSE:
-                    _rosesStock.push_back(cb);
-                    break;
-                case TULIP:
-                    _tulipsStock.push_back(cb);
-                    break;
-            }
-
-            Logger::info("Distributor job #" + std::to_string(_centerId) + " stock after resupply: \n" +
-                         "[roses boxes stock: " + std::to_string(_rosesStock.size()) + " ; tulip boxes stock: " +
-                         std::to_string(_tulipsStock.size()) + "]");
-        }
+        takeClassifierBox();
     };
 }
 
 int DistributorJob::finish() {
+
     delete _classifierPipe;
     Logger::info("Distributor job #" + std::to_string(_centerId) + " pipe connected to classifier destroyed.");
 
@@ -138,5 +105,43 @@ int DistributorJob::finish() {
     }
 
     exit(EXIT_SUCCESS);
+}
+
+void DistributorJob::takeClassifierBox() {
+    int status;
+    std::string data;
+    ssize_t readAmount = _classifierPipe->read(data, &status);
+
+    if (readAmount == -1) {
+        Logger::error("Distributor #" + std::to_string(_centerId) + " could not resupply due to a pipe error.");
+        return;
+    }
+
+    if (readAmount == 0) {
+        Logger::info("Distributor job #" + std::to_string(_centerId) +
+                     " could not fully resupply because of closed pipe. Remnant stock: " + "[roses boxes stock: " +
+                     std::to_string(_rosesStock.size()) + " ; tulip boxes stock: " +
+                     std::to_string(_tulipsStock.size()) + "]");
+        resupplyPipeIsOpen = false;
+
+        return;
+    }
+
+    if (status == EXIT_SUCCESS) {
+        Logger::debug("Distibutor job  #"  + std::to_string(_centerId) + " just read " + std::to_string(readAmount) + " from serialized classifier box: \n" + data);
+        ClassifierBox cb = ClassifierBox::deserialize(data);
+        switch (cb.flowerType) {
+            case ROSE:
+                _rosesStock.push_back(cb);
+                break;
+            case TULIP:
+                _tulipsStock.push_back(cb);
+                break;
+        }
+
+        Logger::info("Distributor #" + std::to_string(_centerId) + " stock after resupply: " +
+                     std::to_string(_rosesStock.size()) + " roses boxes and " + std::to_string(_tulipsStock.size()) +
+                     " tulips boxes.");
+    }
 }
 

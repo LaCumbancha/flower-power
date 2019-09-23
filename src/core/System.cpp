@@ -25,7 +25,6 @@ int System::run() {
 
     }
 
-    this->finish();
     return EXIT_SUCCESS;
 }
 
@@ -46,7 +45,7 @@ int System::finish() {
         Logger::info("System finished successfully.");
     }
 
-    return EXIT_SUCCESS;
+    exit(EXIT_SUCCESS);
 }
 
 Config *System::getConfig() {
