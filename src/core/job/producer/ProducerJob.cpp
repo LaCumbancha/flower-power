@@ -25,6 +25,11 @@ ProducerJob::ProducerJob(const int centerId, const FlowerBox *producerData, Pipe
 
 }
 
+__sighandler_t ProducerJob::handler() {
+    Logger::debug("HANDLER: Producer Job");
+    //TODO:    ContextStatus::saveContext(this->contextState());
+}
+
 FlowerBox ProducerJob::generateFlowerBox() {
 
     // Uncomment the following line to measure stats in real time.
@@ -67,6 +72,8 @@ FlowerBox ProducerJob::generateFlowerBox() {
 int ProducerJob::run() {
     bool producerPipeIsOpen = true;
     while (producerPipeIsOpen && (this->_rosesStock != 0 || this->_tulipsStock != 0)) {
+        ContextStatus::saveContext("ProducerJobContextStatus");
+
         auto box = this->generateFlowerBox();
 
         Logger::info("Producer #" + std::to_string(this->_centerId) + "." + std::to_string(this->_producerId) + " (" +
@@ -83,7 +90,7 @@ int ProducerJob::run() {
 }
 
 int ProducerJob::finish() {
-    this->_producerPipe->~Pipe();
+    delete this->_producerPipe;
     Logger::info("Producer #" + std::to_string(this->_centerId) + "." + std::to_string(this->_producerId) + " (" +
                  this->_producerName + ") pipe destroyed.");
 
@@ -95,6 +102,6 @@ std::string ProducerJob::contextState() {
            std::to_string(this->_rosesStock) + ',' + std::to_string(this->_tulipsStock);
 }
 
-__sighandler_t ProducerJob::handler() {
-    Logger::debug("HANDLER: Producer Job");
+ProducerJob::~ProducerJob() {
+    this->finish();
 }

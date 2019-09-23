@@ -16,6 +16,12 @@ ClassifierJob::ClassifierJob(const int center, Pipe *producersPipe, Pipe* distri
 
 }
 
+__sighandler_t ClassifierJob::handler() {
+    Logger::debug("HANDLER: Classifier Job");
+//    this->finish();
+    //TODO:    ContextStatus::saveContext(this->contextState());
+}
+
 int ClassifierJob::run() {
     std::string data;
     int status;
@@ -108,6 +114,6 @@ std::string ClassifierJob::contextState() {
     return state;
 }
 
-__sighandler_t ClassifierJob::handler() {
-    Logger::debug("HANDLER: Classifier Job");
+ClassifierJob::~ClassifierJob() {
+    this->finish();
 }

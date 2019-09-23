@@ -16,9 +16,9 @@ class ProducerJob : public Job {
 public:
     explicit ProducerJob(int centerId, const FlowerBox* producerData, Pipe* producerPipe);
     int run() override;
-    int finish() override;
-
+    ~ProducerJob();
 private:
+
     int _centerId;
     int _producerId;
     int _rosesStock;
@@ -27,6 +27,7 @@ private:
     Pipe* _producerPipe;
 
     FlowerBox generateFlowerBox();
+    int finish() override;
     std::string contextState();
 
     __sighandler_t handler();

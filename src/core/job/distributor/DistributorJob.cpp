@@ -25,6 +25,12 @@ int DistributorJob::run() {
     return Job::run();
 }
 
+__sighandler_t DistributorJob::handler() {
+    Logger::debug("HANDLER: Distributor Job");
+//    this->finish();
+    //TODO:    ContextStatus::saveContext(this->contextState());
+}
+
 void DistributorJob::handleRequest(const SellerRequest &request) {
 
     Logger::info("Distributor #" + std::to_string(_centerId) + " received a request from Seller #"
@@ -157,6 +163,6 @@ std::string DistributorJob::contextState() {
     return state;
 }
 
-__sighandler_t DistributorJob::handler() {
-    Logger::debug("HANDLER: Distributor Job");
+DistributorJob::~DistributorJob() {
+    this->finish();
 }
