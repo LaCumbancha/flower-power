@@ -102,5 +102,6 @@ std::string ProducerJob::contextState() {
 
 int ProducerJob::stopJob() {
     Logger::debug("HANDLER: Producer Job #" + std::to_string(this->_centerId) + "." + std::to_string(this->_producerId) + ".");
+    ContextStatus::saveContext(this->contextState());
     return EXIT_SUCCESS;
 }

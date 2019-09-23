@@ -163,5 +163,6 @@ std::string DistributorJob::contextState() {
 
 int DistributorJob::stopJob() {
     Logger::debug("HANDLER: Distributor Job #" + std::to_string(this->_centerId) + ".");
+    ContextStatus::saveContext(this->contextState());
     return EXIT_SUCCESS;
 }

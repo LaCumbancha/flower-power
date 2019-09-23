@@ -184,5 +184,6 @@ std::string SellerJob::contextState() {
 
 int SellerJob::stopJob() {
     Logger::debug("HANDLER: Seller Job #" + _sellerId + ".");
+    ContextStatus::saveContext(this->contextState());
     return EXIT_SUCCESS;
 }
