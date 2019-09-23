@@ -55,8 +55,15 @@ int SellerJob::listenRequests() {
 void SellerJob::handleRequest(BouquetRequest bouquetRequest) {
     // Uncomment the following line to measure stats real time.
     // sleep(10);
-    Logger::info("Seller # " + this->_sellerId + " received a request for " + std::to_string(bouquetRequest.rosesAmount) +
-            " roses and " + std::to_string(bouquetRequest.tulipsAmount) + " tulips.");
+    if (bouquetRequest.onlineSale) {
+        Logger::info("Seller # " + this->_sellerId + " just received an online purchase for " +
+                     std::to_string(bouquetRequest.rosesAmount) + " roses and " +
+                     std::to_string(bouquetRequest.tulipsAmount) + " tulips.");
+    } else {
+        Logger::info("Seller # " + this->_sellerId + " received an in place request for " +
+                     std::to_string(bouquetRequest.rosesAmount) + " roses and " +
+                     std::to_string(bouquetRequest.tulipsAmount) + " tulips.");
+    }
 
     if ((this->_rosesStock.size() < bouquetRequest.rosesAmount ||
          this->_tulipsStock.size() < bouquetRequest.tulipsAmount) && _distributionPipeIsOpen) {

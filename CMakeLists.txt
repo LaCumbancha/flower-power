@@ -55,4 +55,4 @@ add_executable(
         src/core/job/distributor/DistributorJob.cpp
         src/core/config/data/ClassifierBox.cpp
         src/core/config/data/ClassifierBox.h
-)
+        src/core/config/Paths.h)
