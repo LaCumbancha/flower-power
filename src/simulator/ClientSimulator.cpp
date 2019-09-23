@@ -3,7 +3,7 @@
 #include <utility>
 
 
-ClientSimulator::ClientSimulator(std::string sellerId, int clients, Pipe &clientPipe) {
+ClientSimulator::ClientSimulator(std::string sellerId, int clients, Pipe * clientPipe) {
     this->_sellerId = std::move(sellerId);
     this->_clients = clients;
     this->_clientPipe = clientPipe;
@@ -21,7 +21,7 @@ void ClientSimulator::run() {
                      ": " +
                      std::to_string(request.rosesAmount) + " roses and " + std::to_string(request.tulipsAmount) +
                      " tulips.");
-        this->_clientPipe.write(request.serialize());
+        this->_clientPipe->write(request.serialize());
     }
     Logger::info("Client simulator #" + _sellerId + " finished it's work.");
 }
@@ -36,5 +36,6 @@ BouquetRequest ClientSimulator::simulateBouquetRequest() {
 
 ClientSimulator::~ClientSimulator() {
     Logger::debug("Client simulator #" + _sellerId + " destroyed.");
+    delete _clientPipe;
     exit(EXIT_SUCCESS);
 }

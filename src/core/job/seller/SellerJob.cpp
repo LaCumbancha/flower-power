@@ -14,19 +14,19 @@ SellerJob::SellerJob(std::string sellerId, int clients, Pipe *requestPipe, Pipe 
 }
 
 int SellerJob::run() {
-    this->_clientPipe = Pipe();
+    this->_clientPipe = new Pipe();
     pid_t pid = fork();
 
     if (pid == CHILD_PROCESS_PID) {
         // Child process.
-        this->_clientPipe.setWriteMode();
+        this->_clientPipe->setWriteMode();
         auto clientSimulator = ClientSimulator(this->_sellerId, this->_clients, _clientPipe);
         clientSimulator.run();
     } else {
         // Seller process.
         Logger::info("Client Simulator # " + this->_sellerId + " running in process " + std::to_string(pid) + ".");
         this->_clientSimulatorPID = pid;
-        this->_clientPipe.setReadMode();
+        this->_clientPipe->setReadMode();
 
         // Listening for incoming requests.
         this->listenRequests();
@@ -41,7 +41,7 @@ int SellerJob::listenRequests() {
     int status;
     bool canHandleRequests = true;
     Logger::info("Seller # " + this->_sellerId + " started to listen for requests.");
-    while (canHandleRequests && (this->_clientPipe.read(incoming, &status) > 0)) {
+    while (canHandleRequests && (this->_clientPipe->read(incoming, &status) > 0)) {
         if (status == EXIT_SUCCESS) {
             BouquetRequest bouquetRequest = BouquetRequest::deserialize(incoming);
             this->handleRequest(bouquetRequest);
@@ -103,7 +103,6 @@ void SellerJob::resupply(BouquetRequest request) {
     while (_distributionPipeIsOpen && receivedBoxes < (rosesBoxAmount + tulipsBoxAmount)) {
         std::string serializedCb;
         int status;
-
         int readAmount = _distributionPipe->read(serializedCb, &status);
 
         if (readAmount == -1) {
@@ -112,7 +111,6 @@ void SellerJob::resupply(BouquetRequest request) {
         }
 
         if (readAmount == 0) {
-            Logger::debug("OOO");
             Logger::debug(
                     "Seller # " + this->_sellerId + " could not resupply due to the distributor pipe being closed.");
             _distributionPipeIsOpen = false;
@@ -154,6 +152,7 @@ int SellerJob::finish() {
     } else {
         Logger::info("Client Simulator #" + this->_sellerId + " successfully ended without errors.");
     }
+    delete _clientPipe;
 
     delete _distributionPipe;
 
