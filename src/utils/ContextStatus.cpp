@@ -149,16 +149,15 @@ void ContextStatus::loadData() {
     for (const auto& line : stateData) {
         buffer = "";
 
-        for (unsigned long i = 1; i < line.length(); i++) {
-            char prevCharacter = line.at(i - 1);
-            char character = line.at(i);
+        for (auto character : line) {
 
-            if (character == ',' && prevCharacter != ',') {
+            if (character == ',') {
                 ContextStatus::_data.insert(std::pair<std::string, std::string>(buffer, line));
                 break;
             } else {
-                buffer += prevCharacter;
+                buffer += character;
             }
+
         }
     }
 
