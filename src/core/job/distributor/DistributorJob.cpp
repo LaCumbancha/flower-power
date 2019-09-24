@@ -233,6 +233,9 @@ void DistributorJob::loadPreviousState(const string& previousState) {
 
     boxes.push_back(flowers);
 
+    this->_rosesStock = std::vector<ClassifierBox>();
+    this->_tulipsStock = std::vector<ClassifierBox>();
+
     for (const auto& rose : boxes[0]) {
         this->_rosesStock.push_back(ClassifierBox::deserialize(rose));
     }

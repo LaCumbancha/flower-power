@@ -153,7 +153,7 @@ void ClassifierJob::loadPreviousState(const string& previousState) {
     for (auto character : previousState) {
 
         if (character == '!') {
-            flowers.push_back(buffer + '\0');
+            flowers.push_back(buffer);
             buffer = "";
         } else if (character == ',') {
             boxes.push_back(flowers);
@@ -165,6 +165,9 @@ void ClassifierJob::loadPreviousState(const string& previousState) {
     }
 
     boxes.push_back(flowers);
+
+    this->_roses = std::vector<Flower>();
+    this->_tulips = std::vector<Flower>();
 
     for (const auto& rose : boxes[0]) {
         this->_roses.push_back(Flower::deserialize(rose));

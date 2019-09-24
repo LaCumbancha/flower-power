@@ -261,6 +261,9 @@ void SellerJob::loadPreviousState(const string& previousState) {
 
     boxes.push_back(flowers);
 
+    this->_rosesStock = std::vector<Flower>();
+    this->_tulipsStock = std::vector<Flower>();
+
     for (const auto& rose : boxes[0]) {
         this->_rosesStock.push_back(Flower::deserialize(rose));
     }

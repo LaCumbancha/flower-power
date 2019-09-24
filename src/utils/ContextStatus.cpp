@@ -143,22 +143,22 @@ void ContextStatus::loadData() {
     std::string buffer;
 
     // Loading producers from CSV.
-    auto reader = CSVReader(ContextStatus::_stateFile);
-    std::vector<std::string> stateData = reader.getDataByLines();
+    auto reader = new CSVReader(ContextStatus::_stateFile);
+    std::vector<std::string> stateData = reader->getDataByLines();
 
     for (const auto& line : stateData) {
         buffer = "";
 
-        for (unsigned long i = 1; i < line.length(); i++) {
-            char prevCharacter = line.at(i - 1);
-            char character = line.at(i);
+        for (auto character : line) {
 
-            if (character == ',' && prevCharacter != ',') {
-                ContextStatus::_data.insert(std::pair<std::string, std::string>(buffer, line));
+            if (character == ',') {
+                Logger::warn("Job "+ buffer + " stored: [" + line.substr(buffer.size() + 1) + "].");
+                ContextStatus::_data.insert(std::pair<std::string, std::string>(buffer, line.substr(buffer.size() + 1)));
                 break;
             } else {
-                buffer += prevCharacter;
+                buffer += character;
             }
+
         }
     }
 
@@ -174,9 +174,8 @@ void ContextStatus::retrieveData(const std::string& id) {
             Logger::error("Failed to retrieve previous state data for Job " + id + ".");
             ContextStatus::_retrievePipe->write("");
         } else {
-            std::string previousStatus = ContextStatus::_data.find(id)->second;
-
-            ContextStatus::_retrievePipe->write(previousStatus.substr(id.size() + 1, previousStatus.size()));
+            Logger::warn("Job "+ id + " retrieved: [" + ContextStatus::_data.find(id)->second + "].");
+            ContextStatus::_retrievePipe->write(ContextStatus::_data.find(id)->second);
         }
     } else {
         ContextStatus::_retrievePipe->write("");

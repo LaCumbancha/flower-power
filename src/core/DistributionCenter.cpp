@@ -178,8 +178,15 @@ void DistributionCenter::closePipes() {
 }
 
 int DistributionCenter::stopJob() {
-    Logger::debug("HANDLER: Distribution Center Job #" + std::to_string(this->_id) + ".");
+    // Destroying pipes.
+    this->_requestsPipe->~Pipe();
+    this->_producersPipe->~Pipe();
+    this->_innerPipe->~Pipe();
+
+    for (auto pipe : this->_distributionPipes) {
+        pipe.second->~Pipe();
+    }
+
+    delete this;
     return EXIT_SUCCESS;
 }
-
-

@@ -68,7 +68,6 @@ void ClientSimulator::loadOnlineSales() {
 }
 
 int ClientSimulator::stopJob() {
-    Logger::debug("HANDLER: Client Simulator #" + _sellerId + ".");
     delete this;
     return EXIT_SUCCESS;
 }
