@@ -20,7 +20,7 @@ int ClientSimulator::run() {
     for (int client = 1; client <= this->_clients; client++) {
 
         // Uncomment the following line to measure stats in real time.
-        sleep(3);
+        sleep(1);
 
         BouquetRequest request = simulateBouquetRequest();
 

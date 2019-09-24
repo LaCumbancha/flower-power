@@ -168,7 +168,7 @@ void ContextStatus::retrieveData(const std::string& id) {
     if (ContextStatus::_systemResumed) {
         // Retrieving data for previous state.
         if (ContextStatus::_data.find(id) == ContextStatus::_data.end()) {
-            Logger::error("Failed to retrieve previous state data for Job " + id);
+            Logger::error("Failed to retrieve previous state data for Job " + id + ".");
             ContextStatus::_retrievePipe->write("");
         } else {
             std::string previousStatus = ContextStatus::_data.find(id)->second;

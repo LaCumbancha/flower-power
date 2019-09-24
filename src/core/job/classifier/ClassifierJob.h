@@ -30,7 +30,7 @@ private:
 
     void initializeStatus();
 
-    void loadPreviousState(string previousState);
+    void loadPreviousState(const string& previousState);
 };
 
 

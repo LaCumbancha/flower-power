@@ -16,8 +16,16 @@
 
 
 class DistributorJob : public Job {
+
+public:
+    explicit DistributorJob(int center, Pipe *classifierPipe, Pipe *requestsPipe, std::map<std::string, Pipe*> distributionPipes);
+
+    int run() override;
+    int finish() override;
+    int stopJob() override;
+
 private:
-    int _centerId;
+    int _center;
     Pipe *_classifierPipe;
     Pipe *_requestsPipe;
     std::map<std::string, Pipe*> _distributionPipes;
@@ -31,15 +39,9 @@ private:
     void takeClassifierBox();
     std::string contextState();
 
-public:
-    DistributorJob(int centerId, Pipe *classifierPipe, Pipe *requestsPipe, std::map<std::string, Pipe*> distributionPipes)
-            : _classifierPipe(classifierPipe), _requestsPipe(requestsPipe),
-              _distributionPipes(std::move(distributionPipes)),
-              _centerId(centerId), Job() {};
+    void initializeStatus();
 
-    int run() override;
-    int finish() override;
-    int stopJob() override;
+    void loadPreviousState(const string& previousState);
 };
 
 

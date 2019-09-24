@@ -30,6 +30,10 @@ int ClassifierJob::run() {
 
     while ((readAmount = this->_producersPipe->read(data, &status)) > 0) {
         if (status == EXIT_SUCCESS) {
+
+            // Uncomment the following line to measure stats in real time.
+            // sleep(1);
+
             FlowerBox box = FlowerBox::deserialize(data);
             std::string producerId = std::to_string(this->_center) + "." + std::to_string(box.producerId);
             Logger::debug("Classifier #" + std::to_string(this->_center) + " received a box with " +
@@ -127,7 +131,7 @@ void ClassifierJob::initializeStatus() {
     std::string previousState = ContextStatus::retrieveContext('C' + std::to_string(this->_center));
 
     if (previousState.empty()) {
-        Logger::info("Creating new state for Classifier #" + std::to_string(this->_center));
+        Logger::info("Creating new empty state for Classifier #" + std::to_string(this->_center));
     } else {
         Logger::info("Load previous state for Classifier #" + std::to_string(this->_center));
         this->loadPreviousState(previousState);
@@ -135,7 +139,7 @@ void ClassifierJob::initializeStatus() {
 
 }
 
-void ClassifierJob::loadPreviousState(string previousState) {
+void ClassifierJob::loadPreviousState(const string& previousState) {
 
     std::string buffer;
     std::vector<std::string> flowers;
