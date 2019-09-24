@@ -25,6 +25,7 @@ void ContextStatus::run() {
                 writer->saveData(data.substr(3, data.size()));
             } else if (isLoadIncoming(data)) {
                 loadData();
+                writer->clearFile();
             } else if (isRetrieveIncoming(data)) {
                 retrieveData(data.substr(3, data.size()));
             } else if (isSaveSystemStatus(data)) {

@@ -220,7 +220,7 @@ void DistributorJob::loadPreviousState(const string& previousState) {
     for (auto character : previousState) {
 
         if (character == '!') {
-            flowers.push_back(buffer);
+            flowers.push_back(buffer + '\0');
             buffer = "";
         } else if (character == ',') {
             boxes.push_back(flowers);

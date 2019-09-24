@@ -136,7 +136,7 @@ void ProducerJob::loadPreviousState(const string& previousState) {
     for (auto character : previousState) {
 
         if (character == ',') {
-            values.push_back(buffer);
+            values.push_back(buffer + '\0');
             buffer = "";
         } else {
             buffer += character;

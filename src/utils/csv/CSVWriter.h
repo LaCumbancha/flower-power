@@ -12,6 +12,7 @@ class CSVWriter {
 public:
     explicit CSVWriter(std::string filename, char separator = ',');
     void saveData(const std::string& data);
+    void clearFile();
 
 private:
     std::string _filename;
