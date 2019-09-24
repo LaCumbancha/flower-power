@@ -2,64 +2,72 @@
 
 DistributionCenter::DistributionCenter(Config *config, int id) : Job() {
 
-    // Setting configurations.
-    this->_id = id;
-    this->_config = config;
+        // Setting configurations.
+        this->_id = id;
+        this->_config = config;
 
-    // Getting current pid
-    pid_t pid;
+        // Getting current pid
+        pid_t pid;
+    try {
+        /*********** Producer processes creation. **********/
+        // Creating pipe for producers.
+        auto producersPipe = new Pipe();
+        for (auto producerData : config->getProducers()) {
 
-    /*********** Producer processes creation. **********/
-    // Creating pipe for producers.
-    auto producersPipe = new Pipe();
-    for (auto producerData : config->getProducers()) {
+            std::string producerId = std::to_string(this->_id) + "." + std::to_string(producerData->producerId);
+            pid = fork();
 
-        std::string producerId = std::to_string(this->_id) + "." + std::to_string(producerData->producerId);
-        pid = fork();
-
-        if (pid == CHILD_PROCESS_PID) {
-            // Child process.
-            producersPipe->setWriteMode();
-            auto producerJob = new ProducerJob(this->_id, producerData, producersPipe);
-            producerJob->run();
-            delete producerJob;
+            if (pid == CHILD_PROCESS_PID) {
+                // Child process.
+                try {
+                    producersPipe->setWriteMode();
+                    auto producerJob = new ProducerJob(this->_id, producerData, producersPipe);
+                    producerJob->run();
+                    delete producerJob;
+                } catch (std::exception& e) {
+                    std::cerr << "Distribution center producerData for";
+                }
+            }
+            this->_producersPIDs.push_back(pid);
+            ProcessKiller::addPID(pid);
+            Logger::info("Producer #" + producerId + " running in process with PID #" + std::to_string(pid) + ".");
         }
-        this->_producersPIDs.push_back(pid);
-        ProcessKiller::addPID(pid);
-        Logger::info("Producer #" + producerId + " running in process with PID #" + std::to_string(pid) + ".");
-    }
-    producersPipe->setReadMode();
-    this->_producersPipe = producersPipe;
+        producersPipe->setReadMode();
+        this->_producersPipe = producersPipe;
 
-    /*********** Seller processes creation. **********/
-    // Creating pipe for sellers' requests.
-    auto requestsPipe = new Pipe();
-    int salePoints = config->getSalePoints();
-    for (int salePoint = 1 ; salePoint <= salePoints ; salePoint++) {
-        // Creating pipe for sellers' stock distribution.
-        auto distributionPipe = new Pipe();
+        /*********** Seller processes creation. **********/
+        // Creating pipe for sellers' requests.
+        auto requestsPipe = new Pipe();
+        int salePoints = config->getSalePoints();
+        for (int salePoint = 1; salePoint <= salePoints; salePoint++) {
+            // Creating pipe for sellers' stock distribution.
+            auto distributionPipe = new Pipe();
 
-        std::string sellerId = std::to_string(this->_id) + "." + std::to_string(salePoint);
-        pid = fork();
+            std::string sellerId = std::to_string(this->_id) + "." + std::to_string(salePoint);
+            pid = fork();
 
-        if (pid == CHILD_PROCESS_PID) {
-            // Child process.
-            requestsPipe->setWriteMode();
-            distributionPipe->setReadMode();
-            auto sellerJob = new SellerJob(sellerId, config->getClients(), requestsPipe, distributionPipe);
-            sellerJob->run();
-            delete sellerJob;
+            if (pid == CHILD_PROCESS_PID) {
+                // Child process.
+                requestsPipe->setWriteMode();
+                distributionPipe->setReadMode();
+                auto sellerJob = new SellerJob(sellerId, config->getClients(), requestsPipe, distributionPipe);
+                sellerJob->run();
+                delete sellerJob;
+            }
+            this->_distributionPipes.insert(std::pair<std::string, Pipe *>(sellerId, distributionPipe));
+            this->_sellersPIDs.push_back(pid);
+            ProcessKiller::addPID(pid);
+            Logger::info("Seller #" + sellerId + " running in process with PID #" + std::to_string(pid) + ".");
         }
-        this->_distributionPipes.insert(std::pair<std::string, Pipe*>(sellerId, distributionPipe));
-        this->_sellersPIDs.push_back(pid);
-        ProcessKiller::addPID(pid);
-        Logger::info("Seller #" + sellerId + " running in process with PID #" + std::to_string(pid) + ".");
-    }
-    requestsPipe->setReadMode();
-    this->_requestsPipe = requestsPipe;
+        requestsPipe->setReadMode();
+        this->_requestsPipe = requestsPipe;
 
-    /******** Classifier-Distributor pipe creation *********/
-    this->_innerPipe = new Pipe();
+        /******** Classifier-Distributor pipe creation *********/
+        this->_innerPipe = new Pipe();
+    } catch (std::exception &e) {
+        std::cerr << "Distribution Center constructor exception: " << e.what() << std::endl;
+        exit(EXIT_FAILURE);
+    }
 }
 
 int DistributionCenter::run() {

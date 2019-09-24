@@ -149,15 +149,16 @@ void ContextStatus::loadData() {
     for (const auto& line : stateData) {
         buffer = "";
 
-        for (auto character : line) {
+        for (unsigned long i = 1; i < line.length(); i++) {
+            char prevCharacter = line.at(i - 1);
+            char character = line.at(i);
 
-            if (character == ',') {
+            if (character == ',' && prevCharacter != ',') {
                 ContextStatus::_data.insert(std::pair<std::string, std::string>(buffer, line));
                 break;
             } else {
-                buffer += character;
+                buffer += prevCharacter;
             }
-
         }
     }
 
@@ -174,6 +175,7 @@ void ContextStatus::retrieveData(const std::string& id) {
             ContextStatus::_retrievePipe->write("");
         } else {
             std::string previousStatus = ContextStatus::_data.find(id)->second;
+
             ContextStatus::_retrievePipe->write(previousStatus.substr(id.size() + 1, previousStatus.size()));
         }
     } else {

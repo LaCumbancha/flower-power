@@ -5,6 +5,9 @@
 
 ProducerJob::ProducerJob(const int centerId, const FlowerBox *producerData, Pipe *producerPipe) : Job() {
 
+    try {
+
+
     // Registering SIGTERM handler.
     auto handler = new StopHandler(this);
     SignalHandler::getInstance()->registerHandler(SIGTERM, handler);
@@ -26,7 +29,9 @@ ProducerJob::ProducerJob(const int centerId, const FlowerBox *producerData, Pipe
 
     // Initializing random number generator
     srand(time(NULL) * getpid());
-
+    } catch (const std::exception& e) {
+        std::cerr << "ProducerJob construction exception: " << e.what() << std::endl;
+    }
 }
 
 FlowerBox ProducerJob::generateFlowerBox() {
@@ -115,40 +120,49 @@ int ProducerJob::stopJob() {
 
 void ProducerJob::initializeStatus(const FlowerBox* producerData) {
 
-    std::string producerId = std::to_string(this->_centerId) + '.' + std::to_string(this->_producerId);
-    std::string previousState = ContextStatus::retrieveContext('P' + producerId);
+    try {
+        std::string producerId = std::to_string(this->_centerId) + '.' + std::to_string(this->_producerId);
+        std::string previousState = ContextStatus::retrieveContext('P' + producerId);
 
-    if (previousState.empty()) {
-        Logger::info("Creating new state for Producer #" + producerId);
-        this->_rosesStock = producerData->rosesStock;
-        this->_tulipsStock = producerData->tulipsStock;
-    } else {
-        Logger::info("Load previous state for Producer #" + producerId);
-        this->loadPreviousState(previousState);
+        if (previousState.empty()) {
+            Logger::info("Creating new state for Producer #" + producerId);
+            this->_rosesStock = producerData->rosesStock;
+            this->_tulipsStock = producerData->tulipsStock;
+        } else {
+            Logger::info("Load previous state for Producer #" + producerId);
+            this->loadPreviousState(previousState);
+        }
+    } catch (const std::exception &e) {
+        std::cerr << "Producer Job initializeStatus exception: " << e.what() << std::endl;
     }
-
 }
 
 void ProducerJob::loadPreviousState(const string& previousState) {
     std::string buffer;
     std::vector<std::string> values;
 
-    for (auto character : previousState) {
+    try {
+        for (auto character : previousState) {
 
-        if (character == ',') {
-            values.push_back(buffer + '\0');
-            buffer = "";
-        } else {
-            buffer += character;
+            if (character == ',') {
+                values.push_back(buffer + '\0');
+                buffer = "";
+            } else {
+                buffer += character;
+            }
+
         }
 
+        values.push_back(buffer);
+
+        Logger::debug("Producer Job #" + std::to_string(this->_centerId) + "." + std::to_string(this->_producerId) +
+                      " retrieved a stock of " + values[0] + " roses and " + values[1] + " tulips.");
+
+        this->_rosesStock = std::stoi(values[0]);
+        this->_tulipsStock = std::stoi(values[1]);
+    } catch (const std::invalid_argument& e) {
+        std::cerr << "Producer Job loadPreviousState invalid argument exception: " << e.what() << std::endl;
+        std::cerr << values[0] << " - " << values[1] << std::endl;
+        std::cerr << previousState << std::endl;
     }
-
-    values.push_back(buffer);
-
-    Logger::debug("Producer Job #" + std::to_string(this->_centerId) + "." + std::to_string(this->_producerId) +
-                  " retrieved a stock of " + values[0] + " roses and " + values[1] + " tulips.");
-
-    this->_rosesStock = std::stoi(values[0]);
-    this->_tulipsStock = std::stoi(values[1]);
 }

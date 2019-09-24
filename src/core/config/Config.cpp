@@ -1,5 +1,5 @@
 #include "Config.h"
-
+#include "../../utils/Logger.h"
 
 
 int Config::getClients() {
@@ -34,18 +34,20 @@ void Config::setProducers(std::vector<FlowerBox*> producersDTO) {
 }
 
 void Config::loadData() {
+    try {
+        // Loading producers from CSV.
+        auto reader = CSVReader(this->_producersPath);
+        std::vector<std::vector<std::string>> producersData = reader.getData();
 
-    // Loading producers from CSV.
-    auto reader = CSVReader(this->_producersPath);
-    std::vector<std::vector<std::string>> producersData = reader.getData();
-
-    // Parsing and storing producers.
-    for (auto producerData: producersData) {
-        int producerId = std::stoi(producerData[0]);
-        std::string producerName = producerData[1];
-        int rosesStock = std::stoi(producerData[2]);
-        int tulipsStock = std::stoi(producerData[3]);
-        this->_producers.push_back(new FlowerBox(producerId, producerName, rosesStock, tulipsStock));
+        // Parsing and storing producers.
+        for (auto producerData: producersData) {
+            int producerId = std::stoi(producerData[0]);
+            std::string producerName = producerData[1];
+            int rosesStock = std::stoi(producerData[2]);
+            int tulipsStock = std::stoi(producerData[3]);
+            this->_producers.push_back(new FlowerBox(producerId, producerName, rosesStock, tulipsStock));
+        }
+    } catch (const std::exception& e){
+        std::cerr << "Config loadData exception: " << e.what() << std::endl;
     }
-
 }
