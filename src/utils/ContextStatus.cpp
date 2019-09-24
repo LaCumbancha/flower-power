@@ -1,16 +1,20 @@
 #include "ContextStatus.h"
 #include "csv/CSVWriter.h"
+#include "csv/CSVReader.h"
 
+bool ContextStatus::_systemResumed = false;
+bool ContextStatus::_systemFinished = false;
 Pipe* ContextStatus::_incomingPipe = new Pipe();
 Pipe* ContextStatus::_retrievePipe = new Pipe();
-bool ContextStatus::_systemFinished = false;
+std::string ContextStatus::_stateFile = "./tmp/state.csv";
+std::map<std::string, std::string> ContextStatus::_data = std::map<std::string, std::string>();
 
 void ContextStatus::run() {
     std::string data;
     int status;
 
     // Creating CSV Writer.
-    auto writer = new CSVWriter("./tmp/state.csv");
+    auto writer = new CSVWriter(ContextStatus::_stateFile);
 
     // Reading incoming stats.
     ContextStatus::_incomingPipe->setReadMode();
@@ -19,8 +23,10 @@ void ContextStatus::run() {
         if (status == EXIT_SUCCESS) {
             if (isSaveIncoming(data)) {
                 writer->saveData(data.substr(3, data.size()));
+            } else if (isLoadIncoming(data)) {
+                loadData();
             } else if (isRetrieveIncoming(data)) {
-                // TODO: Not implemented.
+                retrieveData(data.substr(3, data.size()));
             } else if (isSaveSystemStatus(data)) {
                 saveSystemStatus(data);
             } else if (isSystemFinishedRequest(data)) {
@@ -50,6 +56,10 @@ void ContextStatus::saveMode() {
 
 void ContextStatus::saveContext(const std::string& data) {
     ContextStatus::_incomingPipe->write("SC|" + data);
+}
+
+void ContextStatus::loadDataForResume() {
+    ContextStatus::_incomingPipe->write("LD|");
 }
 
 std::string ContextStatus::retrieveContext(const std::string& id) {
@@ -90,6 +100,10 @@ bool ContextStatus::isQuitIncoming(std::string &data) {
     return data == "QUIT";
 }
 
+bool ContextStatus::isLoadIncoming(std::string &data) {
+    return data.substr(0, 3) == "LD|";
+}
+
 bool ContextStatus::isSaveIncoming(std::string &data) {
     return data.substr(0, 3) == "SC|";
 }
@@ -117,4 +131,51 @@ void ContextStatus::sendSystemFinished() {
     } else {
         ContextStatus::_retrievePipe->write("RUNNING");
     }
+}
+
+void ContextStatus::loadData() {
+
+    // Setting resume flag on.
+    ContextStatus::_systemResumed = true;
+
+    std::string buffer;
+
+    // Loading producers from CSV.
+    auto reader = CSVReader(ContextStatus::_stateFile);
+    std::vector<std::string> stateData = reader.getDataByLines();
+
+    for (const auto& line : stateData) {
+        buffer = "";
+
+        for (auto character : line) {
+
+            if (character == ',') {
+                ContextStatus::_data.insert(std::pair<std::string, std::string>(buffer, line));
+                break;
+            } else {
+                buffer += character;
+            }
+
+        }
+    }
+
+    Logger::info("Data retrieved to resume system: " + std::to_string(ContextStatus::_data.size()) + " records.");
+
+}
+
+void ContextStatus::retrieveData(const std::string& id) {
+
+    if (ContextStatus::_systemResumed) {
+        // Retrieving data for previous state.
+        if (ContextStatus::_data.find(id) == ContextStatus::_data.end()) {
+            Logger::error("Failed to retrieve previous state data for Job " + id);
+            ContextStatus::_retrievePipe->write("");
+        } else {
+            std::string previousStatus = ContextStatus::_data.find(id)->second;
+            ContextStatus::_retrievePipe->write(previousStatus.substr(id.size() + 1, previousStatus.size()));
+        }
+    } else {
+        ContextStatus::_retrievePipe->write("");
+    }
+
 }

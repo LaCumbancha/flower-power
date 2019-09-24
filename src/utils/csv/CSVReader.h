@@ -10,11 +10,12 @@ using namespace std;
 class CSVReader {
 
 public:
-    explicit CSVReader(string filename, char separator = ',');
-    vector<vector<string>> getData();
+    explicit CSVReader(std::string filename, char separator = ',');
+    std::vector<std::vector<std::string>> getData();
+    std::vector<std::string> getDataByLines();
 
 private:
-    string _filename;
+    std::string _filename;
     char _separator;
 
 };

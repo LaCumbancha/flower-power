@@ -62,7 +62,7 @@ int ClassifierJob::run() {
                     }
                     Logger::debug("Classifier #" + std::to_string(this->_center) +
                                  " sent a 'classifier box' of tulips to the distributor #" +
-                                 std::to_string(this->_center) + ":\n" + tulipsBox.serialize());
+                                 std::to_string(this->_center) + ": " + tulipsBox.serialize());
                     _tulips = std::vector<Flower>();
                 }
             }

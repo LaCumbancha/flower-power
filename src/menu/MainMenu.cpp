@@ -48,6 +48,18 @@ int MainMenu::show() {
                     case STOPPED: {
                         // Resuming system.
                         this->status = RUNNING1;
+                        ContextStatus::loadDataForResume();
+                        pid_t pid = fork();
+
+                        if (pid == CHILD_PROCESS_PID) {
+                            // System process.
+                            coreSystem->run();
+                            coreSystem->finish();
+                        }
+
+                        ProcessKiller::addPID(pid);
+                        cout << endl;
+                        display();
                         break;
                     }
                 }
