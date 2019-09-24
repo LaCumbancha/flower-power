@@ -3,7 +3,7 @@
 
 
 #include <iostream>
-#include <signal.h>
+#include <csignal>
 #include "../Job.h"
 #include "../../../utils/Pipe.h"
 #include "../../../utils/Logger.h"
@@ -22,8 +22,8 @@ private:
 
     int _centerId;
     int _producerId;
-    int _rosesStock;
-    int _tulipsStock;
+    int _rosesStock{};
+    int _tulipsStock{};
     std::string _producerName;
     Pipe* _producerPipe;
 
@@ -31,6 +31,9 @@ private:
     int finish() override;
     std::string contextState();
 
+    void initializeStatus(const FlowerBox *producerData);
+
+    void loadPreviousState(const string& previousState);
 };
 
 

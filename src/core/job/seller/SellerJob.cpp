@@ -12,12 +12,13 @@ SellerJob::SellerJob(std::string sellerId, int clients, Pipe *requestPipe, Pipe 
     this->_sellerId = std::move(sellerId);
     this->_requestPipe = requestPipe;
     this->_distributionPipe = distributionPipe;
-    this->_rosesStock = std::vector<Flower>();
-    this->_tulipsStock = std::vector<Flower>();
 
     // Registering SIGTERM handler.
     auto handler = new StopHandler(this);
     SignalHandler::getInstance()->registerHandler(SIGTERM, handler);
+
+    // Initializing seller data.
+    this->initializeStatus(this->_sellerId);
 }
 
 int SellerJob::run() {
@@ -39,7 +40,7 @@ int SellerJob::run() {
 
         // Listening for incoming requests.
         this->listenRequests();
-//        this->finish(); TODO: check if necessary
+        //this->finish(); TODO: Check if it's necessary.
     }
 
     return EXIT_SUCCESS;
@@ -49,10 +50,8 @@ int SellerJob::listenRequests() {
     std::string incoming;
     int status;
     bool canHandleRequests = true;
-    Logger::info("Seller # " + this->_sellerId + " started to listen for requests.");
+    Logger::info("Seller #" + this->_sellerId + " started to listen for requests.");
     while (canHandleRequests && (this->_clientPipe->read(incoming, &status) > 0)) {
-        ContextStatus::saveContext("SellerJobContextStatus");
-
         if (status == EXIT_SUCCESS) {
             BouquetRequest bouquetRequest = BouquetRequest::deserialize(incoming);
             this->handleRequest(bouquetRequest);
@@ -65,8 +64,9 @@ int SellerJob::listenRequests() {
 
 void SellerJob::handleRequest(BouquetRequest bouquetRequest) {
 
-    // Uncomment the following line to measure stats real time.
-    // sleep(10);
+    // Uncomment the following line to measure stats in real time.
+    sleep(3);
+
     if (bouquetRequest.onlineSale) {
         Logger::info("Seller # " + this->_sellerId + " just received an online purchase for " +
                      std::to_string(bouquetRequest.rosesAmount) + " roses and " +
@@ -104,7 +104,6 @@ void SellerJob::handleRequest(BouquetRequest bouquetRequest) {
         Logger::debug("Seller #" + this->_sellerId + " added a tulip to the Stats Center.");
     }
 }
-
 
 void SellerJob::resupply(BouquetRequest request) {
     unsigned int rosesBoxAmount =
@@ -214,11 +213,63 @@ std::string SellerJob::contextState() {
 }
 
 int SellerJob::stopJob() {
-    Logger::debug("HANDLER: Seller Job #" + _sellerId + ".");
+    Logger::info("Seller Job #" + this->_sellerId + " saved a stock of " + std::to_string(this->_rosesStock.size())
+                 + " roses and " + std::to_string(this->_tulipsStock.size()) + " tulips.");
+    ContextStatus::saveContext(this->contextState());
     delete this;
     return EXIT_SUCCESS;
 }
 
 SellerJob::~SellerJob() {
     this->finish();
+}
+
+void SellerJob::initializeStatus(const string& sellerId) {
+
+    std::string previousState = ContextStatus::retrieveContext('S' + sellerId);
+
+    if (previousState.empty()) {
+        Logger::info("Creating new state for Seller #" + sellerId);
+        this->_rosesStock = std::vector<Flower>();
+        this->_tulipsStock = std::vector<Flower>();
+    } else {
+        Logger::info("Load previous state for Seller #" + sellerId);
+        this->loadPreviousState(previousState);
+    }
+
+}
+
+void SellerJob::loadPreviousState(const string& previousState) {
+
+    std::string buffer;
+    std::vector<std::string> flowers;
+    std::vector<std::vector<std::string>> boxes;
+
+    for (auto character : previousState) {
+
+        if (character == '!') {
+            flowers.push_back(buffer);
+            buffer = "";
+        } else if (character == ',') {
+            boxes.push_back(flowers);
+            flowers.clear();
+        } else {
+            buffer += character;
+        }
+
+    }
+
+    boxes.push_back(flowers);
+
+    for (const auto& rose : boxes[0]) {
+        this->_rosesStock.push_back(Flower::deserialize(rose));
+    }
+
+    for (const auto& tulip : boxes[1]) {
+        this->_tulipsStock.push_back(Flower::deserialize(tulip));
+    }
+
+    Logger::info("Seller Job #" + this->_sellerId + " retrieved a stock of " + std::to_string(this->_rosesStock.size())
+                 + " roses and " + std::to_string(this->_tulipsStock.size()) + " tulips.");
+
 }

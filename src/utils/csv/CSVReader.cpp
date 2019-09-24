@@ -4,12 +4,12 @@
 #include <vector>
 #include <string>
 
-CSVReader::CSVReader(string filename, char separator) {
+CSVReader::CSVReader(std::string filename, char separator) {
     this->_filename = std::move(filename);
     this->_separator = separator;
 }
 
-std::vector<std::vector<std::string> > CSVReader::getData(){
+std::vector<std::vector<std::string>> CSVReader::getData() {
 
     std::ifstream file(this->_filename);
     std::vector<std::vector<std::string>> data;
@@ -45,3 +45,21 @@ std::vector<std::vector<std::string> > CSVReader::getData(){
 
     return data;
 }
+
+std::vector<std::string> CSVReader::getDataByLines() {
+
+    std::ifstream file(this->_filename);
+    std::vector<std::string> data;
+    std::string line;
+
+    // Save each line.
+    while (getline(file, line)) {
+        data.push_back(line);
+    }
+
+    // Close the File
+    file.close();
+
+    return data;
+}
+

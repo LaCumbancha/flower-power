@@ -12,14 +12,13 @@ ProducerJob::ProducerJob(const int centerId, const FlowerBox *producerData, Pipe
     // Assigning pipe to communicate with the distribution center.
     this->_producerPipe = producerPipe;
 
+    // Initializing distribution center data.
+    this->_centerId = centerId;
+
     // Initializing producer data.
     this->_producerId = producerData->producerId;
     this->_producerName = producerData->producerName;
-    this->_rosesStock = producerData->rosesStock;
-    this->_tulipsStock = producerData->tulipsStock;
-
-    // Initializing distribution center data.
-    this->_centerId = centerId;
+    this->initializeStatus(producerData);
 
     Logger::debug("Producer #" + std::to_string(this->_centerId) + "." + std::to_string(this->_producerId) + " (" +
                   this->_producerName + ") current stock: " + std::to_string(this->_rosesStock) + " roses and " +
@@ -72,8 +71,6 @@ FlowerBox ProducerJob::generateFlowerBox() {
 int ProducerJob::run() {
     bool producerPipeIsOpen = true;
     while (producerPipeIsOpen && (this->_rosesStock != 0 || this->_tulipsStock != 0)) {
-        ContextStatus::saveContext("ProducerJobContextStatus");
-
         auto box = this->generateFlowerBox();
 
         Logger::info("Producer #" + std::to_string(this->_centerId) + "." + std::to_string(this->_producerId) + " (" +
@@ -97,19 +94,61 @@ int ProducerJob::finish() {
     exit(EXIT_SUCCESS);
 }
 
+ProducerJob::~ProducerJob() {
+    this->finish();
+}
+
 std::string ProducerJob::contextState() {
     return 'P' + std::to_string(this->_centerId) + '.' + std::to_string(this->_producerId) + ',' +
            std::to_string(this->_rosesStock) + ',' + std::to_string(this->_tulipsStock);
 }
 
 int ProducerJob::stopJob() {
-    Logger::debug(
-            "HANDLER: Producer Job #" + std::to_string(this->_centerId) + "." + std::to_string(this->_producerId) +
-            ".");
+    Logger::debug("Producer Job #" + std::to_string(this->_centerId) + "." + std::to_string(this->_producerId) +
+                  " saved a stock of " + std::to_string(this->_rosesStock) + " roses and "
+                  + std::to_string(this->_tulipsStock) + " tulips.");
+
+    ContextStatus::saveContext(this->contextState());
     delete this;
     return EXIT_SUCCESS;
 }
 
-ProducerJob::~ProducerJob() {
-    this->finish();
+void ProducerJob::initializeStatus(const FlowerBox* producerData) {
+
+    std::string producerId = std::to_string(this->_centerId) + '.' + std::to_string(this->_producerId);
+    std::string previousState = ContextStatus::retrieveContext('P' + producerId);
+
+    if (previousState.empty()) {
+        Logger::info("Creating new state for Producer #" + producerId);
+        this->_rosesStock = producerData->rosesStock;
+        this->_tulipsStock = producerData->tulipsStock;
+    } else {
+        Logger::info("Load previous state for Producer #" + producerId);
+        this->loadPreviousState(previousState);
+    }
+
+}
+
+void ProducerJob::loadPreviousState(const string& previousState) {
+    std::string buffer;
+    std::vector<std::string> values;
+
+    for (auto character : previousState) {
+
+        if (character == ',') {
+            values.push_back(buffer);
+            buffer = "";
+        } else {
+            buffer += character;
+        }
+
+    }
+
+    values.push_back(buffer);
+
+    Logger::debug("Producer Job #" + std::to_string(this->_centerId) + "." + std::to_string(this->_producerId) +
+                  " retrieved a stock of " + values[0] + " roses and " + values[1] + " tulips.");
+
+    this->_rosesStock = std::stoi(values[0]);
+    this->_tulipsStock = std::stoi(values[1]);
 }

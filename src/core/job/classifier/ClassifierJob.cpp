@@ -18,6 +18,9 @@ ClassifierJob::ClassifierJob(const int center, Pipe *producersPipe, Pipe* distri
     // Initializing distribution center data.
     this->_center = center;
 
+    // Initializing state.
+    this->initializeStatus();
+
 }
 
 int ClassifierJob::run() {
@@ -27,6 +30,10 @@ int ClassifierJob::run() {
 
     while ((readAmount = this->_producersPipe->read(data, &status)) > 0) {
         if (status == EXIT_SUCCESS) {
+
+            // Uncomment the following line to measure stats in real time.
+            // sleep(1);
+
             FlowerBox box = FlowerBox::deserialize(data);
             std::string producerId = std::to_string(this->_center) + "." + std::to_string(box.producerId);
             Logger::debug("Classifier #" + std::to_string(this->_center) + " received a box with " +
@@ -61,8 +68,8 @@ int ClassifierJob::run() {
                         return EXIT_SUCCESS;
                     }
                     Logger::debug("Classifier #" + std::to_string(this->_center) +
-                                 " sent a 'classifier box' of tulips to the distributor #" +
-                                 std::to_string(this->_center) + ":\n" + tulipsBox.serialize());
+                                  " sent a 'classifier box' of tulips to the distributor #" +
+                                  std::to_string(this->_center) + ": " + tulipsBox.serialize());
                     _tulips = std::vector<Flower>();
                 }
             }
@@ -113,11 +120,61 @@ std::string ClassifierJob::contextState() {
 }
 
 int ClassifierJob::stopJob() {
-    Logger::debug("HANDLER: Classifier Job #" + std::to_string(this->_center) + ".");
+    Logger::info("Classifier Job #" + std::to_string(this->_center) + " saved a stock of "
+                 + std::to_string(this->_roses.size()) + " roses and " + std::to_string(this->_tulips.size()) + " tulips.");
+    ContextStatus::saveContext(this->contextState());
     delete this;
     return EXIT_SUCCESS;
 }
 
 ClassifierJob::~ClassifierJob() {
     this->finish();
+}
+
+void ClassifierJob::initializeStatus() {
+
+    std::string previousState = ContextStatus::retrieveContext('C' + std::to_string(this->_center));
+
+    if (previousState.empty()) {
+        Logger::info("Creating new empty state for Classifier #" + std::to_string(this->_center));
+    } else {
+        Logger::info("Load previous state for Classifier #" + std::to_string(this->_center));
+        this->loadPreviousState(previousState);
+    }
+
+}
+
+void ClassifierJob::loadPreviousState(const string& previousState) {
+
+    std::string buffer;
+    std::vector<std::string> flowers;
+    std::vector<std::vector<std::string>> boxes;
+
+    for (auto character : previousState) {
+
+        if (character == '!') {
+            flowers.push_back(buffer);
+            buffer = "";
+        } else if (character == ',') {
+            boxes.push_back(flowers);
+            flowers.clear();
+        } else {
+            buffer += character;
+        }
+
+    }
+
+    boxes.push_back(flowers);
+
+    for (const auto& rose : boxes[0]) {
+        this->_roses.push_back(Flower::deserialize(rose));
+    }
+
+    for (const auto& tulip : boxes[1]) {
+        this->_tulips.push_back(Flower::deserialize(tulip));
+    }
+
+    Logger::info("Classifier Job #" + std::to_string(this->_center) + " retrieved a stock of "
+                 + std::to_string(this->_roses.size()) + " roses and " + std::to_string(this->_tulips.size()) + " tulips.");
+
 }

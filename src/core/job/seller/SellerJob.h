@@ -7,14 +7,16 @@
 #include <utility>
 #include "../Job.h"
 #include "../../config/Config.h"
+#include "../../config/data/SellerRequest.h"
+#include "../../config/data/ClassifierBox.h"
+#include "../../../simulator/ClientSimulator.h"
 #include "../../../utils/StatsCenter.h"
 #include "../../../utils/ContextStatus.h"
 #include "../../../utils/ProcessKiller.h"
 #include "../../../utils/Pipe.h"
 #include "../../../utils/Logger.h"
-#include "../../../simulator/ClientSimulator.h"
-#include "../../config/data/SellerRequest.h"
-#include "../../config/data/ClassifierBox.h"
+#include "../../../utils/signals/SignalHandler.h"
+#include "../../../utils/signals/StopHandler.h"
 
 
 class SellerJob : public Job {
@@ -45,6 +47,10 @@ private:
 
     std::vector<Flower> _rosesStock;
     std::vector<Flower> _tulipsStock;
+
+    void initializeStatus(const string& basicString);
+
+    void loadPreviousState(const string& previousState);
 };
 
 

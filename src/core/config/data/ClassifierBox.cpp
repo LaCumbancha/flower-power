@@ -40,7 +40,7 @@ ClassifierBox ClassifierBox::deserialize(const std::string& serializedCB) {
         }
         return ClassifierBox(flowerType, flowers);
     } catch (std::exception& e) {
-        Logger::error("Classifier box deserialization error: " + std::string(e.what()) + "\n : serializedCB: " + serializedCB);
+        Logger::error("Classifier box deserialization error: " + std::string(e.what()) + " -- serializedCB: " + serializedCB);
         return ClassifierBox(flowerType, flowers);
     }
 

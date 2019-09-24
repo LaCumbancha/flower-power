@@ -3,13 +3,18 @@
 CSVWriter::CSVWriter(std::string filename, char separator) {
     this->_filename = std::move(filename);
     this->_separator = separator;
+
+    // Clearing file
+    std::ofstream outfile;
+    outfile.open(this->_filename, std::ios::out);
+    outfile.close();
 }
 
 void CSVWriter::saveData(const std::string& data) {
 
     // Creating CSV file file.
     std::ofstream outfile;
-    outfile.open(this->_filename, std::ios::out);
+    outfile.open(this->_filename, std::ios::app);
 
     // Saving data.
     outfile << data << std::endl;

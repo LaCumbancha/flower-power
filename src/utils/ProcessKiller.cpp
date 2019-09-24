@@ -62,4 +62,6 @@ void ProcessKiller::killPIDs() {
         result = kill(pid, SIGTERM);
         Logger::debug("Killing process " + std::to_string(pid) + ". Result: " + std::to_string(result) + ".");
     }
+
+    ProcessKiller::_pids.clear();
 }
