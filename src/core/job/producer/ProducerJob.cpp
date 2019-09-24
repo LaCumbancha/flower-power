@@ -108,15 +108,15 @@ int ProducerJob::stopJob() {
     return EXIT_SUCCESS;
 }
 
-void ProducerJob::initializeStatus(const FlowerBox* pBox) {
+void ProducerJob::initializeStatus(const FlowerBox* producerData) {
 
     std::string producerId = std::to_string(this->_centerId) + '.' + std::to_string(this->_producerId);
     std::string previousState = ContextStatus::retrieveContext('P' + producerId);
 
     if (previousState.empty()) {
         Logger::info("Creating new state for Producer #" + producerId);
-        this->_rosesStock = pBox->rosesStock;
-        this->_tulipsStock = pBox->tulipsStock;
+        this->_rosesStock = producerData->rosesStock;
+        this->_tulipsStock = producerData->tulipsStock;
     } else {
         Logger::info("Load previous state for Producer #" + producerId);
         this->loadPreviousState(previousState);

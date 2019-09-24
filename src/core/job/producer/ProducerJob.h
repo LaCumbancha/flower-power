@@ -30,7 +30,7 @@ private:
     FlowerBox generateFlowerBox();
     std::string contextState();
 
-    void initializeStatus(const FlowerBox *pBox);
+    void initializeStatus(const FlowerBox *producerData);
 
     void loadPreviousState(const string& previousState);
 };

@@ -53,7 +53,7 @@ int DistributorJob::run() {
 void DistributorJob::handleRequest(const SellerRequest &request) {
 
     // Uncomment the following line to measure stats in real time.
-    sleep(1);
+    // sleep(1);
 
     Logger::info("Distributor #" + std::to_string(_center) + " received a request from Seller #"
                  + request.sellerId + " asking for " + std::to_string(request.rosesBoxAmount) + " roses boxes and " +
