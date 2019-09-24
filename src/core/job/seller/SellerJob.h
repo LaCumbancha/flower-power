@@ -32,6 +32,9 @@ private:
     void handleRequest(BouquetRequest bouquetRequest);
     void resupply(BouquetRequest request);
 
+    int _remitoNumber = 0;
+    void writeRemito(BouquetRequest request);
+
     std::vector<Flower> _rosesStock;
     std::vector<Flower> _tulipsStock;
 
