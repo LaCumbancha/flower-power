@@ -5,8 +5,12 @@
 #include <sys/wait.h>
 #include "Menu.h"
 #include "SettingsMenu.h"
-#include "../core/System.h"
 #include "StatsMenu.h"
+#include "../core/System.h"
+#include "../utils/ProcessKiller.h"
+
+
+enum SYSTEM_STATUS { NONE, RUNNING1, RUNNING2, STOPPED };
 
 using namespace std;
 
@@ -20,8 +24,11 @@ private:
     System* coreSystem = new System();
     SettingsMenu* settingsMenu = new SettingsMenu(coreSystem->getConfig());
     StatsMenu* statsMenu = new StatsMenu();
+    SYSTEM_STATUS status = NONE;
+
 
     void display() override;
+    string systemStart();
 };
 
 

@@ -1,7 +1,13 @@
 #include "ClassifierJob.h"
 #include "../../config/data/ClassifierBox.h"
+#include "../../../utils/signals/StopHandler.h"
+#include "../../../utils/signals/SignalHandler.h"
 
 ClassifierJob::ClassifierJob(const int center, Pipe *producersPipe, Pipe* distributorPipe) : Job() {
+
+    // Registering SIGTERM handler.
+    auto handler = new StopHandler(this);
+    SignalHandler::getInstance()->registerHandler(SIGTERM, handler);
 
     // Assigning pipe to communicate with the distribution center.
     this->_producersPipe = producersPipe;
@@ -88,4 +94,30 @@ int ClassifierJob::finish() {
             "Classifier #" + std::to_string(this->_center) + " pipe connected to the distributor process destroyed.");
 
     exit(EXIT_SUCCESS);
+}
+
+std::string ClassifierJob::contextState() {
+    std::string state = 'C' + std::to_string(this->_center) + ',';
+
+    for (auto rose : this->_roses) {
+        state += rose.serialize() + '!';
+    }
+
+    state += ',';
+
+    for (auto tulip : this->_tulips) {
+        state += tulip.serialize() + '!';
+    }
+
+    return state;
+}
+
+int ClassifierJob::stopJob() {
+    Logger::debug("HANDLER: Classifier Job #" + std::to_string(this->_center) + ".");
+    delete this;
+    return EXIT_SUCCESS;
+}
+
+ClassifierJob::~ClassifierJob() {
+    this->finish();
 }

@@ -1,6 +1,13 @@
+#include <cstring>
 #include "ProducerJob.h"
+#include "../../../utils/signals/SignalHandler.h"
+#include "../../../utils/signals/StopHandler.h"
 
 ProducerJob::ProducerJob(const int centerId, const FlowerBox *producerData, Pipe *producerPipe) : Job() {
+
+    // Registering SIGTERM handler.
+    auto handler = new StopHandler(this);
+    SignalHandler::getInstance()->registerHandler(SIGTERM, handler);
 
     // Assigning pipe to communicate with the distribution center.
     this->_producerPipe = producerPipe;
@@ -24,6 +31,9 @@ ProducerJob::ProducerJob(const int centerId, const FlowerBox *producerData, Pipe
 }
 
 FlowerBox ProducerJob::generateFlowerBox() {
+
+    // Uncomment the following line to measure stats in real time.
+    // sleep(1);
 
     // Take a random number of roses.
     int rosesToBox = rand() % 10;
@@ -62,6 +72,8 @@ FlowerBox ProducerJob::generateFlowerBox() {
 int ProducerJob::run() {
     bool producerPipeIsOpen = true;
     while (producerPipeIsOpen && (this->_rosesStock != 0 || this->_tulipsStock != 0)) {
+        ContextStatus::saveContext("ProducerJobContextStatus");
+
         auto box = this->generateFlowerBox();
 
         Logger::info("Producer #" + std::to_string(this->_centerId) + "." + std::to_string(this->_producerId) + " (" +
@@ -73,13 +85,31 @@ int ProducerJob::run() {
             producerPipeIsOpen = false;
         }
     }
+
     return EXIT_SUCCESS;
 }
 
 int ProducerJob::finish() {
-    this->_producerPipe->~Pipe();
+    delete this->_producerPipe;
     Logger::info("Producer #" + std::to_string(this->_centerId) + "." + std::to_string(this->_producerId) + " (" +
                  this->_producerName + ") pipe destroyed.");
 
     exit(EXIT_SUCCESS);
+}
+
+std::string ProducerJob::contextState() {
+    return 'P' + std::to_string(this->_centerId) + '.' + std::to_string(this->_producerId) + ',' +
+           std::to_string(this->_rosesStock) + ',' + std::to_string(this->_tulipsStock);
+}
+
+int ProducerJob::stopJob() {
+    Logger::debug(
+            "HANDLER: Producer Job #" + std::to_string(this->_centerId) + "." + std::to_string(this->_producerId) +
+            ".");
+    delete this;
+    return EXIT_SUCCESS;
+}
+
+ProducerJob::~ProducerJob() {
+    this->finish();
 }

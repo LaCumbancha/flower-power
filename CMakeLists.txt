@@ -28,8 +28,8 @@ add_executable(
         src/core/job/Job.h
         src/core/DistributionCenter.cpp
         src/core/DistributionCenter.h
-        src/utils/CSVReader.cpp
-        src/utils/CSVReader.h
+        src/utils/csv/CSVReader.cpp
+        src/utils/csv/CSVReader.h
         src/core/config/data/FlowerBox.cpp
         src/core/config/data/FlowerBox.h
         src/utils/Definitions.h
@@ -55,4 +55,16 @@ add_executable(
         src/core/job/distributor/DistributorJob.cpp
         src/core/config/data/ClassifierBox.cpp
         src/core/config/data/ClassifierBox.h
-        src/core/config/Paths.h)
+        src/core/config/Paths.h
+        src/utils/csv/CSVWriter.cpp
+        src/utils/csv/CSVWriter.h
+        src/utils/ContextStatus.cpp
+        src/utils/ContextStatus.h
+        src/utils/ProcessKiller.cpp
+        src/utils/ProcessKiller.h
+        src/utils/signals/StopHandler.cpp
+        src/utils/signals/StopHandler.h
+        src/utils/signals/EventHandler.h
+        src/utils/signals/SignalHandler.cpp
+        src/utils/signals/SignalHandler.h
+)

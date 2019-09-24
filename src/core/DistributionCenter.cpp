@@ -1,5 +1,4 @@
 #include "DistributionCenter.h"
-#include "job/distributor/DistributorJob.h"
 
 DistributionCenter::DistributionCenter(Config *config, int id) : Job() {
 
@@ -23,9 +22,10 @@ DistributionCenter::DistributionCenter(Config *config, int id) : Job() {
             producersPipe->setWriteMode();
             auto producerJob = new ProducerJob(this->_id, producerData, producersPipe);
             producerJob->run();
-            producerJob->finish();
+            delete producerJob;
         }
         this->_producersPIDs.push_back(pid);
+        ProcessKiller::addPID(pid);
         Logger::info("Producer #" + producerId + " running in process with PID #" + std::to_string(pid) + ".");
     }
     producersPipe->setReadMode();
@@ -48,11 +48,12 @@ DistributionCenter::DistributionCenter(Config *config, int id) : Job() {
             distributionPipe->setReadMode();
             auto sellerJob = new SellerJob(sellerId, config->getClients(), requestsPipe, distributionPipe);
             sellerJob->run();
-            sellerJob->finish();
+            delete sellerJob;
         }
         this->_distributionPipes.insert(std::pair<std::string, Pipe*>(sellerId, distributionPipe));
-        Logger::info("Seller #" + sellerId + " running in process with PID #" + std::to_string(pid) + ".");
         this->_sellersPIDs.push_back(pid);
+        ProcessKiller::addPID(pid);
+        Logger::info("Seller #" + sellerId + " running in process with PID #" + std::to_string(pid) + ".");
     }
     requestsPipe->setReadMode();
     this->_requestsPipe = requestsPipe;
@@ -71,11 +72,12 @@ int DistributionCenter::run() {
         this->_innerPipe->setWriteMode();
         auto classifierJob = new ClassifierJob(this->_id, this->_producersPipe, this->_innerPipe);
         classifierJob->run();
-        classifierJob->finish();
+        delete classifierJob;
     }
 
     Logger::info("Classifier #" + std::to_string(this->_id) + " running in process with PID #" + std::to_string(pid) + ".");
     this->_classifierPID = pid;
+    ProcessKiller::addPID(pid);
 
     /********** Distributor process creation *************/
     pid = fork();
@@ -83,9 +85,10 @@ int DistributionCenter::run() {
         this->_innerPipe->setReadMode();
         auto distributorJob = new DistributorJob(this->_id, _innerPipe, _requestsPipe, _distributionPipes);
         distributorJob->run();
-        distributorJob->finish();
+        delete distributorJob;
     }
 
+    ProcessKiller::addPID(pid);
 
     this->closePipes();
 
@@ -164,6 +167,11 @@ void DistributionCenter::closePipes() {
         Logger::info("Distribution pipe #" + std::to_string(pipeIdx) + " in Distribution Center #" +
                      std::to_string(this->_id) + " destroyed.");
     }
+}
+
+int DistributionCenter::stopJob() {
+    Logger::debug("HANDLER: Distribution Center Job #" + std::to_string(this->_id) + ".");
+    return EXIT_SUCCESS;
 }
 
 

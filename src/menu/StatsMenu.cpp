@@ -11,12 +11,12 @@ int StatsMenu::show() {
             case 0:
                 break;
             case 1: {
-                cout << StatsCenter::getMostSoldFlower() << endl;
+                cout << StatsCenter::getMostSoldProducer() << endl;
                 display();
                 break;
             }
             case 2: {
-                cout << StatsCenter::getMostSoldProducer() << endl;
+                cout << StatsCenter::getMostSoldFlower() << endl;
                 display();
                 break;
             }
@@ -33,7 +33,7 @@ int StatsMenu::show() {
 void StatsMenu::display() {
     cout << endl;
     cout << "Available stats:" << endl;
-    cout << "[1] Best selling flower type" << endl;
-    cout << "[2] Best selling producer" << endl;
+    cout << "[1] Best selling producer" << endl;
+    cout << "[2] Best selling flower type" << endl;
     cout << "What do you want to see? [0 for quit] ";
 }

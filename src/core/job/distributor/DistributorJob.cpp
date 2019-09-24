@@ -1,16 +1,16 @@
-//
-// Created by darius on 17/9/19.
-//
-
-#include <cstring>
 #include "DistributorJob.h"
-#include "../../config/data/ClassifierBox.h"
-#include "../../../utils/Logger.h"
+#include "../../../utils/signals/SignalHandler.h"
+#include "../../../utils/signals/StopHandler.h"
 
 int DistributorJob::run() {
 
     int status;
     std::string incoming;
+
+    // Registering SIGTERM handler.
+    auto handler = new StopHandler(this);
+    SignalHandler::getInstance()->registerHandler(SIGTERM, handler);
+
     Logger::info("Distributor job from Distribution Center #" + std::to_string(_centerId) + " running.");
 
     while (this->_requestsPipe->read(incoming, &status) > 0) {
@@ -128,7 +128,7 @@ void DistributorJob::takeClassifierBox() {
     }
 
     if (status == EXIT_SUCCESS) {
-        Logger::debug("Distibutor job  #"  + std::to_string(_centerId) + " just read " + std::to_string(readAmount) + " from serialized classifier box: \n" + data);
+        Logger::debug("Distibutor job  #"  + std::to_string(_centerId) + " just read " + std::to_string(readAmount) + " from serialized classifier box: " + data);
         ClassifierBox cb = ClassifierBox::deserialize(data);
         switch (cb.flowerType) {
             case ROSE:
@@ -145,3 +145,28 @@ void DistributorJob::takeClassifierBox() {
     }
 }
 
+std::string DistributorJob::contextState() {
+    std::string state = 'D' + std::to_string(this->_centerId) + ',';
+
+    for (auto rose : this->_rosesStock) {
+        state += rose.serialize() + '!';
+    }
+
+    state += ',';
+
+    for (auto tulip : this->_tulipsStock) {
+        state += tulip.serialize() + '!';
+    }
+
+    return state;
+}
+
+int DistributorJob::stopJob() {
+    Logger::debug("HANDLER: Distributor Job #" + std::to_string(this->_centerId) + ".");
+    delete this;
+    return EXIT_SUCCESS;
+}
+
+DistributorJob::~DistributorJob() {
+    this->finish();
+}

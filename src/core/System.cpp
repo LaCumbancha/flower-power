@@ -1,6 +1,9 @@
 #include "System.h"
 
 int System::run() {
+    // Set system as not finished
+    ContextStatus::saveSystemFinishStatus(false);
+
     // Loading configuration data.
     this->_config.loadData();
 
@@ -20,6 +23,7 @@ int System::run() {
             } else {
                 Logger::info("Distribution Center #" + std::to_string(idx) + " running in process with PID #" + std::to_string(pid) + ".");
                 this->_distributionCentersPIDs.push_back(pid);
+                ProcessKiller::addPID(pid);
             }
         }
 
@@ -44,6 +48,9 @@ int System::finish() {
         Logger::info("Every Distribution Center finished successfully without errors.");
         Logger::info("System finished successfully.");
     }
+
+    // Set system as finished
+    ContextStatus::saveSystemFinishStatus(true);
 
     exit(EXIT_SUCCESS);
 }

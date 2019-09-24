@@ -9,6 +9,8 @@
 #include "job/seller/SellerJob.h"
 #include "job/producer/ProducerJob.h"
 #include "job/classifier/ClassifierJob.h"
+#include "job/distributor/DistributorJob.h"
+#include "../utils/ProcessKiller.h"
 
 
 class DistributionCenter : public Job {
@@ -17,6 +19,7 @@ public:
     explicit DistributionCenter(Config *config, int id);
     int run() override;
     int finish() override;
+    int stopJob() override;
 
 private:
     int _id;

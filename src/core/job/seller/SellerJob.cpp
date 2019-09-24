@@ -1,4 +1,6 @@
 #include "SellerJob.h"
+#include "../../../utils/signals/SignalHandler.h"
+#include "../../../utils/signals/StopHandler.h"
 
 #include <utility>
 #include "../../config/data/SellerRequest.h"
@@ -12,9 +14,14 @@ SellerJob::SellerJob(std::string sellerId, int clients, Pipe *requestPipe, Pipe 
     this->_distributionPipe = distributionPipe;
     this->_rosesStock = std::vector<Flower>();
     this->_tulipsStock = std::vector<Flower>();
+
+    // Registering SIGTERM handler.
+    auto handler = new StopHandler(this);
+    SignalHandler::getInstance()->registerHandler(SIGTERM, handler);
 }
 
 int SellerJob::run() {
+
     this->_clientPipe = new Pipe();
     pid_t pid = fork();
 
@@ -27,11 +34,12 @@ int SellerJob::run() {
         // Seller process.
         Logger::info("Client Simulator # " + this->_sellerId + " running in process " + std::to_string(pid) + ".");
         this->_clientSimulatorPID = pid;
+        ProcessKiller::addPID(pid);
         this->_clientPipe->setReadMode();
 
         // Listening for incoming requests.
         this->listenRequests();
-        this->finish();
+//        this->finish(); TODO: check if necessary
     }
 
     return EXIT_SUCCESS;
@@ -43,6 +51,8 @@ int SellerJob::listenRequests() {
     bool canHandleRequests = true;
     Logger::info("Seller # " + this->_sellerId + " started to listen for requests.");
     while (canHandleRequests && (this->_clientPipe->read(incoming, &status) > 0)) {
+        ContextStatus::saveContext("SellerJobContextStatus");
+
         if (status == EXIT_SUCCESS) {
             BouquetRequest bouquetRequest = BouquetRequest::deserialize(incoming);
             this->handleRequest(bouquetRequest);
@@ -54,6 +64,7 @@ int SellerJob::listenRequests() {
 }
 
 void SellerJob::handleRequest(BouquetRequest bouquetRequest) {
+
     // Uncomment the following line to measure stats real time.
     // sleep(10);
     if (bouquetRequest.onlineSale) {
@@ -93,6 +104,7 @@ void SellerJob::handleRequest(BouquetRequest bouquetRequest) {
         Logger::debug("Seller #" + this->_sellerId + " added a tulip to the Stats Center.");
     }
 }
+
 
 void SellerJob::resupply(BouquetRequest request) {
     unsigned int rosesBoxAmount =
@@ -148,7 +160,6 @@ void SellerJob::resupply(BouquetRequest request) {
                   std::to_string(_tulipsStock.size()) + "]");
 }
 
-
 int SellerJob::finish() {
     int processStatus;
 
@@ -164,7 +175,6 @@ int SellerJob::finish() {
     delete _clientPipe;
 
     delete _distributionPipe;
-
     delete _requestPipe;
 
     exit(EXIT_SUCCESS);
@@ -185,4 +195,30 @@ void SellerJob::writeRemito(BouquetRequest request) {
     remito.close();
     remito.clear();
     _remitoNumber++;
+}
+
+std::string SellerJob::contextState() {
+    std::string state = 'S' + this->_sellerId + ',';
+
+    for (auto rose : this->_rosesStock) {
+        state += rose.serialize() + '!';
+    }
+
+    state += ',';
+
+    for (auto tulip : this->_tulipsStock) {
+        state += tulip.serialize() + '!';
+    }
+
+    return state;
+}
+
+int SellerJob::stopJob() {
+    Logger::debug("HANDLER: Seller Job #" + _sellerId + ".");
+    delete this;
+    return EXIT_SUCCESS;
+}
+
+SellerJob::~SellerJob() {
+    this->finish();
 }
