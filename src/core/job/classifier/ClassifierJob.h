@@ -15,6 +15,7 @@ class ClassifierJob : public Job {
 
 public:
     explicit ClassifierJob(int center, Pipe* producersPipe, Pipe* distributorPipe);
+    ~ClassifierJob();
     int run() override;
     int finish() override;
     int stopJob() override;
@@ -29,7 +30,6 @@ private:
     std::string contextState();
 
     void initializeStatus();
-
     void loadPreviousState(const string& previousState);
 };
 

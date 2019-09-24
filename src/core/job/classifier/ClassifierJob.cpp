@@ -68,8 +68,8 @@ int ClassifierJob::run() {
                         return EXIT_SUCCESS;
                     }
                     Logger::debug("Classifier #" + std::to_string(this->_center) +
-                                 " sent a 'classifier box' of tulips to the distributor #" +
-                                 std::to_string(this->_center) + ": " + tulipsBox.serialize());
+                                  " sent a 'classifier box' of tulips to the distributor #" +
+                                  std::to_string(this->_center) + ": " + tulipsBox.serialize());
                     _tulips = std::vector<Flower>();
                 }
             }
@@ -123,7 +123,12 @@ int ClassifierJob::stopJob() {
     Logger::info("Classifier Job #" + std::to_string(this->_center) + " saved a stock of "
                  + std::to_string(this->_roses.size()) + " roses and " + std::to_string(this->_tulips.size()) + " tulips.");
     ContextStatus::saveContext(this->contextState());
+    delete this;
     return EXIT_SUCCESS;
+}
+
+ClassifierJob::~ClassifierJob() {
+    this->finish();
 }
 
 void ClassifierJob::initializeStatus() {

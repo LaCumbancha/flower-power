@@ -24,9 +24,9 @@ class SellerJob : public Job {
 public:
     explicit SellerJob(std::string sellerId, int clients, Pipe *requestPipe, Pipe *distributionPipe);
     int run() override;
-    int finish() override;
-    int stopJob() override;
 
+    int stopJob() override;
+    ~SellerJob();
 private:
     int _clients;
     std::string _sellerId;
@@ -34,12 +34,16 @@ private:
     Pipe* _requestPipe;
     Pipe* _distributionPipe;
     pid_t _clientSimulatorPID{};
-
     bool _distributionPipeIsOpen = true;
+
     int listenRequests();
+    int finish() override;
     void handleRequest(BouquetRequest bouquetRequest);
     void resupply(BouquetRequest request);
     std::string contextState();
+
+    int _remitoNumber = 0;
+    void writeRemito(BouquetRequest request);
 
     std::vector<Flower> _rosesStock;
     std::vector<Flower> _tulipsStock;

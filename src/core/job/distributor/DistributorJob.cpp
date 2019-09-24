@@ -131,6 +131,10 @@ int DistributorJob::finish() {
     exit(EXIT_SUCCESS);
 }
 
+DistributorJob::~DistributorJob() {
+    this->finish();
+}
+
 void DistributorJob::takeClassifierBox() {
     int status;
     std::string data;
@@ -190,6 +194,7 @@ int DistributorJob::stopJob() {
                  + std::to_string(this->_rosesStock.size()) + " roses boxes and "
                  + std::to_string(this->_tulipsStock.size()) + " tulips boxes.");
     ContextStatus::saveContext(this->contextState());
+    delete this;
     return EXIT_SUCCESS;
 }
 

@@ -26,9 +26,10 @@ private:
     int _clients;
     std::string _sellerId;
     Pipe * _clientPipe;
-
+    std::vector<BouquetRequest> _onlineSales;
     static BouquetRequest simulateBouquetRequest();
 
+    void loadOnlineSales();
 };
 
 

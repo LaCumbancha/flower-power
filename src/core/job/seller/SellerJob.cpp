@@ -1,4 +1,11 @@
 #include "SellerJob.h"
+#include "../../../utils/signals/SignalHandler.h"
+#include "../../../utils/signals/StopHandler.h"
+
+#include <utility>
+#include "../../config/data/SellerRequest.h"
+#include "../../../utils/StatsCenter.h"
+#include "../../config/Paths.h"
 
 SellerJob::SellerJob(std::string sellerId, int clients, Pipe *requestPipe, Pipe *distributionPipe) : Job() {
     this->_clients = clients;
@@ -15,6 +22,7 @@ SellerJob::SellerJob(std::string sellerId, int clients, Pipe *requestPipe, Pipe 
 }
 
 int SellerJob::run() {
+
     this->_clientPipe = new Pipe();
     pid_t pid = fork();
 
@@ -32,7 +40,7 @@ int SellerJob::run() {
 
         // Listening for incoming requests.
         this->listenRequests();
-        this->finish();
+        //this->finish(); TODO: Check if it's necessary.
     }
 
     return EXIT_SUCCESS;
@@ -57,10 +65,18 @@ int SellerJob::listenRequests() {
 void SellerJob::handleRequest(BouquetRequest bouquetRequest) {
 
     // Uncomment the following line to measure stats in real time.
-    sleep(1);
+    sleep(3);
 
-    Logger::info("Seller # " + this->_sellerId + " received a request for " + std::to_string(bouquetRequest.rosesAmount) +
-            " roses and " + std::to_string(bouquetRequest.tulipsAmount) + " tulips.");
+    if (bouquetRequest.onlineSale) {
+        Logger::info("Seller # " + this->_sellerId + " just received an online purchase for " +
+                     std::to_string(bouquetRequest.rosesAmount) + " roses and " +
+                     std::to_string(bouquetRequest.tulipsAmount) + " tulips.");
+        writeRemito(bouquetRequest);
+    } else {
+        Logger::info("Seller # " + this->_sellerId + " received an in place request for " +
+                     std::to_string(bouquetRequest.rosesAmount) + " roses and " +
+                     std::to_string(bouquetRequest.tulipsAmount) + " tulips.");
+    }
 
     if ((this->_rosesStock.size() < bouquetRequest.rosesAmount ||
          this->_tulipsStock.size() < bouquetRequest.tulipsAmount) && _distributionPipeIsOpen) {
@@ -143,7 +159,6 @@ void SellerJob::resupply(BouquetRequest request) {
                   std::to_string(_tulipsStock.size()) + "]");
 }
 
-
 int SellerJob::finish() {
     int processStatus;
 
@@ -162,6 +177,23 @@ int SellerJob::finish() {
     delete _requestPipe;
 
     exit(EXIT_SUCCESS);
+}
+
+void SellerJob::writeRemito(BouquetRequest request) {
+    std::ofstream remito;
+    std::string remitoFile = remitosFolder + "remito" + _sellerId + "-" + std::to_string(_remitoNumber) + ".txt";
+    Logger::debug("REMITO: " + remitoFile);
+    remito.open(remitoFile);
+    remito << "Remito número " << _remitoNumber << std::endl;
+    remito << "-----------------------------------" << std::endl;
+    remito << "Local # " << _sellerId << std::endl;
+    remito << "-----------------------------------" << std::endl;
+    remito << "Cantidad de rosas       : " << request.rosesAmount << std::endl;
+    remito << "Cantidad de tulipanes   : " << request.tulipsAmount << std::endl;
+    remito << "-----------------------------------" << std::endl;
+    remito.close();
+    remito.clear();
+    _remitoNumber++;
 }
 
 std::string SellerJob::contextState() {
@@ -184,7 +216,12 @@ int SellerJob::stopJob() {
     Logger::info("Seller Job #" + this->_sellerId + " saved a stock of " + std::to_string(this->_rosesStock.size())
                  + " roses and " + std::to_string(this->_tulipsStock.size()) + " tulips.");
     ContextStatus::saveContext(this->contextState());
+    delete this;
     return EXIT_SUCCESS;
+}
+
+SellerJob::~SellerJob() {
+    this->finish();
 }
 
 void SellerJob::initializeStatus(const string& sellerId) {
