@@ -7,9 +7,10 @@
 
 class BouquetRequest {
 public:
-    explicit BouquetRequest(int rosesAmount, int tulipsAmount);
+    explicit BouquetRequest(int rosesAmount, int tulipsAmount, bool onlineSale = false);
     unsigned int rosesAmount;
     unsigned int tulipsAmount;
+    bool onlineSale = false;
 
     std::string serialize();
     static BouquetRequest deserialize(const std::string& data);
