@@ -163,6 +163,7 @@ std::string DistributorJob::contextState() {
 
 int DistributorJob::stopJob() {
     Logger::debug("HANDLER: Distributor Job #" + std::to_string(this->_centerId) + ".");
+    delete this;
     return EXIT_SUCCESS;
 }
 

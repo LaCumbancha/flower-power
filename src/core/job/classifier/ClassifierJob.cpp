@@ -114,6 +114,7 @@ std::string ClassifierJob::contextState() {
 
 int ClassifierJob::stopJob() {
     Logger::debug("HANDLER: Classifier Job #" + std::to_string(this->_center) + ".");
+    delete this;
     return EXIT_SUCCESS;
 }
 
