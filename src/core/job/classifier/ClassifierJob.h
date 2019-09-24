@@ -28,6 +28,9 @@ private:
 
     std::string contextState();
 
+    void initializeStatus();
+
+    void loadPreviousState(string previousState);
 };
 
 
