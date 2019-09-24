@@ -15,6 +15,7 @@ void ContextStatus::run() {
 
     // Creating CSV Writer.
     auto writer = new CSVWriter(ContextStatus::_stateFile);
+    writer->clearFile();
 
     // Reading incoming stats.
     ContextStatus::_incomingPipe->setReadMode();
