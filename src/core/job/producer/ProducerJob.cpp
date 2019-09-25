@@ -141,11 +141,13 @@ void ProducerJob::loadPreviousState(const string& previousState) {
     std::string buffer;
     std::vector<std::string> values;
 
+    Logger::warn("Producer #" + std::to_string(this->_centerId) + "." + std::to_string(this->_producerId) + ". Previous state: " + previousState);
+
     try {
         for (auto character : previousState) {
 
             if (character == ',') {
-                values.push_back(buffer + '\0');
+                values.push_back(buffer);
                 buffer = "";
             } else {
                 buffer += character;
@@ -160,8 +162,9 @@ void ProducerJob::loadPreviousState(const string& previousState) {
 
         this->_rosesStock = std::stoi(values[0]);
         this->_tulipsStock = std::stoi(values[1]);
-    } catch (const std::invalid_argument& e) {
-        std::cerr << "Producer Job loadPreviousState invalid argument exception: " << e.what() << std::endl;
+    } catch (const std::exception& e) {
+        std::cerr << "Producer Job " + std::to_string(this->_centerId) + "." + std::to_string(this->_producerId)
+        + " loadPreviousState invalid argument exception: " << e.what() << std::endl;
         std::cerr << values[0] << " - " << values[1] << std::endl;
         std::cerr << previousState << std::endl;
     }

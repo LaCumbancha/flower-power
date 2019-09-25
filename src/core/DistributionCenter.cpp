@@ -25,7 +25,7 @@ DistributionCenter::DistributionCenter(Config *config, int id) : Job() {
                     producerJob->run();
                     delete producerJob;
                 } catch (std::exception& e) {
-                    std::cerr << "Distribution center producerData for";
+                    std::cerr << "Producer #" + producerId + " failed at creation from Distribution Center: " << e.what() << std::endl;
                 }
             }
             this->_producersPIDs.push_back(pid);
@@ -48,11 +48,16 @@ DistributionCenter::DistributionCenter(Config *config, int id) : Job() {
 
             if (pid == CHILD_PROCESS_PID) {
                 // Child process.
-                requestsPipe->setWriteMode();
-                distributionPipe->setReadMode();
-                auto sellerJob = new SellerJob(sellerId, config->getClients(), requestsPipe, distributionPipe);
-                sellerJob->run();
-                delete sellerJob;
+                try {
+                    requestsPipe->setWriteMode();
+                    distributionPipe->setReadMode();
+                    auto sellerJob = new SellerJob(sellerId, config->getClients(), requestsPipe, distributionPipe);
+                    sellerJob->run();
+                    delete sellerJob;
+                } catch (std::exception& e) {
+                    std::cerr << "Producer #" + sellerId + " failed at creation from Distribution Center: " << e.what() << std::endl;
+                }
+
             }
             this->_distributionPipes.insert(std::pair<std::string, Pipe *>(sellerId, distributionPipe));
             this->_sellersPIDs.push_back(pid);

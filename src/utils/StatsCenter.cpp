@@ -71,11 +71,19 @@ void StatsCenter::outputStats(const std::string &request) {
 
         std::string bestProducerName;
         for (const auto& flower : StatsCenter::_roses) {
-            if (flower.producerId == bestProducerId) bestProducerName = flower.producerName;
+            if (flower.producerId == bestProducerId) {
+                bestProducerName = flower.producerName;
+                break;
+            }
         }
 
-        for (const auto& flower : StatsCenter::_tulips) {
-            if (flower.producerId == bestProducerId) bestProducerName = flower.producerName;
+        if (bestProducerName.empty()) {
+            for (const auto& flower : StatsCenter::_tulips) {
+                if (flower.producerId == bestProducerId) {
+                    bestProducerName = flower.producerName;
+                    break;
+                }
+            }
         }
 
         if (maxSold == 0) {

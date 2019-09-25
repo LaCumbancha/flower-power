@@ -26,7 +26,7 @@ void ContextStatus::run() {
                 writer->saveData(data.substr(3, data.size()));
             } else if (isLoadIncoming(data)) {
                 loadData();
-                writer->clearFile();
+                //writer->clearFile();
             } else if (isRetrieveIncoming(data)) {
                 retrieveData(data.substr(3, data.size()));
             } else if (isSaveSystemStatus(data)) {
@@ -174,8 +174,8 @@ void ContextStatus::retrieveData(const std::string& id) {
             Logger::error("Failed to retrieve previous state data for Job " + id + ".");
             ContextStatus::_retrievePipe->write("");
         } else {
-            Logger::warn("Job "+ id + " retrieved: [" + ContextStatus::_data.find(id)->second + "].");
             ContextStatus::_retrievePipe->write(ContextStatus::_data.find(id)->second);
+            Logger::warn("Job "+ id + " retrieved: [" + ContextStatus::_data.find(id)->second + "].");
         }
     } else {
         ContextStatus::_retrievePipe->write("");

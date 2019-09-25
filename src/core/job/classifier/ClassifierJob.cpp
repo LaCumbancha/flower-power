@@ -150,6 +150,8 @@ void ClassifierJob::loadPreviousState(const string& previousState) {
     std::vector<std::string> flowers;
     std::vector<std::vector<std::string>> boxes;
 
+    Logger::warn("Classifier #" + std::to_string(this->_center) + ". Previous state: " + previousState);
+
     for (auto character : previousState) {
 
         if (character == '!') {

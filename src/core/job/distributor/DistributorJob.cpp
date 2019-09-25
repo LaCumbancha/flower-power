@@ -217,10 +217,12 @@ void DistributorJob::loadPreviousState(const string& previousState) {
     std::vector<std::string> flowers;
     std::vector<std::vector<std::string>> boxes;
 
+    Logger::warn("Distributor #" + std::to_string(this->_center) + ". Previous state: " + previousState);
+
     for (auto character : previousState) {
 
         if (character == '!') {
-            flowers.push_back(buffer + '\0');
+            flowers.push_back(buffer);
             buffer = "";
         } else if (character == ',') {
             boxes.push_back(flowers);

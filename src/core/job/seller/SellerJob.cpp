@@ -245,10 +245,12 @@ void SellerJob::loadPreviousState(const string& previousState) {
     std::vector<std::string> flowers;
     std::vector<std::vector<std::string>> boxes;
 
+    Logger::warn("Seller #" + _sellerId + ". Previous state: " + previousState);
+
     for (auto character : previousState) {
 
         if (character == '!') {
-            flowers.push_back(buffer + '\0');
+            flowers.push_back(buffer);
             buffer = "";
         } else if (character == ',') {
             boxes.push_back(flowers);
