@@ -65,7 +65,7 @@ int SellerJob::listenRequests() {
 void SellerJob::handleRequest(BouquetRequest bouquetRequest) {
 
     // Uncomment the following line to measure stats in real time.
-    sleep(3);
+    sleep(1);
 
     if (bouquetRequest.onlineSale) {
         Logger::info("Seller # " + this->_sellerId + " just received an online purchase for " +
