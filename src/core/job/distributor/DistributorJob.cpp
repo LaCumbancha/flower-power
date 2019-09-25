@@ -204,9 +204,18 @@ void DistributorJob::initializeStatus() {
 
     if (previousState.empty()) {
         Logger::info("Creating new empty state for Distributor #" + std::to_string(this->_center));
+        this->_rosesStock = std::vector<ClassifierBox>();
+        this->_tulipsStock = std::vector<ClassifierBox>();
     } else {
         Logger::info("Load previous state for Distributor #" + std::to_string(this->_center));
-        this->loadPreviousState(previousState);
+
+        try {
+            this->loadPreviousState(previousState);
+        } catch (const std::exception &e) {
+            Logger::error("Distributor #" + std::to_string(this->_center) + " failed to load previous state due to: " + e.what());
+            this->_rosesStock = std::vector<ClassifierBox>();
+            this->_tulipsStock = std::vector<ClassifierBox>();
+        }
     }
 
 }
@@ -216,8 +225,6 @@ void DistributorJob::loadPreviousState(const string& previousState) {
     std::string buffer;
     std::vector<std::string> flowers;
     std::vector<std::vector<std::string>> boxes;
-
-    Logger::warn("Distributor #" + std::to_string(this->_center) + ". Previous state: " + previousState);
 
     for (auto character : previousState) {
 

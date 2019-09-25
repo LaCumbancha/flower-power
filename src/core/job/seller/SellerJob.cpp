@@ -234,7 +234,14 @@ void SellerJob::initializeStatus(const string& sellerId) {
         this->_tulipsStock = std::vector<Flower>();
     } else {
         Logger::info("Load previous state for Seller #" + sellerId);
-        this->loadPreviousState(previousState);
+
+        try {
+            this->loadPreviousState(previousState);
+        } catch (const std::exception &e) {
+            Logger::error("Seller #" + sellerId + " failed to load previous state due to: " + e.what());
+            this->_rosesStock = std::vector<Flower>();
+            this->_tulipsStock = std::vector<Flower>();
+        }
     }
 
 }
@@ -244,8 +251,6 @@ void SellerJob::loadPreviousState(const string& previousState) {
     std::string buffer;
     std::vector<std::string> flowers;
     std::vector<std::vector<std::string>> boxes;
-
-    Logger::warn("Seller #" + _sellerId + ". Previous state: " + previousState);
 
     for (auto character : previousState) {
 

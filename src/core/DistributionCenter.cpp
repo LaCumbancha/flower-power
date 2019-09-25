@@ -2,77 +2,64 @@
 
 DistributionCenter::DistributionCenter(Config *config, int id) : Job() {
 
-        // Setting configurations.
-        this->_id = id;
-        this->_config = config;
+    // Setting configurations.
+    this->_id = id;
+    this->_config = config;
 
-        // Getting current pid
-        pid_t pid;
-    try {
-        /*********** Producer processes creation. **********/
-        // Creating pipe for producers.
-        auto producersPipe = new Pipe();
-        for (auto producerData : config->getProducers()) {
+    // Getting current pid
+    pid_t pid;
 
-            std::string producerId = std::to_string(this->_id) + "." + std::to_string(producerData->producerId);
-            pid = fork();
+    /*********** Producer processes creation. **********/
+    // Creating pipe for producers.
+    auto producersPipe = new Pipe();
+    for (auto producerData : config->getProducers()) {
 
-            if (pid == CHILD_PROCESS_PID) {
-                // Child process.
-                try {
-                    producersPipe->setWriteMode();
-                    auto producerJob = new ProducerJob(this->_id, producerData, producersPipe);
-                    producerJob->run();
-                    delete producerJob;
-                } catch (std::exception& e) {
-                    std::cerr << "Producer #" + producerId + " failed at creation from Distribution Center: " << e.what() << std::endl;
-                }
-            }
-            this->_producersPIDs.push_back(pid);
-            ProcessKiller::addPID(pid);
-            Logger::info("Producer #" + producerId + " running in process with PID #" + std::to_string(pid) + ".");
+        std::string producerId = std::to_string(this->_id) + "." + std::to_string(producerData->producerId);
+        pid = fork();
+
+        if (pid == CHILD_PROCESS_PID) {
+            // Child process.
+            producersPipe->setWriteMode();
+            auto producerJob = new ProducerJob(this->_id, producerData, producersPipe);
+            producerJob->run();
+            delete producerJob;
         }
-        producersPipe->setReadMode();
-        this->_producersPipe = producersPipe;
-
-        /*********** Seller processes creation. **********/
-        // Creating pipe for sellers' requests.
-        auto requestsPipe = new Pipe();
-        int salePoints = config->getSalePoints();
-        for (int salePoint = 1; salePoint <= salePoints; salePoint++) {
-            // Creating pipe for sellers' stock distribution.
-            auto distributionPipe = new Pipe();
-
-            std::string sellerId = std::to_string(this->_id) + "." + std::to_string(salePoint);
-            pid = fork();
-
-            if (pid == CHILD_PROCESS_PID) {
-                // Child process.
-                try {
-                    requestsPipe->setWriteMode();
-                    distributionPipe->setReadMode();
-                    auto sellerJob = new SellerJob(sellerId, config->getClients(), requestsPipe, distributionPipe);
-                    sellerJob->run();
-                    delete sellerJob;
-                } catch (std::exception& e) {
-                    std::cerr << "Producer #" + sellerId + " failed at creation from Distribution Center: " << e.what() << std::endl;
-                }
-
-            }
-            this->_distributionPipes.insert(std::pair<std::string, Pipe *>(sellerId, distributionPipe));
-            this->_sellersPIDs.push_back(pid);
-            ProcessKiller::addPID(pid);
-            Logger::info("Seller #" + sellerId + " running in process with PID #" + std::to_string(pid) + ".");
-        }
-        requestsPipe->setReadMode();
-        this->_requestsPipe = requestsPipe;
-
-        /******** Classifier-Distributor pipe creation *********/
-        this->_innerPipe = new Pipe();
-    } catch (std::exception &e) {
-        std::cerr << "Distribution Center constructor exception: " << e.what() << std::endl;
-        exit(EXIT_FAILURE);
+        this->_producersPIDs.push_back(pid);
+        ProcessKiller::addPID(pid);
+        Logger::info("Producer #" + producerId + " running in process with PID #" + std::to_string(pid) + ".");
     }
+    producersPipe->setReadMode();
+    this->_producersPipe = producersPipe;
+
+    /*********** Seller processes creation. **********/
+    // Creating pipe for sellers' requests.
+    auto requestsPipe = new Pipe();
+    int salePoints = config->getSalePoints();
+    for (int salePoint = 1; salePoint <= salePoints; salePoint++) {
+        // Creating pipe for sellers' stock distribution.
+        auto distributionPipe = new Pipe();
+
+        std::string sellerId = std::to_string(this->_id) + "." + std::to_string(salePoint);
+        pid = fork();
+
+        if (pid == CHILD_PROCESS_PID) {
+            // Child process.
+            requestsPipe->setWriteMode();
+            distributionPipe->setReadMode();
+            auto sellerJob = new SellerJob(sellerId, config->getClients(), requestsPipe, distributionPipe);
+            sellerJob->run();
+            delete sellerJob;
+        }
+        this->_distributionPipes.insert(std::pair<std::string, Pipe *>(sellerId, distributionPipe));
+        this->_sellersPIDs.push_back(pid);
+        ProcessKiller::addPID(pid);
+        Logger::info("Seller #" + sellerId + " running in process with PID #" + std::to_string(pid) + ".");
+    }
+    requestsPipe->setReadMode();
+    this->_requestsPipe = requestsPipe;
+
+    /******** Classifier-Distributor pipe creation *********/
+    this->_innerPipe = new Pipe();
 }
 
 int DistributionCenter::run() {
@@ -88,7 +75,8 @@ int DistributionCenter::run() {
         delete classifierJob;
     }
 
-    Logger::info("Classifier #" + std::to_string(this->_id) + " running in process with PID #" + std::to_string(pid) + ".");
+    Logger::info(
+            "Classifier #" + std::to_string(this->_id) + " running in process with PID #" + std::to_string(pid) + ".");
     this->_classifierPID = pid;
     ProcessKiller::addPID(pid);
 
@@ -124,7 +112,8 @@ int DistributionCenter::finish() {
     }
 
     if (signals == 0) {
-        Logger::info("Every Producer in Center # " + std::to_string(this->_id) + " finished successfully without errors.");
+        Logger::info(
+                "Every Producer in Center # " + std::to_string(this->_id) + " finished successfully without errors.");
     }
 
     // Awaiting for sellers processes.
@@ -140,7 +129,8 @@ int DistributionCenter::finish() {
     }
 
     if (signals == 0) {
-        Logger::info("Every Seller in Center # " + std::to_string(this->_id) + " finished successfully without errors.");
+        Logger::info(
+                "Every Seller in Center # " + std::to_string(this->_id) + " finished successfully without errors.");
     }
 
     // Awaiting for classifier process.
@@ -173,7 +163,7 @@ void DistributionCenter::closePipes() {
 
     // Closing Distribution pipes.
     int pipeIdx = 0;
-    for (const auto& pipe : this->_distributionPipes) {
+    for (const auto &pipe : this->_distributionPipes) {
         pipeIdx++;
         delete pipe.second;
 
