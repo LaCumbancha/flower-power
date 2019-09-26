@@ -1,0 +1,61 @@
+[2019-09-16 23:53:49.999] [31941] [INFO] Initilized logger in process with PID #31945
+[2019-09-16 23:54:00.341] [31941] [INFO] Main system running in process with PID #31941.
+[2019-09-16 23:54:00.343] [31941] [INFO] Distribution Center #1 running in process with PID #31946.
+[2019-09-16 23:54:00.343] [31946] [INFO] Every Producer finished successfully without errors.
+[2019-09-16 23:54:00.344] [31941] [INFO] Distribution Center #2 running in process with PID #31947.
+[2019-09-16 23:54:00.344] [31947] [INFO] Every Producer finished successfully without errors.
+[2019-09-16 23:54:00.345] [31941] [INFO] Distribution Center #3 running in process with PID #31948.
+[2019-09-16 23:54:00.345] [31948] [INFO] Every Producer finished successfully without errors.
+[2019-09-16 23:54:00.347] [31941] [INFO] Distribution Center #4 running in process with PID #31949.
+[2019-09-16 23:54:00.347] [31949] [INFO] Every Producer finished successfully without errors.
+[2019-09-16 23:54:00.348] [31941] [INFO] Distribution Center #5 running in process with PID #31950.
+[2019-09-16 23:54:00.348] [31950] [INFO] Every Producer finished successfully without errors.
+[2019-09-16 23:54:00.349] [31941] [INFO] Distribution Center #6 running in process with PID #31951.
+[2019-09-16 23:54:00.349] [31951] [INFO] Every Producer finished successfully without errors.
+[2019-09-16 23:54:00.350] [31941] [INFO] Distribution Center #7 running in process with PID #31952.
+[2019-09-16 23:54:00.350] [31952] [INFO] Every Producer finished successfully without errors.
+[2019-09-16 23:54:00.351] [31941] [INFO] Distribution Center #8 running in process with PID #31953.
+[2019-09-16 23:54:00.351] [31953] [INFO] Every Producer finished successfully without errors.
+[2019-09-16 23:54:00.352] [31941] [INFO] Distribution Center #9 running in process with PID #31954.
+[2019-09-16 23:54:00.352] [31954] [INFO] Every Producer finished successfully without errors.
+[2019-09-16 23:54:00.353] [31941] [INFO] Distribution Center #10 running in process with PID #31955.
+[2019-09-16 23:54:00.353] [31955] [INFO] Every Producer finished successfully without errors.
+[2019-09-16 23:54:00.354] [31941] [INFO] Every Distribution Center finished successfully without errors.
+[2019-09-16 23:54:01.422] [31941] [INFO] Main program finished.
+[2019-09-16 23:54:01.423] [31945] [INFO] Closing log.
+[2019-09-16 23:56:20.293] [32080] [INFO] Initialized logger in process with PID #32084
+[2019-09-16 23:56:21.883] [32080] [INFO] Main system running in process with PID #32080.
+[2019-09-16 23:56:21.884] [32080] [INFO] Distribution Center #1 running in process with PID #32089.
+[2019-09-16 23:56:21.884] [32089] [INFO] Every Producer finished successfully without errors.
+[2019-09-16 23:56:21.885] [32080] [INFO] Every Distribution Center finished successfully without errors.
+[2019-09-16 23:57:02.273] [32147] [INFO] Initialized logger in process with PID #32151
+[2019-09-16 23:57:03.682] [32147] [INFO] Main system running in process with PID #32147.
+[2019-09-16 23:57:03.683] [32147] [INFO] Distribution Center #1 running in process with PID #32155.
+[2019-09-16 23:57:03.683] [32155] [INFO] Every Producer finished successfully without errors.
+[2019-09-16 23:57:03.684] [32147] [INFO] Every Distribution Center finished successfully without errors.
+[2019-09-16 23:57:21.846] [32199] [INFO] Initialized logger in process with PID #32203
+[2019-09-16 23:57:25.689] [32199] [INFO] Main system running in process with PID #32199.
+[2019-09-16 23:57:25.690] [32199] [INFO] Distribution Center #1 running in process with PID #32213.
+[2019-09-16 23:57:25.690] [32213] [INFO] Every Producer finished successfully without errors.
+[2019-09-16 23:57:25.691] [32199] [INFO] Every Distribution Center finished successfully without errors.
+[2019-09-16 23:57:45.923] [32263] [INFO] Initialized logger in process with PID #32267
+[2019-09-16 23:57:47.153] [32263] [INFO] Main system running in process with PID #32263.
+[2019-09-16 23:57:47.154] [32263] [INFO] Distribution Center #1 running in process with PID #32271.
+[2019-09-16 23:57:47.154] [32271] [INFO] Every Producer finished successfully without errors.
+[2019-09-16 23:57:47.155] [32263] [INFO] Every Distribution Center finished successfully without errors.
+[2019-09-16 23:58:03.597] [32304] [INFO] Initialized logger in process with PID #32308
+[2019-09-16 23:58:04.807] [32304] [INFO] Main system running in process with PID #32304.
+[2019-09-16 23:58:04.808] [32304] [INFO] Distribution Center #1 running in process with PID #32309.
+[2019-09-16 23:58:04.808] [32309] [INFO] Every Producer finished successfully without errors.
+[2019-09-16 23:58:04.809] [32304] [INFO] Every Distribution Center finished successfully without errors.
+[2019-09-16 23:59:07.021] [32448] [INFO] Initialized logger in process with PID #32452
+[2019-09-16 23:59:08.037] [32448] [INFO] Main system running in process with PID #32448.
+[2019-09-16 23:59:08.038] [32448] [INFO] Distribution Center #1 running in process with PID #32456.
+[2019-09-16 23:59:08.038] [32456] [INFO] Every Producer finished successfully without errors.
+[2019-09-16 23:59:08.039] [32448] [INFO] Every Distribution Center finished successfully without errors.
+[2019-09-16 23:59:17.722] [32483] [INFO] Initialized logger in process with PID #32487
+[2019-09-16 23:59:19.350] [32483] [INFO] Main system running in process with PID #32483.
+[2019-09-16 23:59:19.351] [32483] [INFO] Distribution Center #1 running in process with PID #32488.
+[2019-09-16 23:59:19.352] [32488] [INFO] Every Producer finished successfully without errors.
+[2019-09-16 23:59:19.353] [32483] [INFO] Every Distribution Center finished successfully without errors.
+[2019-09-16 23:59:26.462] [32517] [INFO] Initialized logger in process with PID #32521

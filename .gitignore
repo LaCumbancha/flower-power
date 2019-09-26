@@ -43,10 +43,13 @@ cmake_install.cmake
 Makefile
 
 # Logs
-logs/
+logs/.*
 
 # Tests
 *Tests.cpp
 
 # Temps
-tmp/
+tmp/.*
+
+# Delivery Notes
+data/notes/.*

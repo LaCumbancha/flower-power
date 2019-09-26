@@ -184,12 +184,12 @@ void SellerJob::writeDeliveryNote(BouquetRequest request) {
     std::string deliveryNoteFileName = deliveryNoteFolder + "deliveryNoteFile" + _sellerId + "-" + std::to_string(_deliveryNoteNumber) + ".txt";
     Logger::debug("REMITO: " + deliveryNoteFileName);
     deliveryNoteFile.open(deliveryNoteFileName);
-    deliveryNoteFile << "Remito número " << _deliveryNoteNumber << std::endl;
+    deliveryNoteFile << " Delivery Note #" << _deliveryNoteNumber << std::endl;
     deliveryNoteFile << "-----------------------------------" << std::endl;
-    deliveryNoteFile << "Local # " << _sellerId << std::endl;
+    deliveryNoteFile << " Flower Shop #" << _sellerId << std::endl;
     deliveryNoteFile << "-----------------------------------" << std::endl;
-    deliveryNoteFile << "Cantidad de rosas       : " << request.rosesAmount << std::endl;
-    deliveryNoteFile << "Cantidad de tulipanes   : " << request.tulipsAmount << std::endl;
+    deliveryNoteFile << " Roses:                          " << request.rosesAmount << std::endl;
+    deliveryNoteFile << " Tulips:                         " << request.tulipsAmount << std::endl;
     deliveryNoteFile << "-----------------------------------" << std::endl;
     deliveryNoteFile.close();
     deliveryNoteFile.clear();
