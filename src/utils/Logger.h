@@ -8,6 +8,10 @@
 #include <iostream>
 #include <ctime>
 #include <map>
+#include <sys/time.h>
+#include <vector>
+#include <sys/stat.h>
+#include <dirent.h>
 #include "Pipe.h"
 
 
@@ -41,6 +45,7 @@ public:
 private:
     static Pipe* logPipe;
     static std::string logFile;
+    static std::string logFolder;
 
     static LogLevel level;
     static std::map<LogLevel, std::string> levelsMap;
@@ -49,6 +54,8 @@ private:
     static std::string mainLog();
     static void cleanLog(std::string& log);
     static std::string date(const char* format = "%Y-%m-%d.%X");
+
+    static void createLogsFolder();
 };
 
 #endif //FLOWER_POWER_LOGGER_H

@@ -1,14 +1,22 @@
-#include <sys/time.h>
-#include <vector>
 #include "Logger.h"
 
 LogLevel Logger::level = DEBUG;
-Pipe* Logger::logPipe = new Pipe();
-std::string Logger::logFile = "./logs/" + date("%Y%m%d") + ".log";
+Pipe *Logger::logPipe = new Pipe();
+std::string Logger::logFolder = "./logs/";
+std::string Logger::logFile = Logger::logFolder + date("%Y%m%d") + ".log";
 std::map<LogLevel, std::string> Logger::levelsMap = Logger::createLevelsMap();
 
 void Logger::writing() {
     Logger::logPipe->setWriteMode();
+}
+
+void Logger::createLogsFolder() {
+    DIR* directory = opendir(Logger::logFolder.c_str());
+    if (directory == nullptr && mkdir(Logger::logFolder.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) != EXIT_SUCCESS) {
+            std::cerr << "Couldn't create Log folder!" << std::endl;
+    } else {
+        closedir(directory);
+    }
 }
 
 void Logger::run() {
@@ -16,11 +24,12 @@ void Logger::run() {
     int status;
 
     // Creating log file
+    Logger::createLogsFolder();
     std::ofstream outfile;
     outfile.open(Logger::logFile, std::ios::app);
 
     Logger::logPipe->setReadMode();
-    while(Logger::logPipe->read(data, &status)){
+    while (Logger::logPipe->read(data, &status)) {
         if (status == EXIT_SUCCESS) {
             Logger::cleanLog(data);
             outfile << data << std::endl;
@@ -37,7 +46,7 @@ void Logger::close() {
     Logger::logPipe->~Pipe();
 }
 
-void Logger::debug(const std::string& text) {
+void Logger::debug(const std::string &text) {
     if (Logger::level <= DEBUG) {
         std::string log = mainLog();
         log += "[DEBUG] " + text + "|||";
@@ -45,7 +54,7 @@ void Logger::debug(const std::string& text) {
     }
 }
 
-void Logger::info(const std::string& text) {
+void Logger::info(const std::string &text) {
     if (Logger::level <= INFO) {
         std::string log = mainLog();
         log += "[INFO] " + text + "|||";
@@ -53,7 +62,7 @@ void Logger::info(const std::string& text) {
     }
 }
 
-void Logger::warn(const std::string& text) {
+void Logger::warn(const std::string &text) {
     if (Logger::level <= WARN) {
         std::string log = mainLog();
         log += "[WARN] " + text + "|||";
@@ -61,7 +70,7 @@ void Logger::warn(const std::string& text) {
     }
 }
 
-void Logger::error(const std::string& text) {
+void Logger::error(const std::string &text) {
     if (Logger::level <= ERROR) {
         std::string log = mainLog();
         log += "[ERROR] " + text + "|||";
@@ -69,10 +78,10 @@ void Logger::error(const std::string& text) {
     }
 }
 
-std::string Logger::date(const char* format) {
+std::string Logger::date(const char *format) {
     time_t now = ::time(nullptr);
     struct tm tstruct{};
-    char  buf[80];
+    char buf[80];
     tstruct = *localtime(&now);
     strftime(buf, sizeof(buf), format, &tstruct);
     return buf;
@@ -94,7 +103,7 @@ std::string Logger::time() {
         }
     }
 
-    char buffer [80];
+    char buffer[80];
     strftime(buffer, 80, "%Y-%m-%d %H:%M:%S", localtime(&curTime.tv_sec));
 
     char currentTime[84] = "";
@@ -112,7 +121,7 @@ std::string Logger::mainLog() {
     return log;
 }
 
-void Logger::cleanLog(std::string& log) {
+void Logger::cleanLog(std::string &log) {
     size_t pos = log.find("|||");
 
     if (pos != std::string::npos) {
