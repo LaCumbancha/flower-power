@@ -9,6 +9,6 @@
 
 const std::string onlineSalesPath = "../data/onlineSales.csv";
 
-const std::string remitosFolder = "remitos/";
+const std::string remitosFolder = "./";
 
 #endif //FLOWER_POWER_PATHS_H

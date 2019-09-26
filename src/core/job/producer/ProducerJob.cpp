@@ -117,6 +117,8 @@ void ProducerJob::initializeStatus(const FlowerBox *producerData) {
     std::string producerId = std::to_string(this->_centerId) + '.' + std::to_string(this->_producerId);
     std::string previousState = ContextStatus::retrieveContext('P' + producerId);
 
+    Logger::warn("Producer #" + producerId + ". Previous state: " + previousState);
+
     if (previousState.empty()) {
         Logger::info("Creating new state for Producer #" + producerId);
         this->_rosesStock = producerData->rosesStock;

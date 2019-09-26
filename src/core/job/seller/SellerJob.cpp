@@ -228,6 +228,8 @@ void SellerJob::initializeStatus(const string& sellerId) {
 
     std::string previousState = ContextStatus::retrieveContext('S' + sellerId);
 
+    Logger::warn("Seller #" + sellerId + ". Previous state: " + previousState);
+
     if (previousState.empty()) {
         Logger::info("Creating new state for Seller #" + sellerId);
         this->_rosesStock = std::vector<Flower>();

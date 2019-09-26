@@ -134,6 +134,7 @@ ClassifierJob::~ClassifierJob() {
 void ClassifierJob::initializeStatus() {
 
     std::string previousState = ContextStatus::retrieveContext('C' + std::to_string(this->_center));
+    Logger::warn("Classifier #" + std::to_string(this->_center) + ". Previous state: " + previousState);
 
     if (previousState.empty()) {
         Logger::info("Creating new empty state for Classifier #" + std::to_string(this->_center));

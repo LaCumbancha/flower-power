@@ -201,6 +201,7 @@ int DistributorJob::stopJob() {
 void DistributorJob::initializeStatus() {
 
     std::string previousState = ContextStatus::retrieveContext('D' + std::to_string(this->_center));
+    Logger::warn("Distributor #" + std::to_string(this->_center) + ". Previous state: " + previousState);
 
     if (previousState.empty()) {
         Logger::info("Creating new empty state for Distributor #" + std::to_string(this->_center));
