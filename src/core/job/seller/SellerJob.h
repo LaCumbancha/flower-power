@@ -42,8 +42,8 @@ private:
     void resupply(BouquetRequest request);
     std::string contextState();
 
-    int _remitoNumber = 0;
-    void writeRemito(BouquetRequest request);
+    int _deliveryNoteNumber = 0;
+    void writeDeliveryNote(BouquetRequest request);
 
     std::vector<Flower> _rosesStock;
     std::vector<Flower> _tulipsStock;

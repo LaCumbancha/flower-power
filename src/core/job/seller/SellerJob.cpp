@@ -65,13 +65,13 @@ int SellerJob::listenRequests() {
 void SellerJob::handleRequest(BouquetRequest bouquetRequest) {
 
     // Uncomment the following line to measure stats in real time.
-    sleep(1);
+    // sleep(1);
 
     if (bouquetRequest.onlineSale) {
         Logger::info("Seller # " + this->_sellerId + " just received an online purchase for " +
                      std::to_string(bouquetRequest.rosesAmount) + " roses and " +
                      std::to_string(bouquetRequest.tulipsAmount) + " tulips.");
-        writeRemito(bouquetRequest);
+        writeDeliveryNote(bouquetRequest);
     } else {
         Logger::info("Seller # " + this->_sellerId + " received an in place request for " +
                      std::to_string(bouquetRequest.rosesAmount) + " roses and " +
@@ -179,21 +179,21 @@ int SellerJob::finish() {
     exit(EXIT_SUCCESS);
 }
 
-void SellerJob::writeRemito(BouquetRequest request) {
-    std::ofstream remito;
-    std::string remitoFile = remitosFolder + "remito" + _sellerId + "-" + std::to_string(_remitoNumber) + ".txt";
-    Logger::debug("REMITO: " + remitoFile);
-    remito.open(remitoFile);
-    remito << "Remito número " << _remitoNumber << std::endl;
-    remito << "-----------------------------------" << std::endl;
-    remito << "Local # " << _sellerId << std::endl;
-    remito << "-----------------------------------" << std::endl;
-    remito << "Cantidad de rosas       : " << request.rosesAmount << std::endl;
-    remito << "Cantidad de tulipanes   : " << request.tulipsAmount << std::endl;
-    remito << "-----------------------------------" << std::endl;
-    remito.close();
-    remito.clear();
-    _remitoNumber++;
+void SellerJob::writeDeliveryNote(BouquetRequest request) {
+    std::ofstream deliveryNoteFile;
+    std::string deliveryNoteFileName = deliveryNoteFolder + "deliveryNoteFile" + _sellerId + "-" + std::to_string(_deliveryNoteNumber) + ".txt";
+    Logger::debug("REMITO: " + deliveryNoteFileName);
+    deliveryNoteFile.open(deliveryNoteFileName);
+    deliveryNoteFile << "Remito número " << _deliveryNoteNumber << std::endl;
+    deliveryNoteFile << "-----------------------------------" << std::endl;
+    deliveryNoteFile << "Local # " << _sellerId << std::endl;
+    deliveryNoteFile << "-----------------------------------" << std::endl;
+    deliveryNoteFile << "Cantidad de rosas       : " << request.rosesAmount << std::endl;
+    deliveryNoteFile << "Cantidad de tulipanes   : " << request.tulipsAmount << std::endl;
+    deliveryNoteFile << "-----------------------------------" << std::endl;
+    deliveryNoteFile.close();
+    deliveryNoteFile.clear();
+    _deliveryNoteNumber++;
 }
 
 std::string SellerJob::contextState() {

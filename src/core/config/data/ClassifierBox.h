@@ -1,7 +1,3 @@
-//
-// Created by darius on 18/9/19.
-//
-
 #ifndef FLOWER_POWER_CLASSIFIERBOX_H
 #define FLOWER_POWER_CLASSIFIERBOX_H
 
