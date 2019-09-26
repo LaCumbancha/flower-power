@@ -180,6 +180,14 @@ int SellerJob::finish() {
 }
 
 void SellerJob::writeDeliveryNote(BouquetRequest request) {
+    // Creating Delivery Note folders.
+    DIR* directory = opendir(deliveryNoteFolder.c_str());
+    if (directory == nullptr && mkdir(deliveryNoteFolder.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) != EXIT_SUCCESS) {
+        Logger::error("Couldn't create Delivery Notes folder!");
+    } else {
+        closedir(directory);
+    }
+
     std::ofstream deliveryNoteFile;
     std::string deliveryNoteFileName = deliveryNoteFolder + "deliveryNote" + _sellerId + "-" + std::to_string(_deliveryNoteNumber) + ".txt";
     Logger::debug("REMITO: " + deliveryNoteFileName);
