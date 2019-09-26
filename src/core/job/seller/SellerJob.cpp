@@ -181,7 +181,7 @@ int SellerJob::finish() {
 
 void SellerJob::writeDeliveryNote(BouquetRequest request) {
     std::ofstream deliveryNoteFile;
-    std::string deliveryNoteFileName = deliveryNoteFolder + "deliveryNoteFile" + _sellerId + "-" + std::to_string(_deliveryNoteNumber) + ".txt";
+    std::string deliveryNoteFileName = deliveryNoteFolder + "deliveryNote" + _sellerId + "-" + std::to_string(_deliveryNoteNumber) + ".txt";
     Logger::debug("REMITO: " + deliveryNoteFileName);
     deliveryNoteFile.open(deliveryNoteFileName);
     deliveryNoteFile << " Delivery Note #" << _deliveryNoteNumber << std::endl;
