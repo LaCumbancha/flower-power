@@ -27,6 +27,7 @@
 *.lib
 
 # Executables
+bin/
 *.exe
 *.out
 *.app
@@ -49,7 +50,7 @@ logs/.*
 *Tests.cpp
 
 # Temps
-tmp/.*
+tmp/
 
 # Delivery Notes
-data/notes/.*
+data/notes/
