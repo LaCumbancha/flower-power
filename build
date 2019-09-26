@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+cmake CMakeLists.txt
+make
+rm -rf ./tmp
+rm -rf ./logs
+rm -rf ./data/notes
