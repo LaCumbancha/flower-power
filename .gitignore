@@ -43,11 +43,11 @@ CMakeCache.txt
 cmake_install.cmake
 Makefile
 
-# Logs
-logs/.*
-
 # Tests
 *Tests.cpp
+
+# Logs
+logs
 
 # Temps
 tmp/

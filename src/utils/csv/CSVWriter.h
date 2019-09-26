@@ -5,6 +5,8 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <dirent.h>
+#include <sys/stat.h>
 
 
 class CSVWriter {
@@ -18,6 +20,7 @@ private:
     std::string _filename;
     char _separator;
 
+    static void createFolder(const std::string& string);
 };
 
 
