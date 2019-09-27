@@ -1,4 +1,5 @@
 #include "MainMenu.h"
+#include "../utils/Closer.h"
 
 int MainMenu::show() {
     int option = -1;
@@ -20,11 +21,21 @@ int MainMenu::show() {
 
                         if (pid == CHILD_PROCESS_PID) {
                             // System process.
+                            pid = getpid();
                             coreSystem->run();
                             coreSystem->finish();
+
+                            Logger::info("System running in process with PID #" + std::to_string(pid) + " destroyed.");
+                            ProcessKiller::removePID(pid);
+                            Closer::finishAuxJobs(pid);
+
+                            delete coreSystem;
+                            exit(EXIT_SUCCESS);
                         }
 
+                        Logger::info("System running in process with PID #" + std::to_string(pid) + ".");
                         ProcessKiller::addPID(pid);
+
                         cout << endl;
                         display();
                         break;
@@ -53,11 +64,21 @@ int MainMenu::show() {
 
                         if (pid == CHILD_PROCESS_PID) {
                             // System process.
+                            pid = getpid();
                             coreSystem->run();
                             coreSystem->finish();
+
+                            Logger::info("System running in process with PID #" + std::to_string(pid) + " destroyed.");
+                            ProcessKiller::removePID(pid);
+                            Closer::finishAuxJobs(pid);
+
+                            delete coreSystem;
+                            exit(EXIT_SUCCESS);
                         }
 
+                        Logger::info("System running in process with PID #" + std::to_string(pid) + ".");
                         ProcessKiller::addPID(pid);
+
                         cout << endl;
                         display();
                         break;

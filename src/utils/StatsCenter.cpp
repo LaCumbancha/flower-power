@@ -18,12 +18,13 @@ void StatsCenter::run() {
                 StatsCenter::updateStats(data);
             } else if (isRequestIncoming(data)) {
                 StatsCenter::outputStats(data);
-            }
+            } else if (isQuitIncoming(data)) break;
         }
     }
 
     Logger::info("Closing Stats Center.");
     StatsCenter::close();
+    Logger::close();
     exit(EXIT_SUCCESS);
 }
 
@@ -169,4 +170,13 @@ bool StatsCenter::isFlowerRequest(const std::string &request) {
 void StatsCenter::close() {
     StatsCenter::_statsPipe->~Pipe();
     StatsCenter::_sellerPipe->~Pipe();
+}
+
+void StatsCenter::finish() {
+    StatsCenter::_sellerPipe->write("QUIT");
+    StatsCenter::close();
+}
+
+bool StatsCenter::isQuitIncoming(std::string &data) {
+    return data == "QUIT";
 }

@@ -19,12 +19,13 @@ void ProcessKiller::run() {
                 Logger::debug("Process " + data.substr(2, data.size()) + " removed from Process Killer list.");
             } else if (isKillIncoming(data)) {
                 killPIDs();
-            }
+            } else if (isQuitIncoming(data)) break;
         }
     }
 
     Logger::info("Closing Process Killer.");
     ProcessKiller::close();
+    Logger::close();
     exit(EXIT_SUCCESS);
 }
 
@@ -75,4 +76,13 @@ void ProcessKiller::removePidFromVector(int pid) {
     ProcessKiller::_pids.erase(std::remove(ProcessKiller::_pids.begin(), ProcessKiller::_pids.end(), pid),
                                ProcessKiller::_pids.end());
     Logger::warn("List size after removing PID #" + std::to_string(pid) + ": " + std::to_string(ProcessKiller::_pids.size()));
+}
+
+void ProcessKiller::finish() {
+    ProcessKiller::_pidsPipe->write("QUIT");
+    ProcessKiller::close();
+}
+
+bool ProcessKiller::isQuitIncoming(std::string &data) {
+    return data == "QUIT";
 }

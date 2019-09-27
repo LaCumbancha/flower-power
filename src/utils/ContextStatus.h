@@ -14,6 +14,8 @@ public:
 
     static void run();
     static void close();
+    static void finish();
+
     static void saveMode();
     static void saveContext(const std::string& data);
     static std::string retrieveContext(const std::string& id);
@@ -40,6 +42,7 @@ private:
     static void saveSystemStatus(const std::string& status);
 
     static void retrieveData(const std::string& id);
+    static bool isQuitIncoming(std::string &data);
 };
 
 

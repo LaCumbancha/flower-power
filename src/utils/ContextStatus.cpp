@@ -33,12 +33,13 @@ void ContextStatus::run() {
                 saveSystemStatus(data);
             } else if (isSystemFinishedRequest(data)) {
                 sendSystemFinished();
-            }
+            } else if (isQuitIncoming(data)) break;
         }
     }
 
     Logger::info("Closing Context Storage.");
     ContextStatus::close();
+    Logger::close();
     exit(EXIT_SUCCESS);
 }
 
@@ -67,7 +68,11 @@ std::string ContextStatus::retrieveContext(const std::string& id) {
     int status;
 
     ContextStatus::_retrievePipe->read(data, &status);
-    if (status == EXIT_SUCCESS) return data;
+
+    if (status == EXIT_SUCCESS) {
+        if (data == "NULL") return "";
+        return data;
+    }
 
     Logger::error("Context Storage failed to retrieve data for id " + id + ".");
     return "";
@@ -170,7 +175,16 @@ void ContextStatus::retrieveData(const std::string& id) {
             Logger::warn("Job "+ id + " retrieved: [" + ContextStatus::_data.find(id)->second + "].");
         }
     } else {
-        ContextStatus::_retrievePipe->write("");
+        ContextStatus::_retrievePipe->write("NULL");
     }
 
+}
+
+void ContextStatus::finish() {
+    ContextStatus::_incomingPipe->write("QUIT");
+    ContextStatus::close();
+}
+
+bool ContextStatus::isQuitIncoming(std::string &data) {
+    return data == "QUIT";
 }

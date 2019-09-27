@@ -52,9 +52,9 @@ int main(int argc, char *argv[]) {
     MainMenu menu = MainMenu();
     menu.show();
 
-    ProcessKiller::close();
-    ContextStatus::close();
-    StatsCenter::close();
+    ProcessKiller::finish();
+    ContextStatus::finish();
+    StatsCenter::finish();
 
     Logger::info("Main program finished.");
     Logger::close();

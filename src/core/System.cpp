@@ -61,8 +61,6 @@ int System::finish() {
 
     // Set system as finished
     ContextStatus::saveSystemFinishStatus(true);
-
-    exit(EXIT_SUCCESS);
 }
 
 Config *System::getConfig() {

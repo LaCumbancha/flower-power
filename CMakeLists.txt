@@ -22,8 +22,6 @@ add_executable(
         src/core/job/seller/SellerJob.h
         src/core/config/Config.cpp
         src/core/config/Config.h
-        src/core/scheduler/Scheduler.cpp
-        src/core/scheduler/Scheduler.h
         src/core/job/Job.cpp
         src/core/job/Job.h
         src/core/DistributionCenter.cpp
@@ -67,4 +65,5 @@ add_executable(
         src/utils/signals/EventHandler.h
         src/utils/signals/SignalHandler.cpp
         src/utils/signals/SignalHandler.h
-        src/utils/Closer.h)
+        src/utils/Closer.h
+)

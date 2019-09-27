@@ -15,6 +15,8 @@ public:
         StatsCenter::close();
         Logger::debug("Finishing auxiliary jobs for PID #" + std::to_string(pid) + ".");
         Logger::close();
+
+        for (int fileDescriptor = getdtablesize(); fileDescriptor > 3;) close(--fileDescriptor);
     }
 
 };

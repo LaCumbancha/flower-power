@@ -14,9 +14,10 @@ public:
 
     static void run();
     static void close();
+    static void finish();
+
     static void addingMode();
     static void addSale(Flower flower, FlowerType type);
-
     static std::string getMostSoldFlower();
     static std::string getMostSoldProducer();
 
@@ -32,6 +33,7 @@ private:
     static bool isTulipIncoming(const std::string& flower);
     static bool isProducerRequest(const std::string& request);
     static bool isFlowerRequest(const std::string& request);
+    static bool isQuitIncoming(std::string &data);
 
     static void updateStats(const std::string& flower);
     static void outputStats(const std::string& request);
