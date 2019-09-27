@@ -5,10 +5,10 @@
 #include <vector>
 #include <string>
 #include <csignal>
+#include <algorithm>
 #include <bits/signum.h>
 #include "Pipe.h"
 #include "Logger.h"
-
 
 class ProcessKiller {
 
@@ -19,6 +19,7 @@ public:
     static void close();
     static void addingMode();
 
+    static void removePID(int pid);
     static void addPID(pid_t pid);
     static void killAll();
 
@@ -28,9 +29,10 @@ private:
 
     static bool isAddIncoming(const std::string& data);
     static bool isKillIncoming(const std::string& data);
-    static bool isQuitIncoming(const std::string &data);
+    static bool isRemoveIncoming(const std::string& data);
     static void killPIDs();
 
+    static void removePidFromVector(int pid);
 };
 
 

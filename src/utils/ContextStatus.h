@@ -29,7 +29,6 @@ private:
     static std::string _stateFile;
     static std::map<std::string, std::string> _data;
 
-    static bool isQuitIncoming(std::string &data);
     static bool isSaveIncoming(std::string &data);
     static bool isLoadIncoming(std::string &data);
     static bool isRetrieveIncoming(std::string &data);

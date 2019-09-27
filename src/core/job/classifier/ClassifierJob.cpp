@@ -98,8 +98,6 @@ int ClassifierJob::finish() {
 
     this->_distributorPipe->~Pipe();
     Logger::info("Classifier #" + std::to_string(this->_center) + " pipe connected to the distributor process destroyed.");
-
-    exit(EXIT_SUCCESS);
 }
 
 std::string ClassifierJob::contextState() {

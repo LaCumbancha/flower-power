@@ -33,20 +33,16 @@ void ContextStatus::run() {
                 saveSystemStatus(data);
             } else if (isSystemFinishedRequest(data)) {
                 sendSystemFinished();
-            } else if (isQuitIncoming(data)) {
-                break;
             }
         }
     }
 
     Logger::info("Closing Context Storage.");
-    ContextStatus::_incomingPipe->~Pipe();
-    ContextStatus::_retrievePipe->~Pipe();
+    ContextStatus::close();
     exit(EXIT_SUCCESS);
 }
 
 void ContextStatus::close() {
-    ContextStatus::_incomingPipe->write("QUIT");
     ContextStatus::_incomingPipe->~Pipe();
     ContextStatus::_retrievePipe->~Pipe();
 }
@@ -96,10 +92,6 @@ bool ContextStatus::retrieveSystemFinished() {
 
     Logger::error("Context Storage failed to retrieve system status.");
     return true;
-}
-
-bool ContextStatus::isQuitIncoming(std::string &data) {
-    return data == "QUIT";
 }
 
 bool ContextStatus::isLoadIncoming(std::string &data) {

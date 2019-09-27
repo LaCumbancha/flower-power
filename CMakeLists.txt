@@ -67,4 +67,4 @@ add_executable(
         src/utils/signals/EventHandler.h
         src/utils/signals/SignalHandler.cpp
         src/utils/signals/SignalHandler.h
-)
+        src/utils/Closer.h)

@@ -1,6 +1,6 @@
 #include "ProcessKiller.h"
 
-Pipe* ProcessKiller::_pidsPipe = new Pipe();
+Pipe *ProcessKiller::_pidsPipe = new Pipe();
 std::vector<pid_t> ProcessKiller::_pids = std::vector<pid_t>();
 
 void ProcessKiller::run() {
@@ -14,26 +14,22 @@ void ProcessKiller::run() {
             if (isAddIncoming(data)) {
                 ProcessKiller::_pids.push_back(std::stoi(data.substr(2, data.size())));
                 Logger::debug("Process " + data.substr(2, data.size()) + " added to Process Killer list.");
+            } else if (isRemoveIncoming(data)) {
+                removePidFromVector(std::stoi(data.substr(2, data.size())));
+                Logger::debug("Process " + data.substr(2, data.size()) + " removed from Process Killer list.");
             } else if (isKillIncoming(data)) {
                 killPIDs();
-            } else if (isQuitIncoming(data)) {
-                break;
             }
         }
     }
 
     Logger::info("Closing Process Killer.");
-    ProcessKiller::_pidsPipe->~Pipe();
+    ProcessKiller::close();
     exit(EXIT_SUCCESS);
 }
 
 void ProcessKiller::close() {
-    ProcessKiller::_pidsPipe->write("QUIT");
     ProcessKiller::_pidsPipe->~Pipe();
-}
-
-bool ProcessKiller::isQuitIncoming(const std::string &data) {
-    return data == "QUIT";
 }
 
 void ProcessKiller::addingMode() {
@@ -44,15 +40,23 @@ void ProcessKiller::addPID(pid_t pid) {
     ProcessKiller::_pidsPipe->write("A|" + std::to_string(pid));
 }
 
+void ProcessKiller::removePID(pid_t pid) {
+    ProcessKiller::_pidsPipe->write("R|" + std::to_string(pid));
+}
+
 void ProcessKiller::killAll() {
     ProcessKiller::_pidsPipe->write("K|");
 }
 
-bool ProcessKiller::isAddIncoming(const std::string& data) {
+bool ProcessKiller::isAddIncoming(const std::string &data) {
     return data.substr(0, 2) == "A|";
 }
 
-bool ProcessKiller::isKillIncoming(const std::string& data) {
+bool ProcessKiller::isRemoveIncoming(const std::string &data) {
+    return data.substr(0, 2) == "R|";
+}
+
+bool ProcessKiller::isKillIncoming(const std::string &data) {
     return data.substr(0, 2) == "K|";
 }
 
@@ -64,4 +68,11 @@ void ProcessKiller::killPIDs() {
     }
 
     ProcessKiller::_pids.clear();
+}
+
+void ProcessKiller::removePidFromVector(int pid) {
+    Logger::warn("List size before removing PID #" + std::to_string(pid) + ": " + std::to_string(ProcessKiller::_pids.size()));
+    ProcessKiller::_pids.erase(std::remove(ProcessKiller::_pids.begin(), ProcessKiller::_pids.end(), pid),
+                               ProcessKiller::_pids.end());
+    Logger::warn("List size after removing PID #" + std::to_string(pid) + ": " + std::to_string(ProcessKiller::_pids.size()));
 }

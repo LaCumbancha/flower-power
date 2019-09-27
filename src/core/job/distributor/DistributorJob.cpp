@@ -127,8 +127,6 @@ int DistributorJob::finish() {
         Logger::info("Distributor job #" + std::to_string(_center) + " distribution pipe connected to seller #" +
                      distributionPipe.first + " destroyed.");
     }
-
-    exit(EXIT_SUCCESS);
 }
 
 void DistributorJob::takeClassifierBox() {

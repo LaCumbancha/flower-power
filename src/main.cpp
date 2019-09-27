@@ -27,6 +27,9 @@ int main(int argc, char *argv[]) {
     // Creating Context Status.
     pid = fork();
     if (pid == CHILD_PROCESS_PID) {
+        // Closing unused feature in child process.
+        StatsCenter::close();
+
         ContextStatus::run();
     }
 
@@ -36,6 +39,10 @@ int main(int argc, char *argv[]) {
     // Creating Process Killer.
     pid = fork();
     if (pid == CHILD_PROCESS_PID) {
+        // Closing unused feature in child process.
+        StatsCenter::close();
+        ContextStatus::close();
+
         ProcessKiller::run();
     }
 
@@ -52,8 +59,6 @@ int main(int argc, char *argv[]) {
     Logger::info("Main program finished.");
     Logger::close();
 
-    // TODO: Check exit codes.
     wait(nullptr);
-
     return EXIT_SUCCESS;
 }

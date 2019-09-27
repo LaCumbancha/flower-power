@@ -6,6 +6,7 @@
 #include "../../config/data/SellerRequest.h"
 #include "../../../utils/StatsCenter.h"
 #include "../../config/Paths.h"
+#include "../../../utils/Closer.h"
 
 SellerJob::SellerJob(std::string sellerId, int clients, Pipe *requestPipe, Pipe *distributionPipe) : Job() {
     this->_clients = clients;
@@ -28,10 +29,17 @@ int SellerJob::run() {
 
     if (pid == CHILD_PROCESS_PID) {
         // Child process.
+        pid = getpid();
         this->_clientPipe->setWriteMode();
         auto clientSimulator = new ClientSimulator(this->_sellerId, this->_clients, _clientPipe);
         clientSimulator->run();
+
+        Logger::info("Client Simulator #" + this->_sellerId + " running in process with PID #" + std::to_string(pid) + " destroyed.");
+        ProcessKiller::removePID(pid);
+        Closer::finishAuxJobs(pid);
+
         delete clientSimulator;
+        exit(EXIT_SUCCESS);
     } else {
         // Seller process.
         Logger::info("Client Simulator # " + this->_sellerId + " running in process " + std::to_string(pid) + ".");
@@ -65,7 +73,7 @@ int SellerJob::listenRequests() {
 void SellerJob::handleRequest(BouquetRequest bouquetRequest) {
 
     // Uncomment the following line to measure stats in real time.
-    sleep(1);
+    // sleep(1);
 
     if (bouquetRequest.onlineSale) {
         Logger::info("Seller # " + this->_sellerId + " just received an online purchase for " +
@@ -173,7 +181,6 @@ int SellerJob::finish() {
     }
 
     this->closePipes();
-    exit(EXIT_SUCCESS);
 }
 
 void SellerJob::writeDeliveryNote(BouquetRequest request) {

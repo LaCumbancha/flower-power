@@ -89,8 +89,6 @@ int ProducerJob::finish() {
     this->_producerPipe->~Pipe();
     Logger::info("Producer #" + std::to_string(this->_centerId) + "." + std::to_string(this->_producerId) + " (" +
                  this->_producerName + ") pipe destroyed.");
-
-    exit(EXIT_SUCCESS);
 }
 
 std::string ProducerJob::contextState() {
