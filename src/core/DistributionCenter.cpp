@@ -4,7 +4,6 @@ DistributionCenter::DistributionCenter(Config *config, int id) : Job() {
 
     // Setting configurations.
     this->_id = id;
-    this->_config = config;
 
     // Getting current pid
     pid_t pid;
@@ -22,6 +21,7 @@ DistributionCenter::DistributionCenter(Config *config, int id) : Job() {
             producersPipe->setWriteMode();
             auto producerJob = new ProducerJob(this->_id, producerData, producersPipe);
             producerJob->run();
+            producerJob->finish();
             delete producerJob;
         }
         this->_producersPIDs.push_back(pid);
@@ -48,6 +48,7 @@ DistributionCenter::DistributionCenter(Config *config, int id) : Job() {
             distributionPipe->setReadMode();
             auto sellerJob = new SellerJob(sellerId, config->getClients(), requestsPipe, distributionPipe);
             sellerJob->run();
+            sellerJob->finish();
             delete sellerJob;
         }
         this->_distributionPipes.insert(std::pair<std::string, Pipe *>(sellerId, distributionPipe));
@@ -72,6 +73,7 @@ int DistributionCenter::run() {
         this->_innerPipe->setWriteMode();
         auto classifierJob = new ClassifierJob(this->_id, this->_producersPipe, this->_innerPipe);
         classifierJob->run();
+        classifierJob->finish();
         delete classifierJob;
     }
 
@@ -86,6 +88,7 @@ int DistributionCenter::run() {
         this->_innerPipe->setReadMode();
         auto distributorJob = new DistributorJob(this->_id, _innerPipe, _requestsPipe, _distributionPipes);
         distributorJob->run();
+        distributorJob->finish();
         delete distributorJob;
     }
 
@@ -143,29 +146,29 @@ int DistributionCenter::finish() {
         Logger::info("Classifier in Center #" + std::to_string(this->_id) + " successfully ended without errors.");
     }
 
+    this->closePipes();
+
     exit(EXIT_SUCCESS);
 }
 
 void DistributionCenter::closePipes() {
     // Closing Producers pipe.
-    delete this->_producersPipe;
-
+    this->_producersPipe->~Pipe();
     Logger::info("Producers pipe in Distribution Center #" + std::to_string(this->_id) + " destroyed.");
 
     // Closing classifier - distributor pipe.
-    delete this->_innerPipe;
-//    Logger::info("Classifier-distributor pipe in Distribution Center #" + std::to_string(this->_id) + " destroyed.");
+    this->_innerPipe->~Pipe();
+    Logger::info("Classifier-distributor pipe in Distribution Center #" + std::to_string(this->_id) + " destroyed.");
 
     // Closing Requests pipe.
-    delete this->_requestsPipe;
-
+    this->_requestsPipe->~Pipe();
     Logger::info("Requests pipe in Distribution Center #" + std::to_string(this->_id) + " destroyed.");
 
     // Closing Distribution pipes.
     int pipeIdx = 0;
     for (const auto &pipe : this->_distributionPipes) {
         pipeIdx++;
-        delete pipe.second;
+        pipe.second->~Pipe();
 
         Logger::info("Distribution pipe #" + std::to_string(pipeIdx) + " in Distribution Center #" +
                      std::to_string(this->_id) + " destroyed.");
@@ -173,15 +176,9 @@ void DistributionCenter::closePipes() {
 }
 
 int DistributionCenter::stopJob() {
-    // Destroying pipes.
-    this->_requestsPipe->~Pipe();
-    this->_producersPipe->~Pipe();
-    this->_innerPipe->~Pipe();
 
-    for (auto pipe : this->_distributionPipes) {
-        pipe.second->~Pipe();
-    }
+    // Finishing job.
+    this->closePipes();
 
-    delete this;
     return EXIT_SUCCESS;
 }

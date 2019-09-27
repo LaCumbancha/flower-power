@@ -86,15 +86,11 @@ int ProducerJob::run() {
 }
 
 int ProducerJob::finish() {
-    delete this->_producerPipe;
+    this->_producerPipe->~Pipe();
     Logger::info("Producer #" + std::to_string(this->_centerId) + "." + std::to_string(this->_producerId) + " (" +
                  this->_producerName + ") pipe destroyed.");
 
     exit(EXIT_SUCCESS);
-}
-
-ProducerJob::~ProducerJob() {
-    this->finish();
 }
 
 std::string ProducerJob::contextState() {
@@ -108,7 +104,10 @@ int ProducerJob::stopJob() {
                   + std::to_string(this->_tulipsStock) + " tulips.");
 
     ContextStatus::saveContext(this->contextState());
-    delete this;
+
+    // Finishing job.
+    this->finish();
+
     return EXIT_SUCCESS;
 }
 

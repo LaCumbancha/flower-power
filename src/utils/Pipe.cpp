@@ -55,20 +55,26 @@ ssize_t Pipe::read(std::string& data, int* status) {
             }
         }
 
-        char* buffer;
-        buffer = new char[bufferSize + 1];
-        memset(buffer, '\0', bufferSize + 1);
-        readReturn += ::read(this->_readFileDescriptor, buffer, bufferSize);
+        if (bufferSize != 0) {
 
-        data = buffer;
-        delete[] buffer;
-        *status = EXIT_SUCCESS;
-        return readReturn;
+            char* buffer;
+            buffer = new char[bufferSize + 1];
+            memset(buffer, '\0', bufferSize + 1);
+            readReturn += ::read(this->_readFileDescriptor, buffer, bufferSize);
+
+            data = buffer;
+            delete[] buffer;
+            *status = EXIT_SUCCESS;
+
+        } else {
+            *status = EXIT_FAILURE;
+        }
 
     } else {
         *status = EXIT_FAILURE;
-        return readReturn;
     }
+
+    return readReturn;
 
 }
 

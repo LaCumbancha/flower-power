@@ -24,8 +24,6 @@ public:
 private:
     int _id;
     pid_t _classifierPID{};
-    pid_t _stockManagerPID{};
-    Config* _config;
     Pipe* _producersPipe;
     Pipe* _requestsPipe;
     Pipe* _innerPipe;

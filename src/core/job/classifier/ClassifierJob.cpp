@@ -93,12 +93,11 @@ int ClassifierJob::run() {
 }
 
 int ClassifierJob::finish() {
-    delete _producersPipe;
+    this->_producersPipe->~Pipe();
     Logger::info("Classifier #" + std::to_string(this->_center) + " pipe connected to producer's processes destroyed.");
 
-    delete _distributorPipe;
-    Logger::info(
-            "Classifier #" + std::to_string(this->_center) + " pipe connected to the distributor process destroyed.");
+    this->_distributorPipe->~Pipe();
+    Logger::info("Classifier #" + std::to_string(this->_center) + " pipe connected to the distributor process destroyed.");
 
     exit(EXIT_SUCCESS);
 }
@@ -123,12 +122,11 @@ int ClassifierJob::stopJob() {
     Logger::info("Classifier Job #" + std::to_string(this->_center) + " saved a stock of "
                  + std::to_string(this->_roses.size()) + " roses and " + std::to_string(this->_tulips.size()) + " tulips.");
     ContextStatus::saveContext(this->contextState());
-    delete this;
-    return EXIT_SUCCESS;
-}
 
-ClassifierJob::~ClassifierJob() {
+    // Finishing job.
     this->finish();
+
+    return EXIT_SUCCESS;
 }
 
 void ClassifierJob::initializeStatus() {

@@ -20,6 +20,7 @@ int System::run() {
                 auto distributionCenter = new DistributionCenter(&(this->_config), idx);
                 distributionCenter->run();
                 distributionCenter->finish();
+                delete distributionCenter;
             } else {
                 Logger::info("Distribution Center #" + std::to_string(idx) + " running in process with PID #" + std::to_string(pid) + ".");
                 this->_distributionCentersPIDs.push_back(pid);

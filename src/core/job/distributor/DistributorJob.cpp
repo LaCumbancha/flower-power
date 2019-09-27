@@ -116,23 +116,19 @@ void DistributorJob::resupply(const SellerRequest &request) {
 
 int DistributorJob::finish() {
 
-    delete _classifierPipe;
+    this->_classifierPipe->~Pipe();
     Logger::info("Distributor job #" + std::to_string(_center) + " pipe connected to classifier destroyed.");
 
-    delete _requestsPipe;
+    this->_requestsPipe->~Pipe();
     Logger::info("Distributor job #" + std::to_string(_center) + " requests pipe destroyed.");
 
     for (const auto& distributionPipe : _distributionPipes ) {
-        delete distributionPipe.second;
+        distributionPipe.second->~Pipe();
         Logger::info("Distributor job #" + std::to_string(_center) + " distribution pipe connected to seller #" +
                      distributionPipe.first + " destroyed.");
     }
 
     exit(EXIT_SUCCESS);
-}
-
-DistributorJob::~DistributorJob() {
-    this->finish();
 }
 
 void DistributorJob::takeClassifierBox() {
@@ -194,7 +190,10 @@ int DistributorJob::stopJob() {
                  + std::to_string(this->_rosesStock.size()) + " roses boxes and "
                  + std::to_string(this->_tulipsStock.size()) + " tulips boxes.");
     ContextStatus::saveContext(this->contextState());
-    delete this;
+
+    // Finishing job.
+    this->finish();
+
     return EXIT_SUCCESS;
 }
 

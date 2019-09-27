@@ -31,7 +31,6 @@ void Logger::run() {
     Logger::logPipe->setReadMode();
     while (Logger::logPipe->read(data, &status)) {
         if (status == EXIT_SUCCESS) {
-            Logger::cleanLog(data);
             outfile << data << std::endl;
         }
     }
@@ -49,7 +48,7 @@ void Logger::close() {
 void Logger::debug(const std::string &text) {
     if (Logger::level <= DEBUG) {
         std::string log = mainLog();
-        log += "[DEBUG] " + text + "|||";
+        log += "[DEBUG] " + text;
         Logger::logPipe->write(log);
     }
 }
@@ -57,7 +56,7 @@ void Logger::debug(const std::string &text) {
 void Logger::info(const std::string &text) {
     if (Logger::level <= INFO) {
         std::string log = mainLog();
-        log += "[INFO] " + text + "|||";
+        log += "[INFO] " + text;
         Logger::logPipe->write(log);
     }
 }
@@ -65,7 +64,7 @@ void Logger::info(const std::string &text) {
 void Logger::warn(const std::string &text) {
     if (Logger::level <= WARN) {
         std::string log = mainLog();
-        log += "[WARN] " + text + "|||";
+        log += "[WARN] " + text;
         Logger::logPipe->write(log);
     }
 }
@@ -73,7 +72,7 @@ void Logger::warn(const std::string &text) {
 void Logger::error(const std::string &text) {
     if (Logger::level <= ERROR) {
         std::string log = mainLog();
-        log += "[ERROR] " + text + "|||";
+        log += "[ERROR] " + text;
         Logger::logPipe->write(log);
     }
 }

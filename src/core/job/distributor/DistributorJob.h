@@ -19,7 +19,6 @@ class DistributorJob : public Job {
 
 public:
     explicit DistributorJob(int center, Pipe *classifierPipe, Pipe *requestsPipe, std::map<std::string, Pipe*> distributionPipes);
-    ~DistributorJob();
 
     int run() override;
     int finish() override;

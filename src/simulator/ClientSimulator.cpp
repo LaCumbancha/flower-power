@@ -1,8 +1,6 @@
 #include "ClientSimulator.h"
 #include "../core/config/Paths.h"
 
-
-
 ClientSimulator::ClientSimulator(std::string sellerId, int clients, Pipe * clientPipe) {
     this->_sellerId = std::move(sellerId);
     this->_clients = clients;
@@ -29,7 +27,7 @@ int ClientSimulator::run() {
     for (int client = 1; client <= this->_clients; client++) {
 
         // Uncomment the following line to measure stats in real time.
-        // sleep(1);
+        sleep(2);
 
         BouquetRequest request = simulateBouquetRequest();
         Logger::info("Client simulator #" + _sellerId + ": generating request for Client #" + std::to_string(client) +
@@ -68,6 +66,5 @@ void ClientSimulator::loadOnlineSales() {
 }
 
 int ClientSimulator::stopJob() {
-    delete this;
     return EXIT_SUCCESS;
 }

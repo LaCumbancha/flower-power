@@ -29,8 +29,9 @@ int SellerJob::run() {
     if (pid == CHILD_PROCESS_PID) {
         // Child process.
         this->_clientPipe->setWriteMode();
-        auto clientSimulator = ClientSimulator(this->_sellerId, this->_clients, _clientPipe);
-        clientSimulator.run();
+        auto clientSimulator = new ClientSimulator(this->_sellerId, this->_clients, _clientPipe);
+        clientSimulator->run();
+        delete clientSimulator;
     } else {
         // Seller process.
         Logger::info("Client Simulator # " + this->_sellerId + " running in process " + std::to_string(pid) + ".");
@@ -40,7 +41,6 @@ int SellerJob::run() {
 
         // Listening for incoming requests.
         this->listenRequests();
-        //this->finish(); TODO: Check if it's necessary.
     }
 
     return EXIT_SUCCESS;
@@ -65,7 +65,7 @@ int SellerJob::listenRequests() {
 void SellerJob::handleRequest(BouquetRequest bouquetRequest) {
 
     // Uncomment the following line to measure stats in real time.
-    // sleep(1);
+    sleep(1);
 
     if (bouquetRequest.onlineSale) {
         Logger::info("Seller # " + this->_sellerId + " just received an online purchase for " +
@@ -171,11 +171,8 @@ int SellerJob::finish() {
     } else {
         Logger::info("Client Simulator #" + this->_sellerId + " successfully ended without errors.");
     }
-    delete _clientPipe;
 
-    delete _distributionPipe;
-    delete _requestPipe;
-
+    this->closePipes();
     exit(EXIT_SUCCESS);
 }
 
@@ -224,12 +221,12 @@ int SellerJob::stopJob() {
     Logger::info("Seller Job #" + this->_sellerId + " saved a stock of " + std::to_string(this->_rosesStock.size())
                  + " roses and " + std::to_string(this->_tulipsStock.size()) + " tulips.");
     ContextStatus::saveContext(this->contextState());
-    delete this;
-    return EXIT_SUCCESS;
-}
 
-SellerJob::~SellerJob() {
+    // Finishing job.
     this->finish();
+    this->closePipes();
+
+    return EXIT_SUCCESS;
 }
 
 void SellerJob::initializeStatus(const string& sellerId) {
@@ -292,4 +289,15 @@ void SellerJob::loadPreviousState(const string& previousState) {
     Logger::info("Seller Job #" + this->_sellerId + " retrieved a stock of " + std::to_string(this->_rosesStock.size())
                  + " roses and " + std::to_string(this->_tulipsStock.size()) + " tulips.");
 
+}
+
+void SellerJob::closePipes() {
+    this->_clientPipe->~Pipe();
+    Logger::info("Client Simulator pipe in Seller #" + this->_sellerId + " destroyed.");
+
+    this->_distributionPipe->~Pipe();
+    Logger::info("Distribution pipe in Seller #" + this->_sellerId + " destroyed.");
+
+    this->_requestPipe->~Pipe();
+    Logger::info("Request pipe in Seller #" + this->_sellerId + " destroyed.");
 }
